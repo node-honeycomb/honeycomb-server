@@ -2,6 +2,9 @@
 
 honeycomb-server is a micro web-app container for Node.js app.
 
+[![dependencies Status](https://david-dm.org/node-honeycomb/honeycomb-server/status.svg)](https://david-dm.org/node-honeycomb/honeycomb-server)
+[snyk-image]: https://snyk.io/test/github/node-honeycomb/honeycomb-server/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/github/node-honeycomb/honeycomb-server
 
 ## 简介
 
