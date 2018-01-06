@@ -1,0 +1,55 @@
+#!/bin/sh
+if [ "${0:0:1}" = "/" ]; then
+  base=$(dirname `dirname $0`)
+else
+  base=$(dirname `pwd`/`dirname $0`)
+fi
+
+date1=`date +%Y-%m-%d --date "-1 day"`
+date15=`date +%Y-%m-%d --date "-15 day"`
+date30=`date +%Y-%m-%d --date "-30 day"`
+d15=`date +%Y%m%d --date "-15 day"`
+d30=`date +%Y%m%d --date "-30 day"`
+
+cd $base/logs
+
+## rotate nodejs log
+if [ -f nodejs_stdout.log ]; then
+  cp -rf nodejs_stdout.log nodejs_stdout.${date1}.log
+  echo '' > nodejs_stdout.log
+fi
+
+flist=`ls .`
+PATTERN="[a-z]+-[0-9]{8}.log"
+## clean logs in app dir
+for f in ${flist[@]}
+do
+  ## clean app logs
+  if [ -d $f ]; then
+    applogs=`ls ${f}/`
+    for ff in ${applogs[@]}
+    do
+      if [ ! -f ${f}/${ff} ];then
+        continue;
+      fi
+      # sys.xxxx.log
+      fftype=`echo $ff | awk -F. '{print $1}'`
+      if [ "${fftype}.${date15}.log" \> "${ff}" ]; then
+        echo "delete: ${f}/${ff}"
+        rm ${f}/${ff}
+      fi
+    done
+  elif [ `echo "$f" | grep -e  '[a-z]\+-[0-9]\{8\}\.log'` ]; then
+    ftype=`echo $f | awk -F- '{print $1}'`
+    if [ ${ftype}-${d30}.log \> $f ]; then
+      echo "delete: $f"
+      rm $f
+    fi
+  else
+    ftype=`echo $f | awk -F. '{print $1}'`
+    if [ ${ftype}.${date30}.log \> $f ]; then
+      echo "delete: $f"
+      rm $f
+    fi
+  fi
+done

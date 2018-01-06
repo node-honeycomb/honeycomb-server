@@ -1,0 +1,20 @@
+/coverage/
+/node_modules/
+/run/
+/out/
+/config/config.js
+/nohup.out
+/example-apps/*.tgz
+/logs/
+/conf/
+/test_*
+/test/lib/tmp_mount.yaml
+tests/mock/.source_maps/
+tests/mock/mount/hello.mount.info.yaml
+.idea
+.DS_Store
+.nyc_output
+/nginx.conf
+ .vscode/
+package-lock.json
+/node

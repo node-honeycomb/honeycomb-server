@@ -1,0 +1,399 @@
+#!/usr/bin/env node
+'use strict';
+
+const config = require('../config');
+config.logs.sys.level = 'INFO';  // disable utils log
+const Table = require('cli-table');
+const chalk = require('chalk');
+const async = require('async');
+const fs = require('fs');
+const crypto = require('crypto');
+const randomatic = require('randomatic');
+const formstream = require('formstream');
+const utils = require('../lib/admin/utils');
+
+const ip = '127.0.0.1';
+
+const cmd = process.argv[2];
+const args = process.argv.slice(3);
+
+switch (cmd) {
+  case 'start':
+    log('正在启动应用...');
+    start(...args);
+    break;
+  case 'stop':
+    log('正在停止应用...');
+    stop(...args);
+    break;
+  case 'reload':
+    log('正在重启应用...');
+    reload(...args);
+    break;
+  case 'restart':
+    log('正在重启应用...');
+    restart(...args);
+    break;
+  case 'delete':
+    log('正在删除应用...');
+    del(...args);
+    break;
+  case 'list':
+    log('正在获取应用列表...');
+    list();
+    break;
+  case 'publish':
+    log('正在发布应用...');
+    publish(...args);
+    break;
+  case 'pwd':
+    log('生成密码加密串');
+    genpwd(...args);
+    break;
+  case 'token':
+    log('生成token');
+    genToken(...args);
+    break;
+  default:
+    help();
+}
+
+function help() {
+  console.log(`Usage: ${process.argv[1]} start|stop|reload|restart|delete|list|publish [appid]`);
+  console.log(`       ${process.argv[1]} pwd $pwd`);
+  console.log(`       ${process.argv[1]} token`);
+  exit();
+}
+
+function log(...args) {
+  console.log('==>', ...args);
+}
+
+function exit(code = 0) {
+  process.exit(code);
+}
+
+function start(appid) {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  let path = `/api/single/start/${appid}`;
+  utils.callremote(path, {ips: [ip]}, function (err, results) {
+    clearInterval(wait);
+    console.log();  // new line
+    if (err) {
+      log(chalk.red('启动失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    const data = results[ip];
+    if (data.code !== 'SUCCESS') {
+      log(chalk.red('启动失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+
+    data.data.forEach((d) => {
+      log(d);
+    });
+    log('启动成功!');
+    exit();
+  });
+}
+
+function stop(appid) {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  let path = `/api/single/stop/${appid}`;
+  utils.callremote(path, {method: 'DELETE', ips: [ip]}, function (err, results) {
+    clearInterval(wait);
+    console.log();  // new line
+    if (err) {
+      log(chalk.red('停止失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    const data = results[ip];
+    if (data.code !== 'SUCCESS') {
+      log(chalk.red('停止失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+
+    log(data.data);
+    log('停止成功!');
+    exit();
+  });
+}
+
+function reload(appid) {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  let path = `/api/single/reload/${appid}`;
+  utils.callremote(path, {ips: [ip]}, function (err, results) {
+    clearInterval(wait);
+    console.log();  // new line
+    if (err) {
+      log(chalk.red('重启失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    const data = results[ip];
+    if (data.code !== 'SUCCESS') {
+      log(chalk.red('重启失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+
+    log('重启成功!');
+    exit();
+  });
+}
+
+function restart(appid) {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  let path = `/api/single/restart/${appid}`;
+  utils.callremote(path, {ips: [ip]}, function (err, results) {
+    clearInterval(wait);
+    console.log();  // new line
+    if (err) {
+      log(chalk.red('重启失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    const data = results[ip];
+    if (data.code !== 'SUCCESS') {
+      log(chalk.red('重启失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+
+    data.data.forEach((d) => {
+      log(d);
+    });
+    log('重启成功!');
+    exit();
+  });
+}
+
+function del(appid) {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  let path = `/api/single/delete/${appid}`;
+  utils.callremote(path, {method: 'DELETE', ips: [ip]}, function (err, results) {
+    clearInterval(wait);
+    console.log();  // new line
+    if (err) {
+      log(chalk.red('删除失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    const data = results[ip];
+    if (data.code !== 'SUCCESS') {
+      log(chalk.red('删除失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+
+    log('删除成功!');
+    exit();
+  });
+}
+
+function list() {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  async.parallel({
+    apps: (cb) => {
+      let path = '/api/single/apps';
+      utils.callremote(path, {method: 'GET', ips: [ip]}, cb);
+    },
+    usages: (cb) => {
+      let path = `/api/single/appUsage?fileName=app-usage.${currHour()}.log`;
+      utils.callremote(path, {method: 'GET', ips: [ip]}, cb);
+    }
+  }, (err, results) => {
+    clearInterval(wait);
+    console.log();  // new line
+
+    if (err) {
+      log(chalk.red('获取应用列表失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    let data = results.apps[ip];
+    // 正常返回值 results[ip] 是app数组，如果不是数组，则说明single api接口返回了error
+    if (!Array.isArray(data)) {
+      log(chalk.red('获取应用列表失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+    let usages = results.usages[ip];
+    let appUsage = {};
+    if (typeof usages === 'object') {
+      log(chalk.yellow('获取应用Usage失败!'));
+      log(chalk.yellow(usages.message));
+      // exit(3);
+    } else {
+      let lastLine = usages.split('\n').slice(-2)[0];
+      if (lastLine) {
+        lastLine.slice(18).split('; ').forEach((use) => {
+          const arr = use.split(': ');
+          const workerUsage = arr[1].split('^');
+          appUsage[arr[0]] = workerUsage.reduce((prev, curr) => {
+            const arr = curr.split(',');
+            if (prev.length) {  // 后续项
+              prev[1] += ', ' + arr[1];
+              prev[2] += ', ' + arr[2];
+            } else {  // 第一项
+              prev[1] = arr[1];
+              prev[2] = arr[2];
+            }
+            return prev;  // [0] is null
+          }, []);
+        });
+      }
+    }
+
+    const table = new Table({
+      head: [
+        'appId',
+        'isCurrWorking',
+        'status',
+        'worker',
+        'exitCount',
+        'cpu (%)',
+        'mem (MB)'
+      ]
+    });
+
+    data = stableSort(data, (a, b) => {
+      if (a.isCurrWorking && !b.isCurrWorking) {
+        return -1;
+      } else if (!a.isCurrWorking && b.isCurrWorking) {
+        return 1;
+      }
+      return 0;
+    });
+    data = stableSort(data, (a, b) => {
+      if (a.status === 'online' && b.status === 'offline') {
+        return -1;
+      } else if (a.status === 'offline' && b.status === 'online') {
+        return 1;
+      }
+      return 0;
+    });
+
+    table.push(...data.map((d) => {
+      return [
+        d.appId,
+        (d.isCurrWorking || false) === false ? chalk.gray(false) : d.isCurrWorking,
+        d.status === 'offline' ? chalk.gray(d.status) : d.status,
+        (d.workerNum || 0) + '/' + (d.expectWorkerNum || 0),
+        (d.errorExitCount || 0) !== 0 ? chalk.red(d.errorExitCount) : 0,
+        appUsage[d.appId] ? appUsage[d.appId][1] : 0,
+        appUsage[d.appId] ? appUsage[d.appId][2] : 0
+      ];
+    }));
+    console.log(table.toString());
+    exit();
+  });
+}
+
+function publish(file) {
+  const wait = setInterval(() => {
+    process.stdout.write('.');
+  }, 1000);
+  let apiPath = '/api/single/publish';
+  let form = formstream();
+  form.file('pkg', file);
+  utils.callremote(apiPath, {
+    method: 'POST',
+    headers: form.headers(),
+    stream: form,
+    ips: [ip]
+  }, function (err, results) {
+    clearInterval(wait);
+    console.log();  // new line
+    if (err) {
+      log(chalk.red('发布失败!'));
+      log(chalk.red(err));
+      exit(1);
+    }
+
+    const data = results[ip];
+    if (data.code !== 'SUCCESS') {
+      log(chalk.red('发布失败!'));
+      log(chalk.red(data.message));
+      exit(2);
+    }
+
+    log('发布成功!');
+    exit();
+  });
+}
+
+
+function sha256(str) {
+  if (typeof str !== 'string') {
+    throw new Error('sha256 only support string');
+  }
+  let hash = crypto.createHash('sha256');
+  hash.update(str);
+  return hash.digest('hex');
+}
+
+function genpwd(pwd) {
+  console.log('-------------');
+  console.log(' input:', pwd);
+  console.log('output:', sha256(pwd));
+  exit();
+}
+
+function genToken(token) {
+  console.log('-------------');
+  console.log('token:', randomatic('*', 64));
+  exit();
+}
+
+
+function stableSort(array, compare) {
+  const arr = array.map((item, _index) => {
+    return {
+      _index,
+      value: item
+    };
+  });
+
+  arr.sort((a, b) => {
+    const order = compare(a.value, b.value);
+    return order === 0 ? a._index - b._index : order;
+  });
+
+  return arr.map((item) => {
+    return item.value;
+  });
+}
+
+function currHour() {
+  const date = new Date();
+  function pad(number) {
+    if (number < 10) {
+      return '0' + number;
+    }
+    return number;
+  }
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}-${pad(date.getHours())}`;
+}

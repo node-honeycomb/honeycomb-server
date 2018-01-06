@@ -1,0 +1,10 @@
+/out/
+/node_modules/
+/example-apps/
+/logs/
+/run/
+/bin/
+/benchmark/
+/test/
+/common/nginx_config_parser.js
+*.min.js

@@ -1,0 +1,280 @@
+#!/bin/bash
+
+if [ "${0:0:1}" = "/" ]; then
+  # if $0 start with /, means abs path call this script sh
+  base=$(dirname `dirname $0`)
+else
+  # else relative path call this sh script
+  base=`pwd`/`dirname "/$0"`
+  cd $base
+  base=$(dirname `pwd`)
+fi
+
+cd $base;
+
+BASE_HOME=`pwd`
+PROJECT_NAME=honeycomb
+PROJECT_DIR=$BASE_HOME/target/$PROJECT_NAME
+PROJECT_TAR=$BASE_HOME/target/$PROJECT_NAME.tgz
+BIN_WEB=$PROJECT_DIR/bin/server
+SERVER_STATUS_FILE=$BASE_HOME/run/_server_status
+PID_FILE=$BASE_HOME/run/honeycomb.pid
+
+NODEJS_BIN=$PROJECT_DIR/node_modules/.bin/node
+
+export NODE_ENV='production'
+export PATH=$PROJECT_DIR/node_modules/.bin:$PATH
+
+# setting up alinode
+export ENABLE_NODE_LOG=YES
+export NODE_LOG_DIR=${BASE_HOME}/logs/
+
+ulimit -c unlimited
+echo "---- env for \"$PROJECT_NAME\" ----"
+echo " DIR  : $PROJECT_DIR "
+echo " NODE : $NODEJS_BIN "
+echo "--------------------------------"
+
+checkuser() {
+  user=`id -nu`
+  if [ $user != 'admin' ]; then
+    echo "now using account: $user"
+    echo "we recommend you to using admin account to run honeycomb"
+    exit 3
+  fi
+}
+
+ACTION=$1
+usage() {
+  echo "Usage: $0 {start|stop|status|restart|online|offline|deploy}"
+  exit 1;
+}
+
+## force user to be admin
+# checkuser
+
+## decompress tgz file
+need_tar=0
+if [ -f $PROJECT_TAR ]; then
+  if [[ `echo $OSTYPE | grep -c 'darwin'` -eq 1 ]]; then
+    tgz_time=`stat -f "%Sm" -t "%s" $PROJECT_TAR`
+    dir_time=`stat -f "%Sm" -t "%s" $PROJECT_DIR`
+  else
+    tgz_time=`stat -c '%Y' $PROJECT_TAR`
+    dir_time=`stat -c '%Y' $PROJECT_DIR`
+  fi
+  echo "tar time: $tgz_time, dir time: $dir_time"
+  if [ $tgz_time -gt $dir_time ]; then
+      need_tar=1
+  fi
+elif [ -d $PROJECT_DIR ]; then
+  need_tar=0
+else
+  echo "neither tar $PROJECT_TAR found, nor dir found, you should re-install honeycomb"
+  exit 1
+fi
+
+depress() {
+  if [ $need_tar -eq 1 ]; then
+    echo "decompress $PROJECT_TAR"
+    rm -rf "$PROJECT_DIR"
+    cd $BASE_HOME/target
+    tar zxf $PROJECT_TAR
+    touch $PROJECT_DIR
+  fi
+
+  if [ ! -d "$PROJECT_DIR" ]; then
+    echo "$PROJECT_DIR directory is not exist"
+    exit 1
+  fi
+}
+
+backup() {
+  if [ -f "$PROJECT_TAR" ]; then
+    if [ ! -d "$BASE_HOME/target/backup" ]; then
+      mkdir -p "$BASE_HOME/target/backup"
+    fi
+    if [[ `echo $OSTYPE | grep -c 'darwin'` -eq 1 ]]; then
+      tgz_time=`stat -f "%Sm" -t "%Y%m%d%H%M%S" $PROJECT_TAR`
+    else
+      tgz_time=`stat -c '%y' $PROJECT_TAR|cut -c 1-19 | sed -e 's/[: -]//g'`
+    fi
+    BACK_FILE=$BASE_HOME/target/backup/${PROJECT_NAME}.$tgz_time.tgz
+    test -f $BACK_FILE || cp -f $PROJECT_TAR $BACK_FILE
+  fi
+}
+
+# get pid
+pid=0
+check_pid() {
+  if [ -f $PID_FILE ]; then
+    pid=`cat $PID_FILE`
+  else
+    return 1
+  fi
+
+  ps -p $pid > /dev/null
+  if [ $? -eq 1 ]; then
+    return 1
+  fi
+  return 0
+}
+
+online() {
+  echo 'server online start'
+  check_pid
+  if [ $? -ne 0 ]; then
+    echo 'server is not running'
+    return $?
+  fi
+  # send SIGUSR2 to master to tell master $offline
+  echo 'online' > $SERVER_STATUS_FILE
+  kill -31 $pid
+  # wait 10's
+  for ((i=0; i<3; i++)); do
+    echo -n '.'
+    sleep 1
+  done
+  echo
+  echo "server online done"
+}
+
+offline() {
+  echo 'server offline start'
+  check_pid
+  if [ $? -ne 0 ]; then
+    echo 'server is not running'
+    return $?
+  fi
+  # send SIGUSR2 to master to tell master $offline
+  echo 'offline' > $SERVER_STATUS_FILE
+  kill -31 $pid
+
+  # wait 10's
+  for ((i=0; i<10; i++)); do
+    echo -n '.'
+    sleep 1
+  done
+
+  echo
+  echo "server offline done"
+}
+
+node_start() {
+  echo 'server starting'
+  if [ -x $NODEJS_BIN ]; then
+    echo "using node: $NODEJS_BIN"
+  else
+    echo "Can not find node: $NODEJS_BIN"
+    exit 1
+  fi
+
+  check_pid;
+  if [ $? -eq 0 ]; then
+    echo "Service is Running.";
+    exit 0
+  fi
+
+  logs_dir=$BASE_HOME/logs
+  mkdir -p $logs_dir
+
+  if [ -f $logs_dir/nodejs_stdout.log ]; then
+    mv $logs_dir/nodejs_stdout.log $logs_dir/nodejs_stdout.log.`date +"%Y-%m-%d_%H:%M:%S"`
+  fi
+
+  echo 'Starting Server:'
+  nohup $NODEJS_BIN $PROJECT_DIR/dispatch.js > $logs_dir/nodejs_stdout.log 2>&1 &
+
+  if [ $? -eq 0 ]; then
+    flag=0
+    count=0
+    while [ $flag -eq 0 ]
+    do
+      res=`cat $logs_dir/nodejs_stdout.log | grep "SERVER_START_SUCCESSFULLY" | wc -l`
+      if [ $res -eq 1 ]; then
+        flag=1
+        echo 'Done'
+        break;
+      fi
+      count=`expr $count + 1`
+      if [ $count -gt 120 ]; then
+        flag=2
+        echo 'timeout'
+        break;
+      fi
+      echo -n '.'
+      sleep 2
+    done
+    if [ $flag -eq 1 ]; then
+      echo "server start successfully."
+    elif [ $flag -eq 2 ]; then
+      echo 'server start failed: server not ready'
+    else
+      echo 'server start failed'
+    fi
+    return 0
+  else
+    echo "server start failed."
+    return 11
+  fi
+}
+
+node_stop() {
+  check_pid;
+  if [ $? -ne 0 ]; then
+    echo 'server not Running.'
+    return $?
+  fi
+
+  echo 'node stopping'
+  kill $pid
+
+  for ((i=0; i<120; i++)); do
+    check_pid;
+    if [ $? -ne 0 ]; then
+      echo ''
+      echo "node stopped"
+      return 0
+    fi
+    echo -n '.'
+    sleep 1
+  done
+  echo ''
+  echo "node stop Timeout."
+  return 3
+}
+
+server() {
+  $NODEJS_BIN $PROJECT_DIR/bin/control $1 $2 $3
+}
+
+case "$ACTION" in
+  start)
+    node_start
+  ;;
+  stop)
+    node_stop
+  ;;
+  status)
+    node_status
+  ;;
+  restart)
+    offline
+    node_stop
+    depress
+    node_start
+    backup
+  ;;
+  online)
+    online
+  ;;
+  offline)
+    offline
+  ;;
+  server)
+    server $2 $3 $4
+  ;;
+  *)
+    usage
+  ;;
+esac

@@ -1,0 +1,9 @@
+{
+  "name": "socket-app",
+  "main": "index.js",
+  "version": "1.0.0",
+  "build": 2,
+  "honeycomb": {
+    "processorNum": 2
+  }
+}
