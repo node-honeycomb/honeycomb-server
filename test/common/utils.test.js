@@ -79,7 +79,7 @@ describe('common/utils,', function () {
     });
     it('should error when cmd not found', function (done) {
       utils.exec('no_exist_ssh_cmd', {timeout: 3000}, function (err) {
-        err.message.should.match(/command not found/);
+        err.message.should.match(/not found/);
         done();
       });
     });

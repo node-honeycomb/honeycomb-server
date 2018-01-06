@@ -66,6 +66,10 @@ test-cov:
 	@$(BIN_NYC) --reporter=lcov make test2
 	@$(BIN_NYC) report --reporter=text-summary
 
+codecov: install eslint prepare-test
+	@rm -rf coverage
+	@$(BIN_NYC) --reporter=lcovonly make test2
+
 release-prepare:
 	@echo 'Copy files'
 	@mkdir -p $(RELEASE_DIR)
@@ -105,4 +109,4 @@ eslint:
 	@rm -rf coverage
 	@./node_modules/.bin/eslint .
 
-.PHONY: install default test test2 test-cov release package eslint parser
+.PHONY: install default test test2 test-cov release package eslint parser codecov
