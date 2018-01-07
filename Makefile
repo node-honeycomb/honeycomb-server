@@ -105,8 +105,11 @@ release: clean release-prepare
 
 package: release
 
+tag:
+	@git tag v${VERSION}_${BUILD_NO}
+
 eslint:
 	@rm -rf coverage
 	@./node_modules/.bin/eslint .
 
-.PHONY: install default test test2 test-cov release package eslint parser codecov
+.PHONY: tag install default test test2 test-cov release package eslint parser codecov
