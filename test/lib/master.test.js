@@ -20,9 +20,9 @@ describe('lib/master.js', function () {
     master.run(done);
   });
 
-  after(function () {
+  after(function (done) {
     mm.restore();
-    master.exit();
+    master.exit(done);
   });
 
   describe('test $mount()', function () {
