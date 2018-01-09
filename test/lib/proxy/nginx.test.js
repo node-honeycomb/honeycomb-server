@@ -45,8 +45,9 @@ describe('lib/proxy/nginx.js', () => {
         port: '80',
         healthCheck: {}
       };
+      let ng;
       try {
-        new Nginx(options);
+        ng = new Nginx(options);
       } catch (e) {
         e.code.should.eql('NGINX_BIN_EACCESS');
       }
@@ -61,8 +62,9 @@ describe('lib/proxy/nginx.js', () => {
         port: '80',
         healthCheck: {}
       };
+      let ng;
       try {
-        new Nginx(options);
+        ng = new Nginx(options);
       } catch (e) {
         e.code.should.eql('NGINX_CONFIG_EACCESS');
       }
@@ -87,6 +89,7 @@ describe('lib/proxy/nginx.js', () => {
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
+        nginxProxy.exit();
         done();
       });
     });
@@ -109,6 +112,7 @@ describe('lib/proxy/nginx.js', () => {
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
+        nginxProxy.exit();
         done();
       });
     });
