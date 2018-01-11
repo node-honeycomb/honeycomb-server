@@ -642,7 +642,7 @@ describe('lib/master.js', function () {
     });
 
     // then stop v1.1.0_1
-    it('should router to v1.0.0_1 when stop v1.1.0_1', function (done) {
+    it('should router to v1.0.0_1 when stop v1.0.0_2', function (done) {
       let appId = 'socket-app_1.0.0_2';
       let url = `/api/stop/${appId}?ips=127.0.0.1`;
       let contentType = 'application/json';
@@ -660,6 +660,28 @@ describe('lib/master.js', function () {
           client.on('error', done);
           client.on('data', function (chunk) {
             chunk.toString().should.eql('socket-app_1.0.0_1');
+            done();
+          });
+        });
+    });
+
+    it('should work fine when stop all', function (done) {
+      let appId = 'socket-app_1.0.0_1';
+      let url = `/api/stop/${appId}?ips=127.0.0.1`;
+      let contentType = 'application/json';
+      let contentMd5 = utils.md5base64('');
+      let date = new Date().toGMTString();
+      let stringToSign = `POST\nundefined\n${contentMd5}\n${contentType}\n${date}\n${url}`;
+      let signature = utils.sha1(stringToSign, config.admin.token);
+      request.post(url)
+        .set('Date', date)
+        .type(contentType)
+        .set('Authorization', `honeycomb admin:${signature}`)
+        .expect(200)
+        .end(function () {
+          let client = net.connect(6000, 'localhost');
+          client.on('error', (err) => {
+            err.code.should.eql('ECONNREFUSED');
             done();
           });
         });
