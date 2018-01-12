@@ -15,6 +15,7 @@ if (process.version < 'v6.0.0') {
   throw new Error('please update node version up to v6.0.0');
 }
 
+
 process.on('exit', function () {
   fs.unlinkSync(configTmp);
   fs.sync().rm(path.join(__dirname, './appsRoot'));
