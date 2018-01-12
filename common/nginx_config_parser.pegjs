@@ -153,53 +153,9 @@ escape_char
       return String.fromCharCode(parseInt("0x" + h1 + h2 + h3 + h4));
     }
 
-line_terminator
-  = [\n\r]
-
-literal_numeric
-  = n:number {
-      return {
-        type  : 'number',
-        value : n
-      }
-    }
-literal_int "LITERAL INT"
-  = n:int {
-    return {
-      type: 'number',
-      value: n
-    }
-  }
-
-number
-  = int_:int frac:frac exp:exp _ { return parseFloat(int_ + frac + exp); }
-  / int_:int frac:frac _         { return parseFloat(int_ + frac);       }
-  / int_:int exp:exp _           { return parseFloat(int_ + exp);        }
-  / int_:int _                   { return parseFloat(int_);              }
-
-int
-  = digit19:digit19 digits:digits     { return digit19 + digits;       }
-  / digit:digit
-  / op:("-" / "+" ) digit19:digit19 digits:digits { return "-" + digit19 + digits; }
-  / op:("-" / "+" ) digit:digit                   { return "-" + digit;            }
-
-frac
-  = "." digits:digits { return "." + digits; }
-
-exp
-  = e:e digits:digits { return e + digits; }
-
-digits
-  = digits:digit+ { return digits.join(""); }
-
-digit "NUMBER"  = [0-9]
-digit19 "NUMBER" = [1-9]
-
 hexDigit "HEX"
   = [0-9a-fA-F]
 
-e
-  = e:[eE] sign:[+-]? { return e + sign; }
 
 sem 'SEMI' = ';'
 

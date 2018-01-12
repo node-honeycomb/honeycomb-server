@@ -214,4 +214,46 @@ describe('common/utils,', function () {
       utils.fixStringLength('abcdef', 5).should.eql('abcdef');
     });
   });
+
+  describe('checkAppId()', () => {
+    let namesOK = [
+      'abc',
+      'a.b',
+      'a_b',
+      'a-b',
+      'a-b.1.0.2_3',
+      'a9'
+    ];
+    namesOK.forEach((name) => {
+      it('appId should ok:' + name, () => {
+        should(utils.checkAppId(name)).eql(null);
+      });
+    });
+    let nameError = [
+      '',
+      '_a',
+      '0a',
+      '__a',
+      'a@'
+    ];
+    nameError.forEach((name) => {
+      it('appId should error: ' + name, () => {
+        let a = utils.checkAppId(name);
+        (a instanceof Error).should.eql(true);
+      });
+    });
+  });
+
+  describe('genWeight()', () => {
+    it('should work fine', () => {
+      let a = utils.genWeight('1.0.2', 2);
+      let b = utils.genWeight('1.0.11', 2);
+      should(a < b).eql(true);
+    });
+    it('should work fine', () => {
+      let a = utils.genWeight('1.0.0', 2);
+      let b = utils.genWeight('0.0.1', 2);
+      should(a > b).eql(true);
+    });
+  });
 });

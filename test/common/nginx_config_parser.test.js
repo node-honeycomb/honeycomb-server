@@ -24,5 +24,23 @@ describe('nginx config parser', () => {
         let tokens = TestMod.parse(cnt, {loc: true});
       });
     });
+
+    let errors = [
+      'http {',
+      'test \'abc',
+      'direction'
+    ];
+    errors.forEach((err) => {
+      it('should throw error' + err, () => {
+        try {
+          TestMod.parse(err, {loc: false});
+        } catch (e) {
+          e.name.should.eql('SyntaxError');
+          // console.log(e);
+        }
+      });
+    });
   });
+
+
 });
