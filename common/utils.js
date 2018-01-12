@@ -260,28 +260,20 @@ exports.stringifyInfo = function (info) {
 };
 
 
-let RegExpAppId = /^[\w-\.]+$/;
+let RegExpAppId = /^[a-zA-Z][\w-\.]+$/;
 exports.checkAppId = function (appId) {
   if (!appId) {
-    return new Error('appid empty');
+    return new Error('name empty');
   }
   if (appId.indexOf('__') === 0) {
-    return new Error('inner private app, no permission');
+    return new Error('reserved name, no permission');
   }
   if (!RegExpAppId.test(appId)) {
-    return new Error('appid illegal, should match /^[\\w-\\.]+$/');
-  }
-  return null;
-};
-
-exports.checkAppName = function (name) {
-  if (name.indexOf('__') === 0) {
-    return new Error('inner private app, no permission');
-  }
-  if (!RegExpAppId.test(name)) {
     return new Error('name illegal, should match /^[\\w-\\.]+$/');
   }
   return null;
 };
+
+exports.checkAppName = exports.checkAppId;
 
 
