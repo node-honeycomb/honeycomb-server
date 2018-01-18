@@ -342,7 +342,7 @@ describe('lib/master.js', function () {
         .expect(200)
         .expect(function (res) {
           child = master.getChild(appId);
-          child.status.should.eql('offline');
+          should(child).eql(undefined);
           res.body.should.have.properties({code: 'SUCCESS'});
         }).end(done);
     });
