@@ -189,7 +189,7 @@ module.exports = {
     /**
      * admin 管控接口的api签名token, 请务必修改
      */
-    token: '**change-this-token**',
+    token: '***honeycomb-default-token***',
     signExpire: 30000,
     gatherUsage: false,
     gatherUsageInterval: 5000,
@@ -202,7 +202,7 @@ module.exports = {
   /**
    * 私有配置保护用
    */
-  configSecret: '** reset this secret **',
+  configSecret: '***honeycomb-default-secret***',
   /**
    * [optional] 服务类型, 一般无需设置，这个参数会传递给app，方便app做不同运行环境的区分
    */
