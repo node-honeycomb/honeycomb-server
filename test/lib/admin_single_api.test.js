@@ -22,12 +22,12 @@ describe('lib/admin/single_api.js', function () {
 
   describe('test config single api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     before(function (done) {
       fs.rm(path.join(__dirname, '../../conf/apps'), done);
     });
     it('should get app config success but null', function (done) {
       let url = '/api/single/config/app/appTest';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -49,6 +49,7 @@ describe('lib/admin/single_api.js', function () {
           processorNum: 5
         }
       };
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -73,6 +74,7 @@ describe('lib/admin/single_api.js', function () {
           processorNum: 4
         }
       };
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -91,6 +93,7 @@ describe('lib/admin/single_api.js', function () {
 
     it('should get app config changed', function (done) {
       let url = '/api/single/config/app/appTest';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -116,6 +119,7 @@ describe('lib/admin/single_api.js', function () {
           processorNum: 2
         }
       };
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -134,6 +138,7 @@ describe('lib/admin/single_api.js', function () {
 
     it('should get server config success', function (done) {
       let url = '/api/single/config/app/config_server';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -157,6 +162,7 @@ describe('lib/admin/single_api.js', function () {
         systemToken: 'xxx',
       };
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
+      let date = new Date().toGMTString();
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.post(url)
@@ -174,6 +180,7 @@ describe('lib/admin/single_api.js', function () {
 
     it('should get app common config success', function (done) {
       let url = '/api/single/config/server/common';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -407,9 +414,9 @@ describe('lib/admin/single_api.js', function () {
 
   describe('test admin worker status api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should get status message success', function (done) {
       let url = '/api/single/status';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -438,9 +445,9 @@ describe('lib/admin/single_api.js', function () {
 
   describe('coredump api', () => {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should list coredump', (done) => {
       let url = '/api/single/coredump';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       fs.sync().save(path.join(__dirname, '../../core.123'));
@@ -460,6 +467,7 @@ describe('lib/admin/single_api.js', function () {
     it('should list coredump', (done) => {
       let url = '/api/single/coredump';
       let postData = {files: ['core.123']};
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -480,9 +488,9 @@ describe('lib/admin/single_api.js', function () {
 
   describe('test admin process check api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should get dead process success', function (done) {
       let url = '/api/single/dead_process';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -499,6 +507,7 @@ describe('lib/admin/single_api.js', function () {
     it('should return error when delete unknow process', function (done) {
       let url = `/api/single/dead_process/12345`;
       let contentType = 'application/json';
+      let date = new Date().toGMTString();
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.delete(url)
