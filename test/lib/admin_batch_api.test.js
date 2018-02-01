@@ -22,11 +22,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('test config batch api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     before(function (done) {
       fs.rm(path.join(__dirname, '../../conf/apps'), done);
     });
-
     /* eslint no-console: 0 */
     it('should set app config success', function (done) {
       let url = '/api/config/appTest?ips=127.0.0.1';
@@ -36,6 +34,7 @@ describe('lib/admin/batch_api.js', function () {
           processorNum: 5
         }
       };
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -54,6 +53,7 @@ describe('lib/admin/batch_api.js', function () {
 
     it('should get app config success', function (done) {
       let url = '/api/config/appTest?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -228,9 +228,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('test status batch api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should get system status success', function (done) {
       let url = '/api/status?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -248,9 +248,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('test clean exit record batch api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should clean app\'s exit_record', function (done) {
       let url = '/api/clean_exit_record/__ADMIN__?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `DELETE\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.delete(url)
@@ -269,9 +269,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('test server online offline', () => {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     after((done) => {
       let url = '/api/online?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -288,6 +288,7 @@ describe('lib/admin/batch_api.js', function () {
     });
     it('should let server offline', function (done) {
       let url = '/api/offline?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -304,6 +305,7 @@ describe('lib/admin/batch_api.js', function () {
     });
     it('should let server online', function (done) {
       let url = '/api/online?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -322,9 +324,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('coredump api', () => {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should list coredump', (done) => {
       let url = '/api/coredump?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       fs.sync().save(path.join(__dirname, '../../core.123'));
@@ -344,6 +346,7 @@ describe('lib/admin/batch_api.js', function () {
     it('should delete coredump', (done) => {
       let url = '/api/coredump?ips=127.0.0.1';
       let postData = {files: ['core.123']};
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -363,6 +366,7 @@ describe('lib/admin/batch_api.js', function () {
     it('should delete coredump success when core file not found', (done) => {
       let url = '/api/coredump?ips=127.0.0.1';
       let postData = {files: ['core.123']};
+      let date = new Date().toGMTString();
       let contentMd5 = utils.md5base64(JSON.stringify(postData));
       let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -382,9 +386,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('test batch admin process check api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should get dead process success', function (done) {
       let url = '/api/dead_process?ips=127.0.0.1';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -401,6 +405,7 @@ describe('lib/admin/batch_api.js', function () {
       let appName = 'err-app-name';
       let url = `/api/dead_process/12345?ips=127.0.0.1`;
       let contentType = 'application/json';
+      let date = new Date().toGMTString();
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.delete(url)
@@ -419,9 +424,9 @@ describe('lib/admin/batch_api.js', function () {
 
   describe('test batch admin apps api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should return apps', function (done) {
       let url = `/api/apps?ips=127.0.0.1`;
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
