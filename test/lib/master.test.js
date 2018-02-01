@@ -22,7 +22,9 @@ describe('lib/master.js', function () {
 
   after(function (done) {
     mm.restore();
-    master.exit(done);
+    master.exit(() => {
+      done();
+    });
   });
 
   describe('test $mount()', function () {
@@ -846,7 +848,7 @@ describe('lib/master.js', function () {
   });
 
   describe('test no target app', () => {
-    it('should publish websocket-app successfully', (done) => {
+    it('should publish notarget-app successfully', (done) => {
       let request = supertest(`http://localhost:${config.admin.port}`);
       let url = '/api/publish?ips=' + ip;
       let date = new Date().toGMTString();

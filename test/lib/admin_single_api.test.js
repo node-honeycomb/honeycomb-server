@@ -199,7 +199,7 @@ describe('lib/admin/single_api.js', function () {
 
   describe('test admin worker with single api', function () {
     let request = supertest('http://localhost:9999');
-    it('should get success message when get app list', function (done) {
+    it('should success when get app list', function (done) {
       let url = '/api/single/apps';
       let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
@@ -215,7 +215,7 @@ describe('lib/admin/single_api.js', function () {
         .end(done);
     });
 
-    it('should get error message when publish illegal app pkg', function (done) {
+    it('should error when publish illegal app pkg', function (done) {
       let url = '/api/single/publish';
       let date = new Date().toGMTString();
       let agent = request.post(url)
@@ -236,7 +236,7 @@ describe('lib/admin/single_api.js', function () {
         .end(done);
     });
 
-    it('should get error message when publish cant-found-module app pkg', function (done) {
+    it('should error when publish cant-found-module app pkg', function (done) {
       let appName = 'cant-found-module';
       let url = '/api/single/publish';
       let date = new Date().toGMTString();
@@ -259,7 +259,7 @@ describe('lib/admin/single_api.js', function () {
         .end(done);
     });
 
-    it('should get success message when stop a not exist app', function (done) {
+    it('should success when stop a not exist app', function (done) {
       let appName = 'err-app-name';
       let url = `/api/single/stop/${appName}`;
       let date = new Date().toGMTString();
@@ -278,7 +278,7 @@ describe('lib/admin/single_api.js', function () {
         .end(done);
     });
 
-    it('should get success message when delete a not exist app', function (done) {
+    it('should success when delete a not exist app', function (done) {
       let appName = 'err-app-name';
       let url = `/api/single/delete/${appName}`;
       let date = new Date().toGMTString();
