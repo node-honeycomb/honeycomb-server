@@ -192,9 +192,9 @@ describe('lib/admin/single_api.js', function () {
 
   describe('test admin worker with single api', function () {
     let request = supertest('http://localhost:9999');
-    let date = new Date().toGMTString();
     it('should get success message when get app list', function (done) {
       let url = '/api/single/apps';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)
@@ -210,6 +210,7 @@ describe('lib/admin/single_api.js', function () {
 
     it('should get error message when publish illegal app pkg', function (done) {
       let url = '/api/single/publish';
+      let date = new Date().toGMTString();
       let agent = request.post(url)
         .set('Date', date)
         .attach('pkg', path.join(__dirname, '../../example-apps/illegal-app.tgz'));
@@ -231,6 +232,7 @@ describe('lib/admin/single_api.js', function () {
     it('should get error message when publish cant-found-module app pkg', function (done) {
       let appName = 'cant-found-module';
       let url = '/api/single/publish';
+      let date = new Date().toGMTString();
       let agent = request.post(url)
         .set('Date', date)
         .attach('pkg', path.join(__dirname, `../../example-apps/${appName}.tgz`));
@@ -253,6 +255,7 @@ describe('lib/admin/single_api.js', function () {
     it('should get success message when stop a not exist app', function (done) {
       let appName = 'err-app-name';
       let url = `/api/single/stop/${appName}`;
+      let date = new Date().toGMTString();
       let contentType = 'application/json';
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -271,6 +274,7 @@ describe('lib/admin/single_api.js', function () {
     it('should get success message when delete a not exist app', function (done) {
       let appName = 'err-app-name';
       let url = `/api/single/delete/${appName}`;
+      let date = new Date().toGMTString();
       let contentType = 'application/json';
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -289,6 +293,7 @@ describe('lib/admin/single_api.js', function () {
     it('should delete app cant-found-module success', function (done) {
       let appName = 'cant-found-module';
       let url = `/api/single/delete/${appName}`;
+      let date = new Date().toGMTString();
       let contentType = 'application/json';
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -308,6 +313,7 @@ describe('lib/admin/single_api.js', function () {
       let appName = 'illegal-app';
       let url = `/api/single/delete/${appName}`;
       let contentType = 'application/json';
+      let date = new Date().toGMTString();
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.delete(url)
@@ -325,6 +331,7 @@ describe('lib/admin/single_api.js', function () {
     it('should get log files success', function (done) {
       let url = '/api/single/logs';
       let contentType = 'application/json';
+      let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\n${contentType}\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
       request.get(url)

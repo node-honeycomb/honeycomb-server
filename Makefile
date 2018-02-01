@@ -63,12 +63,20 @@ test2: prepare-test
 
 test-cov:
 	@rm -rf coverage
-	@$(BIN_NYC) --reporter=lcov make test2
-	@$(BIN_NYC) report --reporter=text-summary
+	@./node_modules/.bin/istanbul cover \
+	  -x ./config/config.js \
+	  --include-pid \
+		--reporter=lcov \
+		./node_modules/mocha/bin/_mocha --\
+		--recursive \
+		-t 30000 \
+		-R spec \
+		-r ./test/env.js \
+		$(TESTS)
+	@./node_modules/.bin/istanbul report --reporter=lcovonly
+	@rm -rf ./config/config.js
 
-codecov: install eslint prepare-test
-	@rm -rf coverage
-	@$(BIN_NYC) --reporter=lcovonly make test2
+codecov: install eslint prepare-test test-cov
 
 release-prepare:
 	@echo 'Copy files'
