@@ -387,7 +387,7 @@ describe('lib/admin/batch_api.js', function () {
   describe('test batch admin process check api', function () {
     let request = supertest('http://localhost:9999');
     it('should get dead process success', function (done) {
-      let url = '/api/dead_process?ips=127.0.0.1';
+      let url = '/api/unknow_process?ips=127.0.0.1';
       let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -403,7 +403,7 @@ describe('lib/admin/batch_api.js', function () {
     });
     it('should return error when delete unknow process', function (done) {
       let appName = 'err-app-name';
-      let url = `/api/dead_process/12345?ips=127.0.0.1`;
+      let url = `/api/unknow_process/12345?ips=127.0.0.1`;
       let contentType = 'application/json';
       let date = new Date().toGMTString();
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
@@ -416,7 +416,7 @@ describe('lib/admin/batch_api.js', function () {
         .expect('content-type', /application\/json/)
         .expect(function (res) {
           res.body.code.should.eql('SUCCESS');
-          res.body.data.error[0].message.should.match(/process is not a dead one/);;
+          res.body.data.error[0].message.should.match(/pid is not a unknow process/);;
         })
         .end(done);
     });

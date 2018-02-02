@@ -488,8 +488,8 @@ describe('lib/admin/single_api.js', function () {
 
   describe('test admin process check api', function () {
     let request = supertest('http://localhost:9999');
-    it('should get dead process success', function (done) {
-      let url = '/api/single/dead_process';
+    it('should get unknow process success', function (done) {
+      let url = '/api/single/unknow_process';
       let date = new Date().toGMTString();
       let stringToSign = `GET\nundefined\n\nundefined\n${date}\n${url}`;
       let signature = utils.sha1(stringToSign, config.admin.token);
@@ -505,7 +505,7 @@ describe('lib/admin/single_api.js', function () {
         .end(done);
     });
     it('should return error when delete unknow process', function (done) {
-      let url = `/api/single/dead_process/12345`;
+      let url = `/api/single/unknow_process/12345`;
       let contentType = 'application/json';
       let date = new Date().toGMTString();
       let stringToSign = `DELETE\nundefined\n\n${contentType}\n${date}\n${url}`;
@@ -518,7 +518,7 @@ describe('lib/admin/single_api.js', function () {
         .expect('content-type', /application\/json/)
         .expect(function (res) {
           res.body.code.should.eql('ERROR');
-          res.body.message.should.match(/process is not a dead one/);
+          res.body.message.should.match(/pid is not a unknow process/);
         })
         .end(done);
     });
