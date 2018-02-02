@@ -180,6 +180,16 @@ module.exports = {
      */
     enablePublishPage: true,
     /**
+     * 是否启用https
+     */
+    https: {
+      enable: true,
+      // privateKey 私钥
+      key: '/Users/yusong.hy/github/honeycomb-server/run/key.pem',
+      // credentials 公钥
+      cert: '/Users/yusong.hy/github/honeycomb-server/run/server.crt'
+    },
+    /**
      * 默认发布页的用户名、密码, 上线请务必修改
      * 密码生成可以用server/bin目录下提供的工具
      *  bin/
