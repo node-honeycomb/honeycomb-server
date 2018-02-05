@@ -183,11 +183,18 @@ module.exports = {
      * 是否启用https
      */
     https: {
+      /**
+       * you can gen you key and sert like this
+       * openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem
+       * openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out server.crt
+       * key.pem is your key
+       * server.crt is your cert
+       */
       enable: true,
-      // privateKey 私钥
-      key: '/Users/yusong.hy/github/honeycomb-server/run/key.pem',
-      // credentials 公钥
-      cert: '/Users/yusong.hy/github/honeycomb-server/run/server.crt'
+      // privateKey 私钥绝对路径
+      key: '',
+      // credentials 公钥绝对路径
+      cert: ''
     },
     /**
      * 默认发布页的用户名、密码, 上线请务必修改
