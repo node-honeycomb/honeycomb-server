@@ -190,7 +190,7 @@ module.exports = {
        * key.pem is your key
        * server.crt is your cert
        */
-      enable: true,
+      enable: false,
       // privateKey 私钥绝对路径
       key: '',
       // credentials 公钥绝对路径
