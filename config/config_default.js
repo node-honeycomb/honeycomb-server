@@ -180,6 +180,19 @@ module.exports = {
      */
     enablePublishPage: true,
     /**
+     * you can gen you key and sert like this
+     * openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem
+     * openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out server.crt
+     * key.pem is your key
+     * server.crt is your cert
+     */
+    https: {
+      // privateKey 私钥绝对路径
+      key: '',
+      // credentials 公钥绝对路径
+      cert: ''
+    },
+    /**
      * 默认发布页的用户名、密码, 上线请务必修改
      * 密码生成可以用server/bin目录下提供的工具
      *  bin/
