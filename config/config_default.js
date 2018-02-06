@@ -180,17 +180,13 @@ module.exports = {
      */
     enablePublishPage: true,
     /**
-     * 是否启用https
+     * you can gen you key and sert like this
+     * openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem
+     * openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out server.crt
+     * key.pem is your key
+     * server.crt is your cert
      */
     https: {
-      /**
-       * you can gen you key and sert like this
-       * openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem
-       * openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out server.crt
-       * key.pem is your key
-       * server.crt is your cert
-       */
-      enable: false,
       // privateKey 私钥绝对路径
       key: '',
       // credentials 公钥绝对路径
