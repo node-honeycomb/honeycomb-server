@@ -73,7 +73,7 @@ function loadConfig() {
   let serverCfg = {};
   try {
     let oldPath = path.join(config.serverRoot, './conf/config_server.json');
-    let newPath = path.join(config.serverRoot, './conf/server.json');
+    let newPath = path.join(config.serverRoot, './conf/apps/server.json');
     if (fs.existsSync(oldPath)) {
       fs.renameSync(oldPath, newPath);
     }
