@@ -186,12 +186,12 @@ module.exports = {
      * key.pem is your key
      * server.crt is your cert
      */
+    /*
     https: {
-      // privateKey 私钥绝对路径
       key: '',
-      // credentials 公钥绝对路径
       cert: ''
     },
+    */
     /**
      * 默认发布页的用户名、密码, 上线请务必修改
      * 密码生成可以用server/bin目录下提供的工具
