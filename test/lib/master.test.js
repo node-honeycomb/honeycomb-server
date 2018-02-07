@@ -411,8 +411,83 @@ describe('lib/master.js', function () {
           let pid = child.getPid();
           pid.should.not.eql(originPid);
           res.body.should.have.properties({code: 'SUCCESS'});
-        }).end(done);
+        }).end(() => {
+          let request = supertest(`http://localhost:8080`);
+          let date = new Date().toGMTString();
+          request.get('/simple-app/abc')
+            .expect(200)
+            .expect((res) => {
+              res.body.code.should.eql('SUCCESS');
+              res.body.action.should.eql('broadcast_test');
+              Object.keys(res.body.data).forEach((key) => {
+                key.should.eql(res.body.data[key] + '');
+              });
+            }).end(done);
+        });
     });
+    /*
+    it('should rollback successfully when reload failed', () => {
+      // first update config, let config failed
+      let url = '/api/single/config/app/' + appId;
+      let postData = {
+        honeycomb: {
+          serverParam: {
+            server: {
+              test: '1'
+            }
+          }
+        }
+      };
+      let date = new Date().toGMTString();
+      let contentMd5 = utils.md5base64(JSON.stringify(postData));
+      let stringToSign = `POST\nundefined\n${contentMd5}\napplication/json\n${date}\n${url}`;
+      let signature = utils.sha1(stringToSign, config.admin.token);
+      request.post(url)
+        .type('json')
+        .set('date', date)
+        .set('authorization', `honeycomb admin:${signature}`)
+        .send(postData)
+        .expect(200)
+        .expect('content-type', /application\/json/)
+        .expect(function (res) {
+          res.body.code.should.eql('SUCCESS');
+        })
+        .end(() => {
+          let child = master.getChild(appId);
+          let originPid = child.getPid();
+          let date = new Date().toGMTString();
+          let url = `/api/reload/${appId}?ips=127.0.0.1`;
+          let contentType = 'application/json';
+          let contentMd5 = utils.md5base64('');
+          let stringToSign = `POST\nundefined\n${contentMd5}\n${contentType}\n${date}\n${url}`;
+          let signature = utils.sha1(stringToSign, config.admin.token);
+          request.post(url)
+            .set('Date', date)
+            .type(contentType)
+            .set('Authorization', `honeycomb admin:${signature}`)
+            .expect(200)
+            .expect(function (res) {
+              let child = master.getChild(appId);
+              let pid = child.getPid();
+              pid.should.not.eql(originPid);
+              res.body.should.have.properties({code: 'SUCCESS'});
+            }).end(() => {
+              let request = supertest(`http://localhost:8080`);
+              let date = new Date().toGMTString();
+              request.get('/simple-app/abc')
+                .expect(200)
+                .expect((res) => {
+                  res.body.code.should.eql('SUCCESS');
+                  res.body.action.should.eql('broadcast_test');
+                  Object.keys(res.body.data).forEach((key) => {
+                    key.should.eql(res.body.data[key] + '');
+                  });
+                }).end(done);
+            });
+        });
+
+    });
+    */
 
     it('should delete app successfully', function (done) {
       let url = `/api/delete/${appId}?ips=127.0.0.1`;

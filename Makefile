@@ -52,6 +52,7 @@ test: eslint prepare-test
 		-R spec \
 		-r $(TESTS_ENV) \
 		$(TESTS)
+	@rm -rf ./config/config.js
 
 test2: prepare-test
 	@$(BIN_MOCHA) \
@@ -60,6 +61,7 @@ test2: prepare-test
 		-R spec \
 		-r $(TESTS_ENV) \
 		$(TESTS)
+	@rm -rf ./config/config.js
 
 test-cov:
 	@rm -rf coverage
