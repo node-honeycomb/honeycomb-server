@@ -20,11 +20,15 @@ describe('lib/proxy/nginx.js', () => {
   });
 
   after(() => {
-    fs.unlinkSync(nginxBin);
-    fs.unlinkSync(nginxConf);
-    fs.unlinkSync(eaccessFile);
-    fs.sync().rm(nginxErrorConf);
-    fs.sync().rm(nginxIncludePath);
+    try {
+      fs.unlinkSync(nginxBin);
+      fs.unlinkSync(nginxConf);
+      fs.unlinkSync(eaccessFile);
+      fs.sync().rm(nginxErrorConf);
+      fs.sync().rm(nginxIncludePath);
+    } catch (e) {
+      // do nothing
+    }
   });
 
   describe('new nginx proxy()', () => {
