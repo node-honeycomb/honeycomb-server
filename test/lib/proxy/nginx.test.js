@@ -6,7 +6,7 @@ const child = require('child_process');
 const Nginx = require('../../../lib/proxy/nginx');
 
 
-describe.skip('lib/proxy/nginx.js', () => {
+describe('lib/proxy/nginx.js', () => {
   const eaccessFile = path.join(__dirname, './eaccess');
   const nginxBin = path.join(__dirname, './nginxBin');
   const nginxConf = path.join(__dirname, './nginxConf');
@@ -27,7 +27,7 @@ describe.skip('lib/proxy/nginx.js', () => {
     fs.sync().rm(nginxIncludePath);
   });
 
-  describe('new nginx proxy()', () => {
+  describe.only('new nginx proxy()', () => {
     let options = {
       nginxBin: nginxBin,
       nginxConfig: nginxConf,
