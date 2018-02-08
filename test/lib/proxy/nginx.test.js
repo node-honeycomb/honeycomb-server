@@ -117,6 +117,7 @@ describe('lib/proxy/nginx.js', () => {
       setTimeout(() => {
         let file = fs.readFileSync(nginxConf).toString();
         file.match(new RegExp('include ' + nginxIncludePath));
+        ng.exit();
         done();
       }, 200);
     });
