@@ -6,7 +6,7 @@ const child = require('child_process');
 const Nginx = require('../../../lib/proxy/nginx');
 
 
-describe('lib/proxy/nginx.js', () => {
+describe.only('lib/proxy/nginx.js', () => {
   const eaccessFile = path.join(__dirname, './eaccess');
   const nginxBin = path.join(__dirname, './nginxBin');
   const nginxConf = path.join(__dirname, './nginxConf');
