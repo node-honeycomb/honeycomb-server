@@ -6,7 +6,7 @@ const child = require('child_process');
 const Nginx = require('../../../lib/proxy/nginx');
 
 
-describe.only('lib/proxy/nginx.js', () => {
+describe('lib/proxy/nginx.js', () => {
   const eaccessFile = path.join(__dirname, './eaccess');
   const nginxBin = path.join(__dirname, './nginxBin');
   const nginxConf = path.join(__dirname, './nginxConf');
@@ -58,6 +58,25 @@ describe.only('lib/proxy/nginx.js', () => {
         e.code.should.eql('NGINX_BIN_EACCESS');
       }
     });
+
+    it('should throw error when config file eaccess', () => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: eaccessFile,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        healthCheck: {}
+      };
+      let ng;
+      try {
+        ng = new Nginx(options);
+      } catch (e) {
+        e.code.should.eql('NGINX_CONFIG_EACCESS');
+      }
+    });
+
     it('should work fine with upstreamCheck config', (done) => {
       let options = {
         nginxBin: nginxBin,
@@ -86,26 +105,9 @@ describe.only('lib/proxy/nginx.js', () => {
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
         file.should.match(/check_http_send/);
+        ng.exit();
         done();
       });
-    });
-
-    it('should throw error when config file eaccess', () => {
-      let options = {
-        nginxBin: nginxBin,
-        nginxConfig: eaccessFile,
-        nginxIncludePath: nginxIncludePath,
-        serverConfigPath: '',
-        ip: '0.0.0.0',
-        port: '80',
-        healthCheck: {}
-      };
-      let ng;
-      try {
-        ng = new Nginx(options);
-      } catch (e) {
-        e.code.should.eql('NGINX_CONFIG_EACCESS');
-      }
     });
 
     it('should insert honeycomb include and nginx file change re-init', (done) => {
