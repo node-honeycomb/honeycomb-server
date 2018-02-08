@@ -78,6 +78,7 @@ test-cov:
 		--reporter=lcov \
 		./node_modules/mocha/bin/_mocha --\
 		--recursive \
+		--exit \
 		-t 30000 \
 		-R spec \
 		-r ./test/env.js \
