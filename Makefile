@@ -55,6 +55,7 @@ prepare-test: parser
 test: eslint prepare-test
 	@$(BIN_MOCHA) \
 		--recursive \
+		--exit \
 		-t 30000 \
 		-R spec \
 		-r $(TESTS_ENV) \
@@ -64,6 +65,7 @@ test: eslint prepare-test
 test2: prepare-test
 	@$(BIN_MOCHA) \
 		--recursive \
+		--exit \
 		-t 30000 \
 		-R spec \
 		-r $(TESTS_ENV) \

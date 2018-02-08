@@ -198,21 +198,31 @@ describe('lib/proxy/nginx.js', () => {
         },
         sockList: ['4.sock']
       };
+      let app2 = {
+        bind: '8080',
+        router: '/example-22',
+        appId: 'simple-app-2',
+        name: 'simple-app-2',
+        sockList: ['5.sock']
+      };
       mm(child, 'exec', function (cmd, callback) {
         callback(null);
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
-        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
-        fileProxyPass.should.match(/location \/example\//);
-        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
-        fileProxyPass.should.match(/server_directive hello;/);
-        fileProxyPass.should.match(/location_directive hello;/);
-        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
-        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
-        fileUpstream.should.match(/server unix:4\.sock/);
-        nginxProxy.exit();
-        done();
+        nginxProxy.register(app2, () => {
+          let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
+          fileProxyPass.should.match(/location \/example\//);
+          fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+          fileProxyPass.should.match(/server_directive hello;/);
+          fileProxyPass.should.match(/location_directive hello;/);
+          fileProxyPass.indexOf('location_directive').should.eql(fileProxyPass.lastIndexOf('location_directive'));
+          let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+          fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+          fileUpstream.should.match(/server unix:4\.sock/);
+          nginxProxy.exit();
+          done();
+        });
       });
     });
 
@@ -317,7 +327,5 @@ describe('lib/proxy/nginx.js', () => {
         });
       });
     });
-
-
   });
 });
