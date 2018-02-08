@@ -10,6 +10,7 @@ describe('lib/session.js', function () {
   let apps;
   let test = new TestMod({file: f});
   after(function () {
+    console.log('>>>> test');
     try{
       fs.unlinkSync(f);
     } catch (e) {
@@ -17,10 +18,12 @@ describe('lib/session.js', function () {
     }
   });
   it('should work fine when file not exist', function () {
+    console.log('>>>> session test case 01');
     apps = test.apps();
     apps.should.be.empty();
   });
   it('should ok when call set()', function () {
+    console.log('>>>> session test case 02');
     test.set('test', {dir: 'xxxx'});
     apps = test.apps();
     apps.should.eql({test: {dir: 'xxxx'}});
