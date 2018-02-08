@@ -85,7 +85,7 @@ test-cov:
 	@./node_modules/.bin/istanbul report --reporter=lcovonly
 	@rm -rf ./config/config.js
 
-codecov:travis-install eslint prepare-test test-cov
+codecov:travis-install eslint prepare-test test
 
 release-prepare:
 	@echo 'Copy files'

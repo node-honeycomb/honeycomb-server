@@ -7,6 +7,8 @@ addons:
     packages:
       - nginx
 install:
+  - echo '-----------------'
+  - which nginx
   - npm install -g codecov
 script:
   - make codecov

@@ -5,7 +5,7 @@ const TestMod = require('../../lib/session');
 const fs = require('fs');
 const path = require('path');
 
-describe.only('lib/session.js', function () {
+describe('lib/session.js', function () {
   let f = path.join(__dirname, 'tmp_mount.yaml');
   let apps;
   let test = new TestMod({file: f});
