@@ -20,18 +20,11 @@ describe('lib/proxy/nginx.js', () => {
   });
 
   after(() => {
-    console.log('>> lib/proxy/nginx.js test done');
-    try {
-      fs.unlinkSync(nginxBin);
-      fs.unlinkSync(nginxConf);
-      fs.unlinkSync(eaccessFile);
-      fs.sync().rm(nginxErrorConf);
-      fs.sync().rm(nginxIncludePath);
-    } catch (e) {
-      console.log('>> lib/proxy/nginx.js after hook exception', e.stack);
-      // do nothing
-    }
-    console.log('>> lib/proxy/nginx.js test after hook done');
+    fs.unlinkSync(nginxBin);
+    fs.unlinkSync(nginxConf);
+    fs.unlinkSync(eaccessFile);
+    fs.sync().rm(nginxErrorConf);
+    fs.sync().rm(nginxIncludePath);
   });
 
   describe('new nginx proxy()', () => {
