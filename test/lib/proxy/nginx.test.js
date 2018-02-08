@@ -27,7 +27,7 @@ describe('lib/proxy/nginx.js', () => {
     fs.sync().rm(nginxIncludePath);
   });
 
-  describe.only('new nginx proxy()', () => {
+  describe('new nginx proxy()', () => {
     let options = {
       nginxBin: nginxBin,
       nginxConfig: nginxConf,
