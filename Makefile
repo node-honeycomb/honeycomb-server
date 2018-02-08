@@ -29,6 +29,13 @@ install: clean
 	@./node_modules/.bin/nodeinstall .
 	@cp nginx_sample.conf nginx.conf
 
+travis-install: clean
+	@mkdir -p ./logs
+	@mkdir -p ./run
+	@npm install
+	@npm install node@8.9.4
+	@cp nginx_sample.conf nginx.conf
+
 prepare-test: parser
 	@cd example-apps && tar cfz simple-app.tgz simple-app/
 	@cd example-apps && tar cfz simple-app_1.0.0_1.tgz simple-app_1.0.0_1/
@@ -71,6 +78,7 @@ test-cov:
 		--reporter=lcov \
 		./node_modules/mocha/bin/_mocha --\
 		--recursive \
+		--exit \
 		-t 30000 \
 		-R spec \
 		-r ./test/env.js \
@@ -78,7 +86,7 @@ test-cov:
 	@./node_modules/.bin/istanbul report --reporter=lcovonly
 	@rm -rf ./config/config.js
 
-codecov: install eslint prepare-test test-cov
+codecov:travis-install eslint prepare-test test-cov
 
 release-prepare:
 	@echo 'Copy files'
@@ -122,4 +130,4 @@ eslint:
 	@rm -rf coverage
 	@./node_modules/.bin/eslint .
 
-.PHONY: tag install default test test2 test-cov release package eslint parser codecov
+.PHONY: tag install default test test2 test-cov release package eslint parser codecov travis-install

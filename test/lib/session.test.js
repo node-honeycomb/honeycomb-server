@@ -10,7 +10,11 @@ describe('lib/session.js', function () {
   let apps;
   let test = new TestMod({file: f});
   after(function () {
-    fs.unlinkSync(f);
+    try{
+      fs.unlinkSync(f);
+    } catch (e) {
+      // do nothing
+    }
   });
   it('should work fine when file not exist', function () {
     apps = test.apps();
