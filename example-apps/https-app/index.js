@@ -5,7 +5,7 @@ let path = require('path');
 let serverConfig = JSON.parse(process.env.HC_APP_CONFIG);
 
 let serv = http.createServer(function (req, res) {
-  let info = 'hello';
+  let info = 'https';
   res.end(info + '#' + process.pid);
 });
 

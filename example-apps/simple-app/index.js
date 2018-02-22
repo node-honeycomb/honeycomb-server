@@ -28,8 +28,9 @@ process.on('broadcast_test', function (data, cb) {
   cb(null, process.pid);
 });
 
-process.on('offline', function () {
+process.on('offline', function (data, cb) {
   console.log('app received offline sig');
+  cb(null);
 });
 
 exports.run = function (cb) {

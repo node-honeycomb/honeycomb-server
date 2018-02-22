@@ -9,6 +9,7 @@ module.exports = {
       file: path.join(__dirname, '../logs/server.%year%-%month%-%day%.log')
     }
   },
+  appReadyTimeout: 2000,
   proxy: {
     port: 8080,
     index: '/console',
