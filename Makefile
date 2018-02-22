@@ -21,7 +21,6 @@ clean:
 
 parser:
 	@./node_modules/.bin/pegjs -o common/nginx_config_parser.js common/nginx_config_parser.pegjs
-
 install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
@@ -45,6 +44,8 @@ prepare-test: parser
 	@cd example-apps && tar cfz notarget-app.tgz notarget-app/
 	@cd example-apps && tar cfz old-app.tgz old-app/
 	@cd example-apps && tar cfz illegal-app.tgz illegal-app/
+	@cd example-apps && tar cfz noenter-app.tgz noenter-app/
+	@cd example-apps && tar cfz norun-app.tgz norun-app/
 	@cd example-apps && tar cfz cant-found-module.tgz cant-found-module/
 	@cd example-apps && tar cfz socket-app.tgz socket-app/
 	@cd example-apps && tar cfz websocket-app.tgz websocket-app/
@@ -75,7 +76,8 @@ test2: prepare-test
 test-cov:
 	@rm -rf coverage
 	@./node_modules/.bin/istanbul cover \
-	  -x ./config/config.js \
+	  -x 'config/config.js' \
+	  -x 'common/nginx_config_parser.js' \
 	  --include-pid \
 		--reporter=lcov \
 		./node_modules/mocha/bin/_mocha --\

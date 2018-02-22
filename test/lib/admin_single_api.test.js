@@ -7,7 +7,7 @@ const supertest = require('supertest');
 const utils = require('../../common/utils');
 const TestMod = require('../../lib/master');
 
-describe('lib/admin/single_api.js', function () {
+describe.skip('lib/admin/single_api.js', function () {
   let master;
   let config;
   before(function (done) {

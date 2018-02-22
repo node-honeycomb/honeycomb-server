@@ -61,6 +61,11 @@ module.exports = {
    */
   appsRoot: '',
   /**
+   * app ready timeout
+   * @type {Number}
+   */
+  appReadyTimeout: 60000,
+  /**
    * 服务器的log配置，一般只需要修改路径
    * TODO 文档说明
    */

@@ -1,44 +1,41 @@
 'use strict';
 
 const mm = require('mm');
-const fs = require('fs');
+const fs = require('xfs');
 const path = require('path');
 const should = require('should');
 const ip = require('ip').address();
 const supertest = require('supertest');
 const utils = require('../../common/utils');
-const TestMod = require('../../lib/master');
 const message = require('../../lib/message');
+const common = require('../common');
 
 describe('lib/master.js', function () {
   let master;
   let config = require('../../config');
-  let date = new Date().toGMTString();
   before(function (done) {
-    config = require('../../config');
-    master = new TestMod(config);
-    master.run(done);
+    master = common.getMaster();
+    done();
   });
 
-  after(function (done) {
+  after(function () {
     mm.restore();
-    master.exit(() => {
-      done();
-    });
   });
 
   describe('test $mount()', function () {
-    it('should work fine when appId not exists', function (done) {
-      master.$mount(null, {dir: 'test'}, function (err) {
-        err.message.should.match(/Error/);
-        master.$mount('test', {}, function (err) {
-          err.message.should.match(/Error/);
-          done();
-        });
+    it('should return error when appId not exists', function (done) {
+      master.$mount(null, {dir: '/test'}, function (err) {
+        err.code.should.eql('PARAM_MISSING');
+        done();
+      });
+    });
+    it('should return error when appId not exists', function (done) {
+      master.$mount('test', {dir: ''}, function (err) {
+        err.code.should.eql('PARAM_MISSING');
+        done();
       });
     });
   });
-
   describe('test $unmount()', function () {
     it('should work fine when appId not exists', function (done) {
       master.$unmount(null, function (err) {
@@ -52,8 +49,24 @@ describe('lib/master.js', function () {
         done();
       });
     });
+    it('should work fine when appId forbidden to unmount', function (done) {
+      master.$unmount('__PROXY__', function (err) {
+        err.code.should.eql('APP_FORBIDDEN_MOUNT');
+        done();
+      });
+    });
   });
 
+  describe('test child fork', () => {
+    it('should return when child\' worker already forked', () => {
+      let proxy = master.getChild('__PROXY__');
+      Object.keys(proxy.workers).length.should.eql(1);
+      proxy._create();
+      Object.keys(proxy.workers).length.should.eql(1);
+    });
+  });
+
+  /*
   describe('test $status', function () {
     it('should work fine', function (done) {
       master.$status(function (err, data) {
@@ -75,6 +88,7 @@ describe('lib/master.js', function () {
       });
     });
   });
+  */
 
   describe('test Events', function () {
     it('should work fine when app_message called', function (done) {
@@ -181,7 +195,7 @@ describe('lib/master.js', function () {
     });
     it('should return if no-exists app', function (done) {
       master._fork('unexists-dir', {file: 'null'}, function (err) {
-        err.message.should.match(/not found/);
+        err.message.should.match(/enter_file_not_found/);
         done();
       });
     });
@@ -236,6 +250,7 @@ describe('lib/master.js', function () {
   });
   */
 
+  /*
   describe('test admin worker', function () {
     let request = supertest(`http://localhost:${config.admin.port}`);
     let appId = 'simple-app';
@@ -487,7 +502,7 @@ describe('lib/master.js', function () {
         });
 
     });
-    */
+    *
 
     it('should delete app successfully', function (done) {
       let url = `/api/delete/${appId}?ips=127.0.0.1`;
@@ -508,7 +523,8 @@ describe('lib/master.js', function () {
         }).end(done);
     });
   });
-
+  */
+  /*
   describe('test proxy version select', function () {
     let request = supertest(`http://localhost:${config.admin.port}`);
     let request2 = supertest('http://localhost:6001');
@@ -621,7 +637,8 @@ describe('lib/master.js', function () {
         });
     });
   });
-
+  */
+  /*
   describe('test socket servers', () => {
     let net = require('net');
     let request = supertest(`http://localhost:${config.admin.port}`);
@@ -764,7 +781,8 @@ describe('lib/master.js', function () {
         });
     });
   });
-
+  */
+  /*
   describe('test old framework support', function () {
     it('should publish old-app.tgz success', function (done) {
       let request = supertest(`http://localhost:${config.admin.port}`);
@@ -798,7 +816,8 @@ describe('lib/master.js', function () {
         .end(done);
     });
   });
-
+  */
+  /*
   describe('test publish but no start', () => {
     it('should publish app but no start successfully', (done) => {
       let request = supertest(`http://localhost:${config.admin.port}`);
@@ -846,7 +865,9 @@ describe('lib/master.js', function () {
         }).end(done);
     });
   });
+  */
 
+  /*
   describe('test https apps', () => {
     it('should publish https-app successfully', (done) => {
       let request = supertest(`http://localhost:${config.admin.port}`);
@@ -881,7 +902,9 @@ describe('lib/master.js', function () {
         .end(done);
     });
   });
+  */
 
+  /*
   describe('test websocket', () => {
     it('should publish websocket-app successfully', (done) => {
       let request = supertest(`http://localhost:${config.admin.port}`);
@@ -921,7 +944,8 @@ describe('lib/master.js', function () {
       });
     });
   });
-
+  */
+  /*
   describe('test no target app', () => {
     it('should publish notarget-app successfully', (done) => {
       let request = supertest(`http://localhost:${config.admin.port}`);
@@ -950,7 +974,7 @@ describe('lib/master.js', function () {
         .end(done);
     });
   });
-
+  */
   describe('test app with broken api(will cause app exit)', () => {
 
   });
