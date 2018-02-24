@@ -217,6 +217,17 @@ describe('app router test', () => {
         .expect(200)
         .end(done);
     });
+    it('should get 400 when request healthCheck', (done) => {
+      let net = require('net');
+      let c = net.connect({port: 6001});
+      c.on('data', (chunk) => {
+        chunk.toString().should.match(/HTTP\/1\.1 400 Bad Request/);
+        done();
+      });
+      c.on('connect', () => {
+        c.write('GET /status s\r\n\r\n');
+      });
+    });
     it('should work fine when request without any header', (done) => {
       let net = require('net');
       let c = net.connect({port: 6001});
