@@ -22,6 +22,7 @@ module.exports = {
   admin: {
     msgTimeout: 6 * 1000,
     enablePublishPage: true,
-    gatherUsage: true
+    gatherUsage: true,
+    readLogMaxLines: 500
   }
 };

@@ -43,6 +43,24 @@ after((done) => {
   master.exit(done);
 });
 
+function commonErrorGet(superAgent, url, query, opt) {
+  if (typeof query === 'object') {
+    query = qs.stringify(query);
+  }
+  if (query) {
+    if (url.indexOf('?') === -1) {
+      url += '?' + query;
+    } else {
+      url += '&' + query;
+    }
+  }
+  let date = opt.date ? opt.date.toGMTString() : new Date().toGMTString();
+  let stringToSign = opt.stringToSign || `GET\nundefined\n\nundefined\n${date}\n${url}`;
+  let signature = utils.sha1(stringToSign, config.admin.token);
+  return superAgent.get(url)
+    .set('date', date)
+    .set('authorization', `honeycomb admin:${signature}`);
+};
 
 function commonGet(superAgent, url, query) {
   if (typeof query === 'object') {
@@ -246,3 +264,6 @@ exports.killUnknowProcess = (superAgent, ips, pid) => {
 exports.getMaster = () => {
   return master;
 };
+
+exports.commonPost = commonPost;
+exports.commonErrorGet = commonErrorGet;
