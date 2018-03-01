@@ -7,9 +7,14 @@ module.exports = {
     sys: {
       level: 'DEBUG',
       file: path.join(__dirname, '../logs/server.%year%-%month%-%day%.log')
+    },
+    appUsage: {
+      level: 'INFO',
+      rotation: 168,
+      file: path.join(__dirname, '../logs/app-usage.%year%-%month%-%day%-%hour%.log')
     }
   },
-  appReadyTimeout: 2000,
+  appReadyTimeout: 3000,
   proxy: {
     port: 8080,
     index: '/console',
