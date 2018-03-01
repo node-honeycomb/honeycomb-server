@@ -41,6 +41,15 @@ describe('api log test: ', () => {
       })
       .end(done);
   });
+  it('should get app usages failed when file empty', function (done) {
+    common.getAppUsage(agent, ips)
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        res.body.data.error[0].message.should.match(/param missing/);
+      })
+      .end(done);
+  });
 
   it('should get log files success', function (done) {
     fs.sync().mkdir(path.join(__dirname, '../../../logs/abc'));
@@ -67,6 +76,17 @@ describe('api log test: ', () => {
       .expect(function (res) {
         res.body.data.success.should.be.an.Array();
         res.body.data.error.should.be.an.Array();
+      })
+      .end(done);
+  });
+
+  it('should get log failed without file', function (done) {
+    let fileName = `server.${moment().format('YYYY-MM-DD')}.log`;
+    common.getLog(agent, ips)
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        res.body.data.error[0].message.should.match(/param missing/);
       })
       .end(done);
   });
