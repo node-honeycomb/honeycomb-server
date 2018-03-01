@@ -22,7 +22,17 @@ describe('api log test: ', () => {
   });
 
   it('should get app usages success', function (done) {
-    common.getAppUsage(agent, ips, {fileName: 'app-usage.2017-01-05-19.log'})
+    common.getAppUsage(agent, ips, {fileName: `app-usage.${moment().format('YYYY-MM-DD')}.log`})
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        res.body.data.success.should.be.an.Array();
+        res.body.data.error.should.be.an.Array();
+      })
+      .end(done);
+  });
+  it('should get app usages success', function (done) {
+    common.getAppUsage(agent, ips, {file: `app-usage.${moment().format('YYYY-MM-DD')}.log`})
       .expect(200)
       .expect('content-type', /application\/json/)
       .expect(function (res) {
@@ -121,8 +131,8 @@ describe('api log test: ', () => {
         res.body.data.success.forEach((line) => {
           line.should.match(/127.0.0.1/);
           line.should.match(/INFO/);
-          let m = line.match(/\d{8}-\d{2}:\d{2}:\d{2}.\d{3}/);
-          (m[0] > startTime).should.eql(true);
+          let m = line.match(/\d{8}-(\d{2}:\d{2}:\d{2}).\d{3}/);
+          (m[1] >= startTime).should.eql(true);
         });
       })
       .end(done);

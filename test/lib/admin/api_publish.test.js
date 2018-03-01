@@ -115,10 +115,13 @@ describe('app publish test: ', () => {
         .end(done);
     });
     it('should return error when app ready timeout', (done) => {
+      let date = new Date();
       common.publishApp(agent, ips, path.join(appsPkgBase, 'timeout-app.tgz'))
         .expect(200)
         .expect((res) => {
+          let timeSpend = new Date().getTime() - date.getTime();
           let data = res.body.data;
+          timeSpend.should.above(config.appReadyTimeout);
           data.success.length.should.eql(0);
           data.error.length.should.eql(1);
           data.error[0].message.should.match(/app_ready_timeout/);
