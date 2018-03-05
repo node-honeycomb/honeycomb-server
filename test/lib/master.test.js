@@ -21,16 +21,57 @@ describe('lib/master.js', function () {
   after(function () {
     mm.restore();
   });
-
+  describe('test https boot', function () {
+    const Master = require('../../lib/master');
+    let master;
+    let httpsConfig;
+    before((done) => {
+      httpsConfig = JSON.parse(JSON.stringify(config))
+      httpsConfig.admin.https = {
+        key: path.join(__dirname, '../common/key.pem'),
+        cert: path.join(__dirname, '../common/server.crt'),
+      };
+      httpsConfig.admin.port += 1;
+      done();
+    });
+    after((done) => {
+      if (master && !master.flagExit) {
+        return master.exit(done);
+      }
+      done();
+    });
+    it('should boot with https when https config is right', function (done) {
+      master = new Master(httpsConfig);
+      master.run((err) => {
+        should(err).eql(null);
+        master.exit(done);
+        master = null;
+      });
+    });
+    it('should boot with http when https config is error', function (done) {
+      httpsConfig.admin.key = null;
+      master = new Master(httpsConfig);
+      master.run((err) => {
+        should(err).eql(null);
+        should(master.admin.options.https).eql(undefined);
+        master.exit(done);
+        master = null;
+      });
+    });
+  });
   describe('test $mount()', function () {
     it('should return error when appId not exists', function (done) {
-      master.$mount(null, {dir: '/test'}, function (err) {
+      master.$mount(null, {
+        dir: '/test'
+      }, function (err) {
         err.code.should.eql('PARAM_MISSING');
         done();
       });
     });
     it('should return error when appId not exists', function (done) {
-      master.$mount('test', {dir: ''}, function (err) {
+      master.$mount('test', {
+        dir: ''
+      }, function (err) {
         err.code.should.eql('PARAM_MISSING');
         done();
       });
@@ -171,22 +212,40 @@ describe('lib/master.js', function () {
     });
 
     it('should work fine when emit app_exit', function () {
-      master.emit('app_exit', {options: {appId: 1}});
+      master.emit('app_exit', {
+        options: {
+          appId: 1
+        }
+      });
     });
     it('should work fine when emit app_retry', function () {
-      master.emit('app_retry', {options: {appId: 1}});
+      master.emit('app_retry', {
+        options: {
+          appId: 1
+        }
+      });
     });
     it('should work fine when emit app_giveup', function () {
-      master.emit('app_giveup', {options: {appId: 1}});
+      master.emit('app_giveup', {
+        options: {
+          appId: 1
+        }
+      });
     });
     it('should work fine when emit app_error', function () {
-      master.emit('app_error', {options: {appId: 1}}, {});
+      master.emit('app_error', {
+        options: {
+          appId: 1
+        }
+      }, {});
     });
   });
 
   describe('test _fork', function () {
     it('should return if already exists app', function (done) {
-      master.children['xx-xx'] = {status: 'online'};
+      master.children['xx-xx'] = {
+        status: 'online'
+      };
       master._fork('xx-xx', {}, function (err) {
         err.message.should.match(/already exists/);
         delete master.children['xx-xx'];
@@ -194,7 +253,9 @@ describe('lib/master.js', function () {
       });
     });
     it('should return if no-exists app', function (done) {
-      master._fork('unexists-dir', {file: 'null'}, function (err) {
+      master._fork('unexists-dir', {
+        file: 'null'
+      }, function (err) {
         err.message.should.match(/enter_file_not_found/);
         done();
       });
