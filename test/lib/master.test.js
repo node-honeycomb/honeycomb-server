@@ -49,7 +49,7 @@ describe('lib/master.js', function () {
       });
     });
     it('should boot with http when https config is error', function (done) {
-      httpsConfig.admin.key = null;
+      httpsConfig.admin.https.key = null;
       master = new Master(httpsConfig);
       master.run((err) => {
         should(err).eql(null);
