@@ -384,6 +384,123 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
+    it('should work fine with app.router undefined', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: [],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
+        fileProxyPass.should.match(/location \//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with app.bind undefined', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: [],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        fileProxyPass.should.match(/location \//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with app.bind = {}', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: {},
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: [],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        fileProxyPass.should.match(/location \//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with app.bind = []', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: [],
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: [],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        fileProxyPass.should.match(/location \//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with illegal app.bind item', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: ['127.0.0.1:8001', 'abc.com:8002'],
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: [],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_127.0.0.1:8001_*.conf')).toString();
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        fs.existsSync(path.join(nginxIncludePath, './http/server_abc.com:8002_*.conf')).should.eql(false);
+        nginxProxy.exit();
+        done();
+      });
+    });
+
     it('should work fine when not match server default flag', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
@@ -434,6 +551,7 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
+    
     it('should work fine with serverName={}', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
@@ -455,10 +573,43 @@ describe('lib/proxy/nginx.js', () => {
         let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
         fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
         fileUpstream.should.match(/server unix:4\.sock/);
-        nginxProxy.exit();
-        done();
+        nginxProxy.unregister('simple-app', () => {
+          fs.existsSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).should.eql(false);
+          nginxProxy.exit();
+          done();
+        });
       });
     });
+
+    it('should work fine with illegal serverName', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        router: '/example',
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: 'abc+def.com',
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
+        fileProxyPass.should.match(/location \/example\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.unregister('simple-app', () => {
+          fs.existsSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).should.eql(false);
+          nginxProxy.exit();
+          done();
+        });
+      });
+    });
+
     it('should work fine with serverName', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
