@@ -6,7 +6,7 @@ const child = require('child_process');
 const Nginx = require('../../../lib/proxy/nginx');
 
 
-describe.only('lib/proxy/nginx.js', () => {
+describe('lib/proxy/nginx.js', () => {
   const eaccessFile = path.join(__dirname, './eaccess');
   const nginxBin = path.join(__dirname, './nginxBin');
   const nginxInitedConfig = path.join(__dirname, './conf/nginx_inited_config.conf');
@@ -100,7 +100,7 @@ describe.only('lib/proxy/nginx.js', () => {
       }
     });
 
-    it('should work fine when conf file already inited', () => {
+    it('should work fine when conf file without inject', () => {
       let options = {
         nginxBin: nginxBin,
         nginxConfig: nginxNoInjectConfig,
