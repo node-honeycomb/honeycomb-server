@@ -409,6 +409,56 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
+    it('should work fine with serverName=[]', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        router: '/example',
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: [],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
+        fileProxyPass.should.match(/location \/example\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with serverName={}', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        router: '/example',
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: {},
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
+        fileProxyPass.should.match(/location \/example\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
     it('should work fine with serverName', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
