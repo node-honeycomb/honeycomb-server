@@ -10,6 +10,7 @@
 /test_*
 /test/lib/tmp_mount.yaml
 tests/mock/.source_maps/
+/test/lib/proxy/nginx_error_config
 tests/mock/mount/hello.mount.info.yaml
 .idea
 .DS_Store
