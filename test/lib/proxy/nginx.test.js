@@ -9,11 +9,14 @@ const Nginx = require('../../../lib/proxy/nginx');
 describe('lib/proxy/nginx.js', () => {
   const eaccessFile = path.join(__dirname, './eaccess');
   const nginxBin = path.join(__dirname, './nginxBin');
+  const nginxInitedConfig = path.join(__dirname, './conf/nginx_inited_config.conf');
+  const nginxNoInjectConfig = path.join(__dirname, './conf/nginx_no_inject.conf');
   const nginxConf = path.join(__dirname, './nginxConf');
-  const nginxErrorConf = path.join(__dirname, './nginx_error_config');
+  const nginxErrorConf = path.join(__dirname, './nginxErrorconfig');
   const nginxIncludePath = path.join(__dirname, './nginx');
   const nginxSampleConf = path.join(__dirname, '../../../nginx_sample.conf');
   before(() => {
+    fs.writeFileSync(nginxErrorConf, '{');
     fs.writeFileSync(nginxBin, 'nginx', {mode: 0o777});
     fs.writeFileSync(nginxConf, fs.readFileSync(nginxSampleConf), {mode: 0o666});
     fs.writeFileSync(eaccessFile, 'abc', {mode: 0o400});
@@ -40,6 +43,8 @@ describe('lib/proxy/nginx.js', () => {
     };
     beforeEach(() => {
       mm.restore();
+      fs.sync().rm(nginxIncludePath);
+      fs.sync().mkdir(nginxIncludePath);
     });
     it('should throw error when binPath error', () => {
       let options = {
@@ -75,6 +80,230 @@ describe('lib/proxy/nginx.js', () => {
       } catch (e) {
         e.code.should.eql('NGINX_CONFIG_EACCESS');
       }
+    });
+
+    it('should throw error when config file parse error', () => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxErrorConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        healthCheck: {}
+      };
+      let ng;
+      try {
+        ng = new Nginx(options);
+      } catch (e) {
+        e.code.should.eql('NGINX_CONFIG_PARSE_ERROR');
+      }
+    });
+
+    it('should work fine when conf file already inited', () => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxNoInjectConfig,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        port: '80'
+      };
+      try {
+        let ng = new Nginx(options);
+      } catch (e) {
+        e.code.should.match(/NGINX_CONFIG_NO_INJECT_FLAG_ERROR/);
+      }
+    });
+
+    it('should work fine when options.healthCheck is undefined', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80'
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        file.should.match(/1\.sock/);
+        ng.exit();
+        done();
+      });
+    });
+    it('should work fine when register stream app', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80'
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        type: 'stream',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        file.should.eql('');
+        ng.exit();
+        done();
+      });
+    });
+
+    it('should work fine when options.healthCheck is setup', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        healthCheck: {
+          router: '/status',
+          file: 'health_check'
+        }
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['111.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        file.should.match(/listen 0.0.0.0:80 +default;/);
+        file.should.match(/\/status/);
+        file.should.match(/health_check/);
+        ng.exit();
+        done();
+      });
+    });
+
+    it('should work fine when app.ssl is setup', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80'
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['111.sock'],
+        param: {
+          server: {
+            ssl_certificate: 's',
+            ssl_certificate_key: 's'
+          }
+        }
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        file.should.match(/listen 0.0.0.0:80 +ssl +default;/);
+        ng.exit();
+        done();
+      });
+    });
+
+    it('should work fine when options.ip is undefined', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        port: '80'
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        file.should.match(/1\.sock/);
+        ng.exit();
+        done();
+      });
+    });
+
+    it('should work fine when conf file already inited', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxInitedConfig,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        port: '80'
+      };
+      let ng = new Nginx(options);
+      ng.on('ready', () => {
+        ng.exit();
+        done();
+      });
+    });
+
+    it('should watch config file change and re-init', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        port: '80'
+      };
+      let ng = new Nginx(options);
+      let flagReady = 0;
+      // change nginxConfig
+      ng.on('ready', () => {
+        if (flagReady === 1) {
+          flagReady++;
+          let conf = fs.readFileSync(nginxConf).toString();
+          conf.should.match(new RegExp(nginxIncludePath));
+          ng.exit();
+          done();
+        } else if (flagReady === 0) {
+          flagReady = 1;
+          fs.writeFileSync(nginxConf, fs.readFileSync(nginxSampleConf));
+        }
+      });
     });
 
     it('should work fine with upstreamCheck config', (done) => {
@@ -134,7 +363,7 @@ describe('lib/proxy/nginx.js', () => {
         // version: '0.0.0',
         // buildNum: 0,
         // pid: 4588,
-        // type: 'socket',  // default 'http', http | socket | stream
+        // type: 'stream',  // default 'http', http  | stream
         sockList: ['1.sock', '2.sock']
         // backupSockList: []
       };
@@ -176,6 +405,59 @@ describe('lib/proxy/nginx.js', () => {
         let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
         fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
         fileUpstream.should.match(/server unix:3\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with serverName', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        router: '/example',
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: 'test.com',
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_test.com.conf')).toString();
+        fileProxyPass.should.match(/location \/example\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with multi serverName', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        router: '/example',
+        appId: 'simple-app',
+        name: 'simple-app',
+        serverName: ['test1.com', 'test2.com'],
+        sockList: ['4.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_test1.com.conf')).toString();
+        fileProxyPass.should.match(/location \/example\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_test2.com.conf')).toString();
+        fileProxyPass.should.match(/location \/example\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_simple\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_simple-app \{/);
+        fileUpstream.should.match(/server unix:4\.sock/);
         nginxProxy.exit();
         done();
       });

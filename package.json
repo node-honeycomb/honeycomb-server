@@ -29,7 +29,7 @@
     "slice-file": "1.0.0",
     "urllib": "2.25.3",
     "uuid": "3.1.0",
-    "xfs": "0.2.2",
+    "xfs": "0.2.3",
     "yamljs": "0.3.0"
   },
   "devDependencies": {

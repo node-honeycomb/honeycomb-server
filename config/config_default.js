@@ -120,6 +120,10 @@ module.exports = {
    * proxy配置段
    */
   proxy: {
+    /**
+     * 监听的ip，如果不指定，则设置为：0.0.0.0
+     * 如果指定网卡，则指定监听的ip
+     */
     ip: '0.0.0.0',
     /**
      * 默认端口
@@ -214,7 +218,17 @@ module.exports = {
     gatherUsageTimeout: 3000,
     readLogMaxLines: 1000,
     readLogDefaultLines: 100,
-    queryLogTimeRegExp: /^\d{8}.(\d{2}:\d{2}:\d{2})/,
+    /**
+     * single api 切割日志，以该正则来识别是否新一条日志
+     * 注意正则中的匹配，必须为 x:y:z
+     * 因为目前console查询提交的startTime格式不可定制
+     * TODO: 需要让console中的startTime可以定制格式
+     */
+    queryLogNewLineRegExp: /^\d{8}.(\d{2}:\d{2}:\d{2})\.\d{3}/,
+    /**
+     * 日志排序匹配正则，主要是捕获日志中的时间
+     * 在batch api中，通过捕获的时间排序，让返回的多机合并的日志按时序排列
+     */
     queryLogSortRegExp: /^\d{8}.\d{2}:\d{2}:\d{2}\.\d{3}/
   },
   /**
