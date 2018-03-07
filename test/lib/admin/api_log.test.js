@@ -53,6 +53,7 @@ describe('api log test: ', () => {
 
   it('should get log files success', function (done) {
     fs.sync().mkdir(path.join(__dirname, '../../../logs/abc'));
+    fs.sync().mkdir(path.join(__dirname, '../../../logs/__usage__'));
     common.listLog(agent, ips)
       .expect(200)
       .expect('content-type', /application\/json/)
