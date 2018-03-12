@@ -21,6 +21,10 @@ module.exports = {
    */
   name: 'honeycomb-server',
   /**
+   * 系统及应用log根目录
+   */
+  logsRoot: '',
+  /**
    * debug flag
    */
   debug: true,

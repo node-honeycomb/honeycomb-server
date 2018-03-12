@@ -35,6 +35,10 @@ module.exports = {
       level: 'INFO',
       rotation: 168,
       file: path.join(serverInstallRoot, './logs/__usage__/app-usage.%year%-%month%-%day%-%hour%.log')
+    },
+    nodejsStd: {
+      level: 'INFO',
+      rotation: 168,
     }
   },
   proxy: {},
