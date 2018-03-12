@@ -75,6 +75,10 @@ module.exports = {
     },
     appUsage: {
       level: 'INFO'
+    },
+    nodejsStd: {
+      level: 'DEBUG',
+      fileDir: path.join(__dirname, '../logs')
     }
   },
   appExtraInfo: ['bind', 'port', 'router', 'type', 'framework'],
