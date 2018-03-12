@@ -23,7 +23,7 @@ module.exports = {
   /**
    * 系统及应用log根目录
    */
-  // logsRoot: path.join(__dirname, '../logs'),
+  logsRoot: '',
   /**
    * debug flag
    */
