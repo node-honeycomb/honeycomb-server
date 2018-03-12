@@ -21,6 +21,10 @@ module.exports = {
    */
   name: 'honeycomb-server',
   /**
+   * 系统及应用log根目录
+   */
+  // logsRoot: path.join(__dirname, '../logs'),
+  /**
    * debug flag
    */
   debug: true,
@@ -75,10 +79,6 @@ module.exports = {
     },
     appUsage: {
       level: 'INFO'
-    },
-    nodejsStd: {
-      level: 'DEBUG',
-      // fileDir: path.join(__dirname, '../logs')
     }
   },
   appExtraInfo: ['bind', 'port', 'router', 'type', 'framework'],
