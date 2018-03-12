@@ -32,7 +32,7 @@ describe('lib/master.js', function () {
         key: path.join(__dirname, '../common/key.pem'),
         cert: path.join(__dirname, '../common/server.crt'),
       };
-      httpsConfig.admin.port += 1;
+      httpsConfig.admin.port += 2;
       done();
     });
     after((done) => {
@@ -45,8 +45,39 @@ describe('lib/master.js', function () {
       master = new Master(httpsConfig);
       master.run((err) => {
         should(err).eql(null);
-        master.exit(done);
-        master = null;
+        let agent = supertest(`https://localhost:${httpsConfig.admin.port}`);
+        common.status(agent,'127.0.0.1')
+          .expect(200)
+          .end((err,res) => {
+            if(err) {
+              return master.exit(() => {
+                done(err);
+              });
+            }
+            should(res.body.code).eql('SUCCESS');
+            master.exit(done);
+            master = null;
+          })
+      });
+    });
+    it('publish simple app', function (done) {
+      let agent = supertest(`https://localhost:${httpsConfig.admin.port}`);
+      const appsPkgBase = path.join(__dirname, '../../example-apps');
+      master = new Master(httpsConfig);
+      master.run((err) => {
+        should(err).eql(null);
+        common.publishApp(agent, '127.0.0.1', path.join(appsPkgBase, 'simple-app.tgz'))
+          .expect(200)
+          .end((err, res) => {
+            if (err) {
+              return master.exit(() => {
+                done(err);
+              });
+            }
+            should(res.body.data.success.length).above(0);
+            master.exit(done);
+            master = null;
+          });
       });
     });
     it('should boot with http when https config is error', function (done) {
@@ -57,15 +88,6 @@ describe('lib/master.js', function () {
         should(master.admin.options.https).eql(undefined);
         master.exit(done);
         master = null;
-      });
-    });
-    it('publish simple app', function (done) {
-      let agent = supertest(`https://localhost:${httpsConfig.admin.port}`);
-      const appsPkgBase = path.join(__dirname, '../example-apps');
-      master = new Master(httpsConfig);
-      master.run((err) => {
-        should(err).eql(null);
-        common.publishApp(agent, '127.0.0.1', path.join(appsPkgBase, '../simple-app.tgz')).end(done)
       });
     });
   });
