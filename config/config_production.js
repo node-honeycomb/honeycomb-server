@@ -34,7 +34,7 @@ module.exports = {
     appUsage: {
       level: 'INFO',
       rotation: 168,
-      file: path.join(serverInstallRoot, './logs/app-usage.%year%-%month%-%day%-%hour%.log')
+      file: path.join(serverInstallRoot, './logs/__usage__/app-usage.%year%-%month%-%day%-%hour%.log')
     }
   },
   proxy: {},
