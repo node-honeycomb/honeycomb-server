@@ -26,7 +26,8 @@ describe('lib/master.js', function () {
     let master;
     let httpsConfig;
     before((done) => {
-      httpsConfig = JSON.parse(JSON.stringify(config))
+      httpsConfig = JSON.parse(JSON.stringify(config));
+      httpsConfig.logsRoot = path.join(__dirname, '../../logs');
       httpsConfig.admin.https = {
         key: path.join(__dirname, '../common/key.pem'),
         cert: path.join(__dirname, '../common/server.crt'),
@@ -56,6 +57,15 @@ describe('lib/master.js', function () {
         should(master.admin.options.https).eql(undefined);
         master.exit(done);
         master = null;
+      });
+    });
+    it('publish simple app', function (done) {
+      let agent = supertest(`https://localhost:${httpsConfig.admin.port}`);
+      const appsPkgBase = path.join(__dirname, '../example-apps');
+      master = new Master(httpsConfig);
+      master.run((err) => {
+        should(err).eql(null);
+        common.publishApp(agent, '127.0.0.1', path.join(appsPkgBase, '../simple-app.tgz')).end(done)
       });
     });
   });

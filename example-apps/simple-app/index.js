@@ -18,6 +18,8 @@ let serv = http.createServer(function (req, res) {
     }));
   });
 });
+console.log('test stdlog');
+console.error('test stderror');
 
 serv.on('close', function () {
   console.log('---- simple-app http server close');
