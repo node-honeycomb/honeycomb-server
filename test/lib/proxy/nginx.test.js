@@ -551,7 +551,35 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
-    
+
+    it('should work fine with multi app register', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        router: '/example',
+        appId: 'simple-app',
+        name: 'simple-app',
+        sockList: ['4.sock']
+      };
+      let app2 = {
+        router: '/example2',
+        appId: 'simple-app2',
+        name: 'simple-app2',
+        sockList: ['5.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      nginxProxy.register(app, (err) => {
+        nginxProxy.register(app2, (err) => {
+          let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+          fileProxyPass.should.match(/location \/example2\/ \{/);
+          fileProxyPass.should.match(/location \/example\/ \{/);
+          nginxProxy.exit();
+          done();
+        });
+      });
+    });
+
     it('should work fine with serverName={}', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
