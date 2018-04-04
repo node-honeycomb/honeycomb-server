@@ -5,7 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>simple publish page</title>
     <style type="text/css">
-      body {padding-top: 40px;}
+      body {
+        padding-top: 40px;
+        font-family: "SF Pro Text","Myriad Set Pro","SF Pro Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+      }
       form {
         margin: 10px auto;
         width: 560px;
@@ -15,7 +18,14 @@
       }
       textarea {
         width: 300px;
-        height: 140px;
+        height: 60px;
+      }
+      input {
+        padding: 4px;
+      }
+      .desc {
+        background: #efefef;
+        padding: 10px 5px;
       }
     </style>
   </head>
@@ -23,15 +33,15 @@
   <% if(publishPage === 'true'){ %>
 
     <form id="uploadApp" onsubmit="return upload(this)" action="/api/defaultPublish" method="post" enctype='multipart/form-data'>
-      <h2>PUBLISH APP</h2>
-      <p>
-        this page is usually for publish honeycomb-console.<br/>
-        the <font color="green">username</font> and <font color="green">password</font> is configed in server.config.admin </br>
-        if console inited, make sure setup: <br/>
-        <font color="red" style="margin-left: 40px">server.config.admin.enablePublishPage = false</font>
+      <h2>Install App</h2>
+      <p class="desc">
+        this page is only for init honeycomb-console.<br/>
+        the <font color="green">password</font> is configed at <font color="red">config.admin.password</font>
+        <br/>
+        <br/>
+        when console inited, make sure close this page by setting up: <font color="red">config.admin.enablePublishPage: false</font>
       </p>
       <div>
-         <p>username: <input name="username" /></p>
          <p>password: <input name="password" type="password" /></p>
       </div>
       <div>
@@ -39,7 +49,7 @@
         <input style="padding-left: 20px" type="file" name="pkg" id="pkg">
       </div>
       <div style="margin-top: 20px;">
-        <p>install app to following machine, each line a ip:</p>
+        <p>publish to machines(each line a ip):</p>
         <span style="padding-left: 20px">
           <textarea id="ips" name="ipList"><%= ipList.join('\n') %></textarea>
         </span>

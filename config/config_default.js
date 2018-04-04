@@ -193,24 +193,23 @@ module.exports = {
      */
     enablePublishPage: true,
     /**
+     * 配置服务端口是否开启https
      * you can gen you key and sert like this
      * openssl req -newkey rsa:2048 -new -nodes -keyout key.pem -out csr.pem
      * openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out server.crt
      * key.pem is your key
      * server.crt is your cert
+     * https: {
+     *   key: {Path}
+     *   scrt: {Path}
+     * }
      */
-    /*
-    https: {
-      key: '',
-      cert: ''
-    },
-    */
+    https: null,
     /**
-     * 默认发布页的用户名、密码, 上线请务必修改
-     * 密码生成可以用server/bin目录下提供的工具
-     *  bin/
+     * 默认发布页的密码, 上线请务必修改
+     * 密码可以通过
+     *   `honeycomb pwd $pwd`来生成， 比如`honeycomb pwd honeycomb123` 即可得到以下hash串
      */
-    username: 'honeycomb',
     password: 'd2df9aa1cde859aef1d78401a6d37cd435d172b79d23ca8662f47bd2d2e3b99e', // honeycomb123
     /**
      * admin 管控接口的api签名token, 请务必修改

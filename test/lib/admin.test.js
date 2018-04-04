@@ -17,7 +17,7 @@ describe('lib/admin.js', function () {
     it('should open a upload page', (done) => {
       request.get('/')
         .expect(200)
-        .expect(/PUBLISH APP/)
+        .expect(/Install App/)
         .end(done);
     });
     it('should upload app faild when pwd miss', (done) => {
