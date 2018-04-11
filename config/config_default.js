@@ -40,6 +40,10 @@ module.exports = {
    */
   serverRoot: serverInstallRoot,
   /**
+   * master会尝试graceful关闭app，但是在超过下面的时间之后app仍在运行，则会强制退出app
+   */
+  forceKillTimeout: 10000,
+  /**
    * !应用初始化顺序, order小的提前启动
    *   order: 如不配置，默认order值1000,
    *   processorNum: 该应用的进程数
