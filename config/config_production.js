@@ -25,6 +25,7 @@ try {
 module.exports = {
   debug: false,
   env: 'production',
+  serverRoot: serverInstallRoot,
   logs: {
     sys: {
       level: 'INFO',
