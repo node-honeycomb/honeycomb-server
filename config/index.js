@@ -168,27 +168,24 @@ function loadConfig() {
     config.appsSessionPath = path.join(config.runDir, './app.mount.info.yaml');
   }
 
+  function cleanCache(mod) {
+    let mPath;
+    let cached;
+    try {
+      mPath = require.resolve(mod);
+      cached = require.cache[mPath];
+      delete require.cache[mPath];
+      cached.parent.children.filter((node) => node !== cached);
+    } catch (e) {
+      // do nothing
+    }
+  }
+
   config.reload = function () {
-    try {
-      delete require.cache[require.resolve('./config')];
-    } catch (e) {
-      // do nothing
-    }
-    try {
-      delete require.cache[require.resolve('./config_default')];
-    } catch (e) {
-      // do nothing
-    }
-    try {
-      delete require.cache[require.resolve(path.join(installServerRoot, './conf/config_default.js'))];
-    } catch (e) {
-      // do nothing
-    }
-    try {
-      delete require.cache[require.resolve(path.join(installServerRoot, './conf/config.js'))];
-    } catch (e) {
-      // do nothing
-    }
+    cleanCache('./config_default');
+    cleanCache('./config');
+    cleanCache(path.join(installServerRoot, './conf/config_default.js'));
+    cleanCache(path.join(installServerRoot, './conf/config.js'));
     gConfig = loadConfig();
   };
   return config;

@@ -3,7 +3,7 @@
 const testMod = require('../config');
 const should = require('should');
 const path = require('path');
-const fs = require('fs');
+const fs = require('xfs');
 const root = path.join(__dirname, '../');
 
 
@@ -50,6 +50,9 @@ mockConsole.mock = function () {
 
 describe('test config', () => {
 
+  after(() => {
+    testMod.reload();
+  });
   it('should throw error when set config.reload', function () {
     mockConsole.mock();
     try {
@@ -96,20 +99,60 @@ describe('test config', () => {
     fs.unlinkSync(aCfgFile);
   });
 
-  it('should work fine', () => {
+  it('should reload config_server.json and rename it to server.json', () => {
     let file = path.join(root, './conf/config_server.json');
+    let newFile = path.join(root, './conf/server.json');
     let cnt;
-    if (fs.existsSync(file)) {
-      cnt = fs.readFileSync(file);
-      fs.unlinkSync(file);
-    }
+    fs.writeFileSync(file, JSON.stringify({
+      test: 'test_server_json'
+    }));
+    try {
+      fs.unlinkSync(newFile);
+    } catch(e) {}
+
     mockConsole.mock();
     testMod.reload();
-    let msg = info;
+    testMod.test.should.eql('test_server_json');
+    should(fs.existsSync(file)).eql(false);
+    should(fs.existsSync(newFile)).eql(true);
+    fs.unlinkSync(newFile);
     mockConsole.reset();
-    // msg.stdout[0].join(' ').should.match(/config_server\.json/);
-    if (cnt) {
-      fs.writeFileSync(file, cnt);
-    }
+  });
+  it('should reload apps_common.json and rename it to server.json', () => {
+    let file = path.join(root, './conf/apps_common.json');
+    let newFile = path.join(root, './conf/common.json');
+    let cnt;
+    fs.writeFileSync(file, JSON.stringify({
+      test: 'test_server_json'
+    }));
+    try {
+      fs.unlinkSync(newFile);
+    } catch(e) {}
+
+    mockConsole.mock();
+    testMod.reload();
+    testMod.appsCommon.test.should.eql('test_server_json');
+    should(fs.existsSync(file)).eql(false);
+    should(fs.existsSync(newFile)).eql(true);
+    fs.unlinkSync(newFile);
+    mockConsole.reset();
+  });
+  it('should reload apps/*.json and rename it to server.json', () => {
+    let appCfg = path.join(root, './conf/apps/test.json');
+    let common = path.join(root, './conf/common.json');
+    let cnt;
+    fs.sync().save(appCfg, JSON.stringify({
+      test: 'abc'
+    }));
+    fs.writeFileSync(common, JSON.stringify({
+      test: 'test_server_json'
+    }));
+    try {
+      fs.unlinkSync(newFile);
+    } catch(e) {}
+    testMod.reload();
+    testMod.apps.test.test.should.eql('abc');
+    fs.unlinkSync(appCfg);
+    fs.unlinkSync(common);
   });
 });
