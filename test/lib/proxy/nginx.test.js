@@ -133,7 +133,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['1.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
@@ -161,7 +161,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['1.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
@@ -193,7 +193,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['111.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
@@ -229,7 +229,7 @@ describe('lib/proxy/nginx.js', () => {
         }
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
@@ -256,7 +256,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['1.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
@@ -329,7 +329,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['1.sock', '2.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       ng.register(app, (err) => {
         let file = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
@@ -368,7 +368,7 @@ describe('lib/proxy/nginx.js', () => {
         // backupSockList: []
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -394,7 +394,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -417,7 +417,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -441,7 +441,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -465,7 +465,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -489,7 +489,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -511,7 +511,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['3.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -537,7 +537,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -567,7 +567,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['5.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         nginxProxy.register(app2, (err) => {
@@ -591,7 +591,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -620,7 +620,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -649,7 +649,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -674,7 +674,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['4.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -717,7 +717,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['5.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         should.not.exists(err);
@@ -747,7 +747,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['1.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         let app1 = {
@@ -765,7 +765,7 @@ describe('lib/proxy/nginx.js', () => {
         let count = 0;
         mm(child, 'exec', function (cmd, callback) {
           if (/nginxBin \-t /.test(cmd)) {
-            callback(null);
+            callback(null, '', '');
           } else if (/nginxBin \-s reload/.test(cmd)) {
             count ++;
             let err = null;
@@ -776,6 +776,8 @@ describe('lib/proxy/nginx.js', () => {
               stderr = 'nginx reload error';
             }
             callback(err, stdout, stderr);
+          } else {
+            callback(null, '', '');
           }
         });
         nginxProxy.register(app, (err) => {
@@ -798,7 +800,7 @@ describe('lib/proxy/nginx.js', () => {
         sockList: ['1.sock']
       };
       mm(child, 'exec', function (cmd, callback) {
-        callback(null);
+        callback(null, '', '');
       });
       nginxProxy.register(app, (err) => {
         let app1 = {
@@ -826,7 +828,7 @@ describe('lib/proxy/nginx.js', () => {
             }
             callback(err, stdout, stderr);
           } else if (/nginxBin \-s reload/.test(cmd)) {
-            callback(null);
+            callback(null, '', '');
           }
         });
         nginxProxy.register(app, (err) => {
@@ -836,6 +838,105 @@ describe('lib/proxy/nginx.js', () => {
           nginxProxy.exit();
           done();
         });
+      });
+    });
+  });
+
+  describe('nginx.getNginxWorkerPids()', () => {
+    let options = {
+      nginxBin: nginxBin,
+      nginxConfig: nginxConf,
+      nginxIncludePath: nginxIncludePath,
+      serverConfigPath: '',
+      ip: '0.0.0.0',
+      port: '80',
+      healthCheck: {},
+      index: '/test'
+    };
+    beforeEach(() => {
+      mm.restore();
+    });
+    it('should return empty when error', (done) => {
+      let ng = new Nginx(options);
+      mm(child, 'exec', function (cmd, callback) {
+        callback(new Error('mock error'));
+      });
+      ng.getNginxWorkerPids((err, data) => {
+        should(err).eql(null);
+        should(data.length).eql(0);
+        ng.exit();
+        done();
+      });
+    });
+    it('should return empty when error', (done) => {
+      let ng = new Nginx(options);
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, `
+          test 1
+          test 2
+          test 33
+        `);
+      });
+      ng.getNginxWorkerPids((err, data) => {
+        should(err).eql(null);
+        should(data).eql(['1', '2', '33']);
+        ng.exit();
+        done();
+      });
+    });
+  });
+  describe('nginx.checkNginxProcess()', () => {
+    let options = {
+      nginxBin: nginxBin,
+      nginxConfig: nginxConf,
+      nginxIncludePath: nginxIncludePath,
+      serverConfigPath: '',
+      ip: '0.0.0.0',
+      port: '80',
+      healthCheck: {},
+      index: '/test'
+    };
+    beforeEach(() => {
+      mm.restore();
+    });
+    it('should work fine when workers is empty', (done) => {
+      let ng = new Nginx(options);
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null);
+      });
+      ng.checkNginxProcess([], null, (err) => {
+        ng.exit();
+        done();
+      });
+    });
+    it('should work fine when workers when check multi time', (done) => {
+      let ng = new Nginx(options);
+      let a = 0;
+      mm(child, 'exec', function (cmd, callback) {
+        a++;
+        if (a < 3) {
+          callback(null);
+        } else {
+          callback(new Error('mock error'));
+        }
+      });
+      ng.checkNginxProcess([1, 2, 3], null, () => {
+        a.should.eql(3);
+        ng.exit();
+        done();
+      });
+    });
+    it('should work fine when workers when check multi time', (done) => {
+      let ng = new Nginx(options);
+      let a = 0;
+      mm(child, 'exec', function (cmd, callback) {
+        a++;
+        callback(null);
+      });
+      ng.checkNginxProcess([1, 2, 3], 2, () => {
+        a.should.eql(3);
+        ng.exit();
+        done();
       });
     });
   });

@@ -168,46 +168,24 @@ function loadConfig() {
     config.appsSessionPath = path.join(config.runDir, './app.mount.info.yaml');
   }
 
-  config.reload = function () {
+  function cleanCache(mod) {
     let mPath;
     let cached;
-    let ix;
     try {
-      mPath = require.resolve('./config');
+      mPath = require.resolve(mod);
       cached = require.cache[mPath];
       delete require.cache[mPath];
-      ix = cached.parent.children.indexOf(cached);
-      if (ix >= 0) cached.parent.children.splice(ix, 1);
+      cached.parent.children.filter((node) => node !== cached);
     } catch (e) {
       // do nothing
     }
-    try {
-      mPath = require.resolve('./config_default');
-      cached = require.cache[mPath];
-      delete require.cache[mPath];
-      ix = cached.parent.children.indexOf(cached);
-      if (ix >= 0) cached.parent.children.splice(ix, 1);
-    } catch (e) {
-      // do nothing
-    }
-    try {
-      mPath = require.resolve(path.join(installServerRoot, './conf/config_default.js'));
-      cached = require.cache[mPath];
-      delete require.cache[mPath];
-      ix = cached.parent.children.indexOf(cached);
-      if (ix >= 0) cached.parent.children.splice(ix, 1);
-    } catch (e) {
-      // do nothing
-    }
-    try {
-      mPath = require.resolve(path.join(installServerRoot, './conf/config.js'));
-      cached = require.cache[mPath];
-      delete require.cache[mPath];
-      ix = cached.parent.children.indexOf(cached);
-      if (ix >= 0) cached.parent.children.splice(ix, 1);
-    } catch (e) {
-      // do nothing
-    }
+  }
+
+  config.reload = function () {
+    cleanCache('./config_default');
+    cleanCache('./config');
+    cleanCache(path.join(installServerRoot, './conf/config_default.js'));
+    cleanCache(path.join(installServerRoot, './conf/config.js'));
     gConfig = loadConfig();
   };
   return config;
