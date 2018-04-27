@@ -182,8 +182,8 @@ function loadConfig() {
   }
 
   config.reload = function () {
-    cleanCache('./config_default');
-    cleanCache('./config');
+    // cleanCache('./config_default');
+    // cleanCache('./config');
     cleanCache(path.join(installServerRoot, './conf/config_default.js'));
     cleanCache(path.join(installServerRoot, './conf/config.js'));
     gConfig = loadConfig();
