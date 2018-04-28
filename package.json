@@ -13,6 +13,7 @@
     "body-parser": "1.18.2",
     "chalk": "2.3.0",
     "cli-table": "0.3.1",
+    "deep-object-diff": "^1.1.0",
     "ejs": "2.5.7",
     "express": "4.16.2",
     "formidable": "1.1.1",

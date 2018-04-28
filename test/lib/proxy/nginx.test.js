@@ -840,6 +840,48 @@ describe('lib/proxy/nginx.js', () => {
         });
       });
     });
+
+    it('should error while nginx check config illegal', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '8080',
+        router: '/app1',
+        appId: 'app_0.0.1_1',
+        name: 'app1',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      nginxProxy.register(app, (err) => {
+        let app = {
+          bind: '8080',
+          router: '/app1',
+          appId: 'app_0.0.1_2',
+          name: 'app1',
+          sockList: ['1.sock']
+        };
+        nginxProxy.register(app, (err) => {
+          let app = {
+            bind: '8080',
+            router: '/app1',
+            appId: 'app_0.0.1_3',
+            name: 'app1',
+            sockList: ['1.sock']
+          };
+          nginxProxy.register(app, (err) => {
+            nginxProxy.unregister(app, () => {
+              nginxProxy.rollback();
+              setTimeout(() => {
+                nginxProxy.exit();
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+
   });
 
   describe('nginx.getNginxWorkerPids()', () => {
