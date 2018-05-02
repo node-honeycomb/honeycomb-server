@@ -142,6 +142,26 @@ describe('api app test: ', () => {
     });
   });
 
+  describe('delete app', () => {
+    it('should return error when unmount error', (done) => {
+      let master = common.getMaster();
+      mm(master, '$unmount', function (appId, cb) {
+        cb(new Error('mock_error'));
+      });
+      common.deleteApp(agent, ips, 'app-not-exist')
+        .expect(200)
+        .expect((res)=>{
+          res.body.error.length.should.eql(1);
+          res.body.error[0].code.should.eql('DELETE_APP_ERROR');
+          res.body.error[0].message.should.eql('mock_error');
+        })
+        .end(() => {
+          mm.restore();
+          done();
+        });
+    });
+  });
+
   describe('reload app', () => {
     let request2 = supertest('http://localhost:8080');
     let oldWorkers;
@@ -232,6 +252,23 @@ describe('api app test: ', () => {
               });
             })
             .end(done);
+        });
+    });
+    it('should return when $mount failed', (done) => {
+      let master = common.getMaster();
+      mm(master, '$mount', function (appId, options, cb) {
+        cb(new Error('mock_error'));
+      });
+      common.restartApp(agent, ips, 'app-not-exist')
+        .expect(200)
+        .expect((res)=>{
+          res.body.error.length.should.eql(1);
+          res.body.error[0].code.should.eql('RESTART_APP_ERROR');
+          res.body.error[0].message.should.eql('mock_error');
+        })
+        .end(() => {
+          mm.restore();
+          done();
         });
     });
   });
