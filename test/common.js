@@ -15,6 +15,28 @@ before(function (done) {
    * test for master start with app.session
    */
   async.series([
+    (done) => {
+      master.children['mock'] = {stop: function(cb){cb()}};
+      master.exit(() => {
+        master = new Master(config);
+        done();
+      });
+    },
+    (done) => {
+      master.___exit = master.exit;
+      master.exit = function () {};
+      master.run(() => {
+        process.emit('SIGHUB');
+        process.emit('SIGTEM');
+        process.emit('SIGQUIT');
+        // process.emit('SIGINT');
+        process.emit('SIGABRT');
+        master.___exit(() => {
+          master = new Master(config);
+          done();
+        });
+      });
+    },
     (done) => master.run(done),
     (done) => exports.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz')).end(done),
     (done) => exports.publishApp(agent, ips, path.join(appsPkgBase, 'https-app.tgz')).end(done),
