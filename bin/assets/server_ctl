@@ -25,6 +25,16 @@ NODEJS_BIN=$PROJECT_DIR/node_modules/.bin/node
 export NODE_ENV='production'
 export PATH=$PROJECT_DIR/node_modules/.bin:$PATH
 
+# check disk
+df -hl | grep 100% > /dev/null
+if [ -z $? ]; then
+  echo '-----------------------------------'
+  echo -e '\033[31m[SYSTEM ERROR] one of the disks is full, please check and clean \033[0m'
+  echo '-----------------------------------'
+  df -hl
+  exit;
+fi
+
 # setting up alinode
 export ENABLE_NODE_LOG=YES
 export NODE_LOG_DIR=${BASE_HOME}/logs/
