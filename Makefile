@@ -52,6 +52,7 @@ prepare-test: parser
 	@cd example-apps && tar cfz socket-app_1.0.0_1.tgz socket-app_1.0.0_1/
 	@cd example-apps && tar cfz socket-app_1.0.0_2.tgz socket-app_1.0.0_2/
 	@cd example-apps && tar cfz https-app.tgz https-app/
+	@cd example-apps && tar cfz exception-retry-app.tgz exception-retry-app/
 
 test: eslint prepare-test
 	@$(BIN_MOCHA) \

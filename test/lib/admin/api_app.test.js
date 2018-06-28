@@ -175,7 +175,9 @@ describe('api app test: ', () => {
     });
     after((done) => {
       async.series([
-        (done) => common.deleteApp(agent, ips, 'simple-app').end(done)
+        (done) => common.deleteApp(agent, ips, 'simple-app').end(done),
+        (done) => common.deleteApp(agent, ips, 'illegal-app').end(done),
+        (done) => common.deleteApp(agent, ips, 'exception-retry-app').end(done)
       ], done);
     });
     it('should work fine', (done) => {
@@ -214,6 +216,71 @@ describe('api app test: ', () => {
 
       common.reloadApp(agent, ips, 'simple-app')
         .expect(checkRes).end(allDone);
+    });
+
+    it('should reload illegal-app fine', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'illegal-app.tgz'))
+        .end(() => {
+          common.reloadApp(agent, ips, 'illegal-app')
+            .expect(200)
+            .expect((res) => {
+              res.body.data.error[0].message.should.match(/app reload failed/);
+            })
+            .end(() => {
+              let fs = require('fs');
+              fs.writeFileSync(
+                path.join(__dirname, '../../appsRoot/illegal-app/index.js'),
+                `
+                class A {
+                  constructor() {}
+                  run(cb) {
+                    cb(null, {});
+                  }
+                }
+                module.exports = A;
+                `
+              );
+              common.reloadApp(agent, ips, 'illegal-app')
+                .expect(200)
+                .expect((res) => {
+                  should(res.body.data.error.length).eql(0);
+                }).end(done);
+            });
+        });
+    });
+
+    it('should reload exception-retry-app fine', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'exception-retry-app.tgz'))
+        .end(() => {
+          setTimeout(() => {
+            common.reloadApp(agent, ips, 'exception-retry-app')
+              .expect(200)
+              .expect((res) => {
+                res.body.data.error[0].message.should.match(/app reload failed/);
+              })
+              .end(() => {
+                let fs = require('fs');
+                fs.writeFileSync(
+                  path.join(__dirname, '../../appsRoot/exception-retry-app/index.js'),
+                  `
+                  class A {
+                    constructor() {}
+                    run(cb) {
+                      cb(null, {});
+                    }
+                  }
+                  module.exports = A;
+                  `
+                );
+                common.reloadApp(agent, ips, 'exception-retry-app')
+                  .expect(200)
+                  .expect((res) => {
+                    console.log(res.body.data.error);
+                    should(res.body.data.error.length).eql(0);
+                  }).end(done);
+              });
+          }, 1000);
+        });
     });
   });
 
