@@ -6,6 +6,7 @@
       "exec": "java",
       "argv": ["-jar", "${main}"],
       "serverName": "localhost",
+      "type": "stream",
       "bind": "9090"
     }
   }

@@ -8,7 +8,7 @@ const supertest = require('supertest');
 const ip = require('ip').address();
 const appsPkgBase = path.join(__dirname, '../../../example-apps');
 
-describe('app config test: ', () => {
+describe('api config test: ', () => {
   let ips = '127.0.0.1';
   let agent = supertest(`http://localhost:${config.admin.port}`);
 
