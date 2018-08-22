@@ -1,0 +1,13 @@
+{
+  "main": "./hc-demo-server-1.0.jar",
+  "honeycomb": {
+    "processorNum": 2,
+    "service": {
+      "exec": "java",
+      "argv": ["-jar", "${main}"],
+      "serverName": "localhost",
+      "type": "stream",
+      "bind": "9090"
+    }
+  }
+}

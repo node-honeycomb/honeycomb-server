@@ -24,7 +24,8 @@ describe('app publish test: ', () => {
       (done) => common.deleteApp(agent, ips, 'illegal-app').end(done),
       (done) => common.deleteApp(agent, ips, 'noenter-app').end(done),
       (done) => common.deleteApp(agent, ips, 'norun-app').end(done),
-      (done) => common.deleteApp(agent, ips, 'timeout-app').end(done)
+      (done) => common.deleteApp(agent, ips, 'timeout-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'java-app').end(done)
     ], done);
   });
   describe('publish api', () => {
@@ -65,6 +66,28 @@ describe('app publish test: ', () => {
           let child = common.getMaster().getChild('notarget-app');
           Object.keys(child.workers).length.should.eql(1);
           done();
+        });
+    });
+    it('should publish java app successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'java-app.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(1);
+          data.error.length.should.eql(0);
+        })
+        .end(() => {
+          let child = common.getMaster().getChild('java-app');
+          Object.keys(child.workers).length.should.eql(2);
+          let client = require('net').connect({host: 'localhost', port: 9090});
+          let msg = {test: true};
+          client.on('data', (chunk) => {
+            let obj = JSON.parse(chunk);
+            obj.should.eql(msg);
+            client.end();
+            done();
+          });
+          client.write(JSON.stringify(msg));
         });
     });
     it('should publish app but not started', (done) => {
