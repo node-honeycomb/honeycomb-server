@@ -24,7 +24,7 @@
     "litelog": "3.0.4",
     "lodash": "4.17.5",
     "mkdirp": "0.5.1",
-    "pidusage": "1.2.0",
+    "pidusage": "2.0.15",
     "randomatic": "3.0.0",
     "slice-file": "1.0.0",
     "urllib": "2.27.0",
