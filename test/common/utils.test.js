@@ -255,5 +255,10 @@ describe('common/utils,', function () {
       let b = utils.genWeight('0.0.1', 2);
       should(a > b).eql(true);
     });
+    it('should work fine', () => {
+      let a = utils.genWeight('1.0.9999', 2);
+      let b = utils.genWeight('1.9.0', 2);
+      should(a < b).eql(true);
+    });
   });
 });

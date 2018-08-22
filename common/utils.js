@@ -128,9 +128,9 @@ exports.genWeight = function (version, buildNum) {
   tmp = _.reverse(tmp);
   let weight = 0;
   tmp.forEach(function (t, i) {
-    weight += Number(t) * Math.pow(1000, i);
+    weight += Number(t) * Math.pow(10000, i);
   });
-  weight += Number(buildNum) / 1000;
+  weight += Number(buildNum) / 10000;
   return weight;
 };
 
