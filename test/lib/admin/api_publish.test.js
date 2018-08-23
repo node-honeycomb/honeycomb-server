@@ -85,7 +85,14 @@ describe('app_publish.test.js', () => {
             let obj = JSON.parse(chunk);
             obj.should.eql(msg);
             client.end();
-            done();
+            common.reloadApp(agent, ips, 'java-app')
+              .expect(200)
+              .expect((res) => {
+                let data = res.body.data;
+                data.success.length.should.eql(1);
+                data.error.length.should.eql(0);
+              })
+              .end(done);
           });
           client.write(JSON.stringify(msg));
         });
