@@ -21,10 +21,6 @@ module.exports = {
    */
   name: 'honeycomb-server',
   /**
-   * 系统及应用log根目录
-   */
-  logsRoot: '',
-  /**
    * debug flag
    */
   debug: true,
@@ -73,6 +69,11 @@ module.exports = {
    * @type {Number}
    */
   appReadyTimeout: 60000,
+  /**
+   * 日志根目录，默认为 $serverRoot/logs
+   * @type {String}  abs path
+   */
+  logsRoot: null,
   /**
    * 服务器的log配置，一般只需要修改路径
    * TODO 文档说明
@@ -231,12 +232,12 @@ module.exports = {
      * 因为目前console查询提交的startTime格式不可定制
      * TODO: 需要让console中的startTime可以定制格式
      */
-    queryLogNewLineRegExp: /^\d{8}.(\d{2}:\d{2}:\d{2})\.\d{3}/,
+    queryLogNewLineRegExp: /^\d{8}.(\d{2}:\d{2}:\d{2})(\.|,)\d{3}/,
     /**
      * 日志排序匹配正则，主要是捕获日志中的时间
      * 在batch api中，通过捕获的时间排序，让返回的多机合并的日志按时序排列
      */
-    queryLogSortRegExp: /^\d{8}.\d{2}:\d{2}:\d{2}\.\d{3}/
+    queryLogSortRegExp: /^\d{8}.\d{2}:\d{2}:\d{2}(\.|,)\d{3}/
   },
   /**
    * 私有配置保护用

@@ -1,7 +1,7 @@
 {
   "name": "honeycomb-server",
   "version": "1.0.9",
-  "build": "2",
+  "build": "3",
   "description": "Honeycomb, the micro-app's container",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "slice-file": "1.0.0",
     "urllib": "2.29.1",
     "uuid": "3.3.2",
-    "xfs": "0.2.4",
+    "xfs": "0.2.6",
     "yamljs": "0.3.0"
   },
   "devDependencies": {
