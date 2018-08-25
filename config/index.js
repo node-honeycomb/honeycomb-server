@@ -163,6 +163,9 @@ function loadConfig() {
   if (!config.appsRoot) {
     config.appsRoot = path.join(config.runDir, './appsRoot');
   }
+  if (!config.logsRoot) {
+    config.logsRoot = path.join(config.serverRoot, './logs');
+  }
   /* istanbul ignore if */
   if (!config.appsSessionPath) {
     config.appsSessionPath = path.join(config.runDir, './app.mount.info.yaml');
