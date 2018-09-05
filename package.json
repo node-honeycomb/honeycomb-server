@@ -1,7 +1,7 @@
 {
   "name": "honeycomb-server",
   "version": "1.0.9",
-  "build": "3",
+  "build": "4",
   "description": "Honeycomb, the micro-app's container",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "free-memory": "1.0.0",
     "ip": "1.1.5",
     "line-reader": "0.4.0",
-    "litelog": "3.0.4",
+    "litelog": "3.0.5",
     "lodash": "4.17.5",
     "mkdirp": "0.5.1",
     "pidusage": "2.0.15",
