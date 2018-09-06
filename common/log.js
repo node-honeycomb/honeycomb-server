@@ -3,7 +3,7 @@
 const LiteLog = require('litelog');
 const config = require('../config');
 const utils = require('./utils');
-const log = LiteLog.create(config.logs);
+const log = LiteLog.create({sys: config.logs.sys});
 
 
 log.get('sys').setFormatter(function (obj) {
