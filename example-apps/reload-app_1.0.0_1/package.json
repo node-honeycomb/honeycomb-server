@@ -1,0 +1,8 @@
+{
+  "main": "index.js",
+  "version": "1.0.0",
+  "buildNum": "1",
+  "honeycomb": {
+    "processorNum": 1
+  }
+}
