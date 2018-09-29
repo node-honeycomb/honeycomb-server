@@ -25,6 +25,7 @@ install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
 	@npm install --registry=https://registry.npm.taobao.org
+	@npm install nodeinstall --registry=https://registry.npm.taobao.org
 	@./node_modules/.bin/nodeinstall .
 	@cp nginx_sample.conf nginx.conf
 
