@@ -28,12 +28,15 @@ describe('api_status.test.js', () => {
           'hostname',
           'serverVersion',
           'kernel',
-          'systemTime',
+          'sysTime',
           'nodeVersion',
           'cpuNum',
           'cpu',
           'timezone',
-          'memory'
+          'memory',
+          'memoryUsage',
+          'diskInfo',
+          'sysLoad'
         ]);
       })
       .end(done);

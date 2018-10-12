@@ -248,6 +248,4 @@ describe('api_log.test.js', () => {
       .end(done);
   });
 
-
-
 });

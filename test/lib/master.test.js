@@ -48,7 +48,7 @@ describe('lib/master.js', function () {
         let agent = supertest(`https://localhost:${httpsConfig.admin.port}`);
         common.status(agent,'127.0.0.1')
           .expect(200)
-          .end((err,res) => {
+          .end((err, res) => {
             if(err) {
               return master.exit(() => {
                 done(err);
