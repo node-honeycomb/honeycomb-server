@@ -26,7 +26,8 @@ describe('api_online_offline.test.js', () => {
         let bool = fs.existsSync(config.proxy.healthCheck.file);
           bool.should.eql(false);
       })
-      .end(() => {
+      .end((err) => {
+        if (err) return done(err);
         // offline again should work fine too
         common.offline(agent, ips)
           .expect(200)
@@ -44,7 +45,8 @@ describe('api_online_offline.test.js', () => {
         let cnt = fs.readFileSync(config.proxy.healthCheck.file);
           cnt.toString().should.eql('');
       })
-      .end(() => {
+      .end((err) => {
+        if (err) return done(err);
         // online again should work fine too
         common.online(agent, ips)
           .expect(200).expect(function (res) {

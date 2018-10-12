@@ -41,7 +41,8 @@ describe('app_router.test.js', () => {
     it('should work fine when websocket app', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'websocket-app.tgz'))
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           const WebSocket = require('ws');
           const ws = new WebSocket('ws://localhost:8080/socket');
           ws.on('open', function open() {
@@ -57,7 +58,8 @@ describe('app_router.test.js', () => {
       let request2 = supertest('https://localhost:8999');
       common.publishApp(agent, ips, path.join(appsPkgBase, 'https-app.tgz'))
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           request2.get('/example')
             .expect(200)
             .expect((res) => {
@@ -78,7 +80,8 @@ describe('app_router.test.js', () => {
       let request2 = supertest('http://localhost:6000');
       common.publishApp(agent, ips, path.join(appsPkgBase, 'socket-app.tgz'))
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let net = require('net');
           let client = net.connect(6000, 'localhost');
           client.on('error', done);
@@ -102,7 +105,8 @@ describe('app_router.test.js', () => {
     it('should router to simple-app_1.0.0_1 successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app_1.0.0_1.tgz'))
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           request2.get('/example/hello')
             .expect(200)
             .expect('simple-app_v1.0.0_1')
@@ -122,7 +126,8 @@ describe('app_router.test.js', () => {
     it('should switch to simple-app_1.0.0_1 when stop 1.1.0_1', (done) => {
       common.stopApp(agent, ips, 'simple-app_1.1.0_1')
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           request2.get('/example/hello')
             .expect(200)
             .expect('simple-app_v1.0.0_1')
@@ -142,7 +147,8 @@ describe('app_router.test.js', () => {
       let request2 = supertest('http://localhost:6000');
       common.publishApp(agent, ips, path.join(appsPkgBase, 'socket-app_1.0.0_1.tgz'))
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let net = require('net');
           let client = net.connect(6000, 'localhost');
           client.on('error', done);
@@ -156,7 +162,8 @@ describe('app_router.test.js', () => {
       let request2 = supertest('http://localhost:6000');
       common.publishApp(agent, ips, path.join(appsPkgBase, 'socket-app_1.0.0_2.tgz'))
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let net = require('net');
           let client = net.connect(6000, 'localhost');
           client.on('error', done);
@@ -170,7 +177,8 @@ describe('app_router.test.js', () => {
       let request2 = supertest('http://localhost:6000');
       common.stopApp(agent, ips, 'socket-app_1.0.0_2')
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let net = require('net');
           let client = net.connect(6000, 'localhost');
           client.on('error', done);
@@ -184,7 +192,8 @@ describe('app_router.test.js', () => {
       let request2 = supertest('http://localhost:6000');
       common.startApp(agent, ips, 'socket-app_1.0.0_2')
         .expect(200)
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let net = require('net');
           let client = net.connect(6000, 'localhost');
           client.on('error', done);

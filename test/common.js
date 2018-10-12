@@ -211,6 +211,11 @@ exports.setServerConfig = (superAgent, ips, appName, data) => {
   return commonPost(superAgent, url, data);
 };
 
+exports.setClusterInfo = (superAgent, ips, data) => {
+  let url = `/api/cluster_info?ips=${ips}`;
+  return commonPost(superAgent, url, data);
+}
+
 /**
  * get app usages
  * @param  {Object} superAgent

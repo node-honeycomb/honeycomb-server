@@ -47,7 +47,8 @@ describe('app_publish.test.js', () => {
           data.success.length.should.eql(1);
           data.error.length.should.eql(0);
         })
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let request2 = supertest('http://localhost:10001');
           request2.get('/old-app/hello')
             .expect(200)
@@ -62,10 +63,10 @@ describe('app_publish.test.js', () => {
           data.success.length.should.eql(1);
           data.error.length.should.eql(0);
         })
-        .end(() => {
+        .end((err) => {
           let child = common.getMaster().getChild('notarget-app');
           Object.keys(child.workers).length.should.eql(1);
-          done();
+          done(err);
         });
     });
     it('should publish java app successfully', (done) => {
@@ -76,7 +77,8 @@ describe('app_publish.test.js', () => {
           data.success.length.should.eql(1);
           data.error.length.should.eql(0);
         })
-        .end(() => {
+        .end((err) => {
+          if (err) return done(err);
           let child = common.getMaster().getChild('java-app');
           Object.keys(child.workers).length.should.eql(2);
           let client = require('net').connect({host: 'localhost', port: 9090});
@@ -105,10 +107,10 @@ describe('app_publish.test.js', () => {
           data.success.length.should.eql(1);
           data.error.length.should.eql(0);
         })
-        .end(() => {
+        .end((err) => {
           let child = common.getMaster().getChild('https-app');
           should(child).eql(undefined);
-          done();
+          done(err);
         });
     });
     it('should return error when app noenter', (done) => {

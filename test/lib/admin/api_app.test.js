@@ -151,13 +151,12 @@ describe('api_app.test.js', () => {
       common.deleteApp(agent, ips, 'app-not-exist')
         .expect(200)
         .expect((res)=>{
-          res.body.error.length.should.eql(1);
-          res.body.error[0].code.should.eql('DELETE_APP_ERROR');
-          res.body.error[0].message.should.eql('mock_error');
+          res.body.data.error.length.should.eql(1);
+          res.body.data.error[0].message.should.eql('mock_error');
         })
-        .end(() => {
+        .end((err) => {
           mm.restore();
-          done();
+          done(err);
         });
     });
   });
@@ -167,10 +166,10 @@ describe('api_app.test.js', () => {
     let oldWorkers;
     before((done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz'))
-        .end(() => {
+        .end((err) => {
           let child = common.getMaster().getChild('simple-app');
           oldWorkers = Object.keys(child.workers).sort();
-          done();
+          done(err);
         });
     });
     after((done) => {
@@ -184,16 +183,17 @@ describe('api_app.test.js', () => {
       let flagBusy = false;
       let count = 0;
       function checkRes (res) {
-        if (res.body.error.length) {
+        if (res.body.data.error.length) {
           res.text.should.match(/SERVER_BUSY/);
           flagBusy = true;
         } else {
-          res.body.error.length.should.eql(0);
-          res.body.success.length.should.eql(1);
+          res.body.data.error.length.should.eql(0);
+          res.body.data.success.length.should.eql(1);
         }
       }
 
-      function allDone() {
+      function allDone(err) {
+        if (err) return done(err);
         count ++;
         if (count >= 2) {
           request2.get('/simple-app/hello')
@@ -289,10 +289,10 @@ describe('api_app.test.js', () => {
     let oldWorkers;
     before((done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz'))
-        .end(() => {
+        .end((err) => {
           let child = common.getMaster().getChild('simple-app');
           oldWorkers = Object.keys(child.workers).sort();
-          done();
+          done(err);
         });
     });
     after((done) => {
@@ -329,13 +329,13 @@ describe('api_app.test.js', () => {
       common.restartApp(agent, ips, 'app-not-exist')
         .expect(200)
         .expect((res)=>{
-          res.body.error.length.should.eql(1);
-          res.body.error[0].code.should.eql('RESTART_APP_ERROR');
-          res.body.error[0].message.should.eql('mock_error');
+          res.body.data.error.length.should.eql(1);
+          res.body.data.error[0].code.should.eql('RESTART_APP_ERROR');
+          res.body.data.error[0].message.should.eql('mock_error');
         })
-        .end(() => {
+        .end((err) => {
           mm.restore();
-          done();
+          done(err);
         });
     });
   });
