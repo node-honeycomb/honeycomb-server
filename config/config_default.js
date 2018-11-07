@@ -210,6 +210,7 @@ module.exports = {
      * }
      */
     https: null,
+    healthCheck: '/status',
     /**
      * 默认发布页的密码, 上线请务必修改
      * 密码可以通过
