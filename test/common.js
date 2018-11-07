@@ -253,6 +253,11 @@ exports.status = (superAgent, ips) => {
   return commonGet(superAgent, url);
 };
 
+exports.healthCheck = (superAgent, ips) => {
+  let url = `/status`;
+  return commonGet(superAgent, url);
+};
+
 exports.cleanAppExitRecord = (superAgent, ips, appId) => {
   let url = `/api/app/${appId}/exitRecord?ips=${ips}`;
   return commonDelete(superAgent, url);
