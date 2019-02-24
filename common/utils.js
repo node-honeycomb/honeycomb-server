@@ -274,6 +274,20 @@ exports.checkAppId = function (appId) {
   return null;
 };
 
+exports.fixPath = function (p) {
+  if (typeof p !== 'string') {
+    return p;
+  }
+  p = p.trim();
+  if (p === '/') {
+    return p;
+  }
+  if (!p.endsWith('/')) {
+    p += '/';
+  }
+  return p;
+};
+
 exports.checkAppName = exports.checkAppId;
 
 

@@ -182,7 +182,14 @@ module.exports = {
     switch: {
       stream: 'node',
       http: 'nginx'
-    }
+    },
+    /**
+     * proxy admin control api
+     * 控制接口通过默认端口提供服务，减少端口占用
+     * 此配置只有nginx模式有效，node模式暂不支持
+     * @type {String}
+     */
+    proxyAdmin: '/__hc__'
   },
   /**
    * admin配置段
