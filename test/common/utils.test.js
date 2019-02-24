@@ -261,4 +261,19 @@ describe('common/utils,', function () {
       should(a < b).eql(true);
     });
   });
+
+  describe('fixPath()', () => {
+    it('should return origin value', () => {
+      should(utils.fixPath()).eql(undefined);
+      should(utils.fixPath(null)).eql(null);
+      should(utils.fixPath(false)).eql(false);
+      should(utils.fixPath('/a/')).eql('/a/');
+    });
+    it('should return /', () => {
+      should(utils.fixPath('/')).eql('/');
+    });
+    it('should append /', () => {
+      should(utils.fixPath('/abc')).eql('/abc/');
+    });
+  });
 });

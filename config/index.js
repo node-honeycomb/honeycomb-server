@@ -158,7 +158,7 @@ function loadConfig() {
   config.pidFile = path.join(config.runDir, './honeycomb.pid');
   config.serverStatusFile = path.join(config.runDir, './_server_status');
   config.proxy.nginxIncludePath = path.join(config.runDir, './nginx');
-
+  config.proxy.proxyAdmin = utils.fixPath(config.proxy.proxyAdmin);
   /* istanbul ignore if */
   if (!config.appsRoot) {
     config.appsRoot = path.join(config.runDir, './appsRoot');
