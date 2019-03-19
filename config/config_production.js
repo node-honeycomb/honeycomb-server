@@ -42,7 +42,9 @@ module.exports = {
       rotation: 168,
     }
   },
-  proxy: {},
+  proxy: {
+    proxyAdmin: false
+  },
   admin: {
     gatherUsage: true
   },
