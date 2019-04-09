@@ -53,7 +53,12 @@ module.exports = {
    * !各应用的公共配置，会merge到各应用中
    * @type {Object}
    */
-  appsCommon: {},
+  appsCommon: {
+    /**
+     * https请求忽略证书异常
+     */
+    honeycomb: {env: {NODE_TLS_REJECT_UNAUTHORIZED: 0}},
+  },
   /**
    * app启动状态存储文件，一般不需要修改
    * @internal
