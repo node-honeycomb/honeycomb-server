@@ -1,0 +1,17 @@
+{
+  "name":"netty-demo",
+  "version":"0.0.1",
+  "build": 6,
+  "main": "./netty-http-server.jar",
+  "honeycomb": {
+    "processorNum": 1,
+    "service": {
+      "router":"/netty-demo",
+      "exec": "java",
+      "argv": ["-jar", "${main}"],
+      "serverName": "localhost",
+      "type": "http",
+      "bind": "9091"
+    }
+  }
+}
