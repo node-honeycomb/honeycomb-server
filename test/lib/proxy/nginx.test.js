@@ -339,6 +339,104 @@ describe('lib/proxy/nginx.js', () => {
       });
     });
 
+    it('should work fine with proxy.index config', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        healthCheck: {},
+        index: '/test',
+        upstreamCheck: {
+          type: 'upstream_check_module'
+        }
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        file.should.match(/return 301 \$scheme:\/\/\$http_host\/test\$is_args\$args/);
+        ng.exit();
+        done();
+      });
+    });
+    it('should work fine while proxy.index with ? ', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        healthCheck: {},
+        index: '/test?abc',
+        upstreamCheck: {
+          type: 'upstream_check_module'
+        }
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        file.should.match(/return 301 \$scheme:\/\/\$http_host\/test\?abc/);
+        ng.exit();
+        done();
+      });
+    });
+
+    it('should work fine while proxy.index with $args ', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        healthCheck: {},
+        index: '/test$args',
+        upstreamCheck: {
+          type: 'upstream_check_module'
+        }
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        file.should.match(/return 301 \$scheme:\/\/\$http_host\/test\$args/);
+        ng.exit();
+        done();
+      });
+    });
+
     it('should insert honeycomb include and nginx file change re-init', (done) => {
       fs.writeFileSync(nginxConf, fs.readFileSync(nginxSampleConf), {mode: 0o666});
       let ng = new Nginx(options);
