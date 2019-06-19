@@ -144,6 +144,17 @@ module.exports = {
      */
     port: 8080,
     /**
+     * bind []
+     *  {
+     *    ip:,
+     *    port:
+     *    ssl:
+     *    default:
+     *    ipv6:
+     *  }
+     */
+    bind: [],
+    /**
      * nginx 命令地址
      * @type {String}
      */
@@ -167,6 +178,7 @@ module.exports = {
      * 默认首页地址， 如果 / 没有被劫持，
      */
     index: '/',
+    serverIndexs: {},
     /**
      * 健康检查
      */
