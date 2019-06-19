@@ -80,7 +80,7 @@ describe('app_publish.test.js', () => {
         .end((err) => {
           if (err) return done(err);
           let child = common.getMaster().getChild('java-app');
-          Object.keys(child.workers).length.should.eql(2);
+          Object.keys(child.workers).length.should.eql(1);
           let client = require('net').connect({host: 'localhost', port: 9090});
           let msg = {test: true};
           client.on('data', (chunk) => {
@@ -88,6 +88,36 @@ describe('app_publish.test.js', () => {
             obj.should.eql(msg);
             client.end();
             common.reloadApp(agent, ips, 'java-app')
+              .expect(200)
+              .expect((res) => {
+                let data = res.body.data;
+                data.success.length.should.eql(1);
+                data.error.length.should.eql(0);
+              })
+              .end(done);
+          });
+          client.write(JSON.stringify(msg));
+        });
+    });
+    it('should publish java port app successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'java-port-app.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(1);
+          data.error.length.should.eql(0);
+        })
+        .end((err) => {
+          if (err) return done(err);
+          let child = common.getMaster().getChild('java-port-app');
+          Object.keys(child.workers).length.should.eql(1);
+          let client = require('net').connect({host: 'localhost', port: 9099});
+          let msg = {test: true};
+          client.on('data', (chunk) => {
+            let obj = JSON.parse(chunk);
+            obj.should.eql(msg);
+            client.end();
+            common.reloadApp(agent, ips, 'java-port-app')
               .expect(200)
               .expect((res) => {
                 let data = res.body.data;

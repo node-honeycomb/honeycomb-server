@@ -22,7 +22,10 @@ describe('api_cluster_info', () => {
       try {
         fs.unlinkSync(path.join(config.serverRoot, './run/cluster.json'));
       } catch (e) {}
-      common.deleteApp(agent, ips, 'reload-app_1.0.0_1').end(done)
+
+      common.stopApp(agent, ips, 'reload-app_1.0.0_1').end((err, data) => {
+        common.deleteApp(agent, ips, 'reload-app_1.0.0_1').end(done);
+      });
     });
 
     it('should get empty cluster info', (done) => {

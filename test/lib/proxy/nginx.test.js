@@ -40,7 +40,8 @@ describe('lib/proxy/nginx.js', () => {
       ip: '0.0.0.0',
       port: '80',
       healthCheck: {},
-      index: '/test'
+      index: '/test',
+      serverIndexs: {}
     };
     beforeEach(() => {
       mm.restore();
@@ -246,7 +247,8 @@ describe('lib/proxy/nginx.js', () => {
         nginxConfig: nginxConf,
         nginxIncludePath: nginxIncludePath,
         serverConfigPath: '',
-        port: '80'
+        port: '80',
+        serverIndexs: {}
       };
       let ng = new Nginx(options);
       let app = {
@@ -254,7 +256,7 @@ describe('lib/proxy/nginx.js', () => {
         router: '/default_server',
         appId: 'default-app',
         name: 'default-app',
-        sockList: ['1.sock']
+        sockList: ['1.sock'],
       };
       mm(child, 'exec', function (cmd, callback) {
         callback(null, '', '');
@@ -843,7 +845,8 @@ describe('lib/proxy/nginx.js', () => {
         router: '/app1',
         appId: 'app1',
         name: 'app1',
-        sockList: ['1.sock']
+        sockList: ['1.sock'],
+        portList: []
       };
       mm(child, 'exec', function (cmd, callback) {
         callback(null, '', '');
@@ -855,6 +858,7 @@ describe('lib/proxy/nginx.js', () => {
           appId: 'app1',
           name: 'app1',
           sockList: ['1.sock'],
+          portList: [],
           param: {
             server: {
               rollback_check: 1
@@ -879,7 +883,7 @@ describe('lib/proxy/nginx.js', () => {
             callback(null, '', '');
           }
         });
-        nginxProxy.register(app, (err) => {
+        nginxProxy.register(app1, (err) => {
           err.should.match(/mock_nginx_reload_error/);
           let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
           fileProxyPass.should.not.match(/rollback_check/);
@@ -896,7 +900,8 @@ describe('lib/proxy/nginx.js', () => {
         router: '/app1',
         appId: 'app1',
         name: 'app1',
-        sockList: ['1.sock']
+        sockList: ['1.sock'],
+        portList: []
       };
       mm(child, 'exec', function (cmd, callback) {
         callback(null, '', '');
@@ -908,6 +913,7 @@ describe('lib/proxy/nginx.js', () => {
           appId: 'app1',
           name: 'app1',
           sockList: ['1.sock'],
+          portList: [],
           param: {
             server: {
               rollback_check: 1
@@ -930,7 +936,7 @@ describe('lib/proxy/nginx.js', () => {
             callback(null, '', '');
           }
         });
-        nginxProxy.register(app, (err) => {
+        nginxProxy.register(app1, (err) => {
           err.should.match(/mock_nginx_check_error/);
           let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:8080_*.conf')).toString();
           fileProxyPass.should.not.match(/rollback_check/);

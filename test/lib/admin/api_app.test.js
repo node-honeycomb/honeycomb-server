@@ -275,12 +275,19 @@ describe('api_app.test.js', () => {
                 common.reloadApp(agent, ips, 'exception-retry-app')
                   .expect(200)
                   .expect((res) => {
-                    console.log(res.body.data.error);
                     should(res.body.data.error.length).eql(0);
                   }).end(done);
               });
           }, 1000);
         });
+    });
+
+    it('should return error when reload none-exists-app', (done) => {
+      common.reloadApp(agent, ips, 'none-exists-app')
+        .expect(200)
+        .expect((res) => {
+          res.body.data.error[0].code.should.match(/APP_NOT_MOUNTED/);
+        }).end(done);
     });
   });
 

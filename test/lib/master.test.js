@@ -9,6 +9,7 @@ const supertest = require('supertest');
 const utils = require('../../common/utils');
 const message = require('../../lib/message');
 const common = require('../common');
+const Master = require('../../lib/master');
 
 describe('lib/master.js', function () {
   let master;
@@ -22,7 +23,7 @@ describe('lib/master.js', function () {
     mm.restore();
   });
   describe('test https boot', function () {
-    const Master = require('../../lib/master');
+    // const Master = require('../../lib/master');
     let master;
     let httpsConfig;
     before((done) => {
@@ -139,7 +140,19 @@ describe('lib/master.js', function () {
     });
   });
 
-  /*
+  describe('test $restartAdmin', () => {
+    it('should work fine', (done) => {
+      let oldPid = master.admin.getPid()[0];
+      master.$restartAdmin((err) => {
+        let newPid = master.admin.getPid()[1];
+        should(err).eql(null);
+        oldPid.should.not.eql(newPid);
+        done();
+      });
+    });
+  });
+
+
   describe('test $status', function () {
     it('should work fine', function (done) {
       master.$status(function (err, data) {
@@ -151,7 +164,7 @@ describe('lib/master.js', function () {
       });
     });
   });
-
+  /*
   describe('test $list', function () {
     it('should work fine', function (done) {
       master.$list(function (err, apps) {
