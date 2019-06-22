@@ -15,6 +15,7 @@ describe('lib/proxy/nginx.js', () => {
   const nginxErrorConf = path.join(__dirname, './nginxErrorconfig');
   const nginxIncludePath = path.join(__dirname, './nginx');
   const nginxSampleConf = path.join(__dirname, '../../../nginx_sample.conf');
+  
   before(() => {
     fs.writeFileSync(nginxErrorConf, '{');
     fs.writeFileSync(nginxBin, 'nginx', {mode: 0o777});
@@ -864,7 +865,7 @@ describe('lib/proxy/nginx.js', () => {
         mm(child, 'exec', function (cmd, callback) {
           if (/nginxBin \-t /.test(cmd)) {
             callback(null, '', '');
-          } else if (/nginxBin \-s reload/.test(cmd)) {
+          } else if (/nginxBin +\-s +reload/.test(cmd)) {
             count ++;
             let err = null;
             let stdout = '';

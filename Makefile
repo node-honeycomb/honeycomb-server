@@ -63,7 +63,7 @@ test: eslint prepare-test
 		--exit \
 		-t 30000 \
 		-R spec \
-		-r $(TESTS_ENV) \
+		-r test/env.js \
 		$(TESTS)
 	@rm -rf ./config/config.js
 
@@ -73,16 +73,16 @@ test2: prepare-test
 		--exit \
 		-t 30000 \
 		-R spec \
-		-r $(TESTS_ENV) \
+		-r test/env.js \
 		$(TESTS)
 	@rm -rf ./config/config.js
 
 test-cov:
 	@rm -rf coverage
 	@./node_modules/.bin/istanbul cover \
-	  -x 'config/config.js' \
-	  -x 'common/nginx_config_parser.js' \
-	  --include-pid \
+		-x 'config/config.js' \
+		-x 'common/nginx_config_parser.js' \
+		--include-pid \
 		--reporter=lcov \
 		./node_modules/mocha/bin/_mocha --\
 		--recursive \

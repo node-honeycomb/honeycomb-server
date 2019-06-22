@@ -3,7 +3,7 @@ const fs = require('xfs');
 const path = require('path');
 const _ = require('lodash');
 process.env.changeUser = false;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 process.env.HONEYCOMB_SERVER_ROOT = path.join(__dirname, '../');
 
 let configFile = path.join(__dirname, '../config/config_test.js');
@@ -15,10 +15,6 @@ fs.sync().rm(confCommon);
 fs.sync().mkdir(confCommon);
 fs.sync().save(configTmp, fs.readFileSync(configFile));
 fs.sync().mkdir(path.join(__dirname, '../conf/apps'));
-
-if (process.version < 'v6.0.0') {
-  throw new Error('please update node version up to v6.0.0');
-}
 
 const childProcess = require('child_process');
 const fork = childProcess.fork;
