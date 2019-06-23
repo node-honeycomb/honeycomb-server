@@ -197,7 +197,7 @@ module.exports = {
     }
     ,*/
     switch: {
-      stream: 'node',
+      stream: 'nginx',
       http: 'nginx'
     },
     /**
