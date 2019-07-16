@@ -170,14 +170,6 @@ function loadConfig() {
   if (!config.appsSessionPath) {
     config.appsSessionPath = path.join(config.runDir, './app.mount.info.yaml');
   }
-  if (!config.proxy.bind.length) {
-    config.proxy.bind.push({
-      ip: config.proxy.ip,
-      port: config.proxy.port,
-      ssl: config.proxy.ssl,
-      default: true
-    });
-  }
 
   function cleanCache(mod) {
     let mPath;
