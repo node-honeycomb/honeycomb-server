@@ -6,7 +6,7 @@ const child = require('child_process');
 const Nginx = require('../../../lib/proxy/nginx');
 
 
-describe('lib/proxy/nginx.js', () => {
+describe.only('lib/proxy/nginx.js', () => {
   const eaccessFile = path.join(__dirname, './eaccess');
   const nginxBin = path.join(__dirname, './nginxBin');
   const nginxInitedConfig = path.join(__dirname, './conf/nginx_inited_config.conf');
@@ -37,8 +37,9 @@ describe('lib/proxy/nginx.js', () => {
       nginxConfig: nginxConf,
       nginxIncludePath: nginxIncludePath,
       serverConfigPath: '',
-      ip: '0.0.0.0',
+      ip: '*',
       port: '80',
+      bind: [{ip: '*', port: 80, default: true}],
       healthCheck: {},
       index: '/test',
       serverIndexs: {}
@@ -124,7 +125,7 @@ describe('lib/proxy/nginx.js', () => {
         nginxIncludePath: nginxIncludePath,
         serverConfigPath: '',
         ip: '0.0.0.0',
-        port: '80'
+        port: '80',
       };
       let ng = new Nginx(options);
       let app = {
@@ -580,7 +581,7 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
-    it('should work fine with illegal app.bind item', (done) => {
+    it.only('should work fine with illegal app.bind item', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
         bind: ['127.0.0.1:8001', 'abc.com:8002'],
