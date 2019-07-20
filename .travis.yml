@@ -1,17 +1,14 @@
+dist: bionic
 language: node_js
-sudo: false
 node_js:
   - "8.9.3"
   - "10"
   - "12"
-addons:
-  apt:
-    packages:
-      - nginx
-install:
-  - echo '-----------------'
-  - which nginx
+before_install:
+  - sudo apt-get install -y nginx
   - npm install -g codecov
+install:
+  - which nginx
 script:
   - make codecov
 after_script:
