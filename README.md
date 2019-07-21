@@ -10,7 +10,7 @@ honeycomb-server is a micro web-app container for Node.js app.
 
 ## 简介
 
-honeycomb-server是一个Node.js web应用的运行容器，每个应用以独立进程运行。
+honeycomb-server是web应用的托管服务，每个应用以独立进程运行。
 
 * app发布、下线、reload、版本切换
 * 支持路径级别的路由，为微应用模式提供便利
