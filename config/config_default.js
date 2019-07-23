@@ -153,7 +153,7 @@ module.exports = {
      *    ipv6:
      *  }
      */
-    bind: [],
+    bind: null,
     /**
      * nginx 命令地址
      * @type {String}

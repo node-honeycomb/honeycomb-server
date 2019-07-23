@@ -16,6 +16,7 @@ master.on('ready', () => {
   master.run(function (err) {
     if (err) {
       log.error('server start failed, err: ', err);
+      process.exit(1);
     } else {
       log.info('server start success', `http://${config.host || '127.0.0.1'}:${config.proxy.port}`);
       // do not remove this console.log, for start.sh checking
