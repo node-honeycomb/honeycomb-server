@@ -328,4 +328,70 @@ describe('lib/master.js', function () {
   describe('test app with broken api(will cause app exit)', () => {
 
   });
+
+  describe('test master.initApps', () => {
+    let newCfg = JSON.parse(JSON.stringify(config));
+    newCfg.admin.port = 29999;
+    newCfg.appsSessionPath = path.join(__dirname, 'tmp_mount2.yaml');
+    newCfg.pidFile = path.join(__dirname, 'hc.pid');
+    let master;
+    let agent = supertest(`http://localhost:${newCfg.admin.port}`);
+    let ips = `http://127.0.0.1:${newCfg.admin.port}`;
+    beforeEach((done) => {
+      const appsPkgBase = path.join(__dirname, '../../example-apps');
+      master = new Master(newCfg);
+      master.run((err) => {
+        common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz'))
+          .expect(200)
+          .end(done);
+      });
+    });
+    afterEach((done) => {
+      fs.sync().rm(newCfg.appsSessionPath);
+      common.stopApp(agent, ips, 'simple-app')
+        .end(() => {
+          common.deleteApp(agent, ips, 'simple-app')
+            .end(() => {
+              master.exit(done);
+            });
+        });
+    }); 
+    it('should work fine when apps ok', (done) => {
+      let appsRoot = newCfg.appsRoot;
+      master.exit((err) => {
+        should.not.exists(err);
+        master = new Master(newCfg);
+        master.run((err) => {
+          should.not.exists(err);
+          master.getChild('simple-app').getPid()[0].should.above(0);
+          done();
+        });
+      });
+    });
+    it('should work fine when app dir is missing', (done) => {
+      let appsRoot = newCfg.appsRoot;
+      master.exit((err) => {
+        should.not.exists(err);
+        fs.sync().rm(path.join(appsRoot, 'simple-app'));
+        master = new Master(newCfg);
+        master.run((err) => {
+          should.not.exists(err);
+          master.getChild('simple-app').getPid()[0].should.above(0);
+          done();
+        });
+      });
+    });
+    it('should error when app.tgz is missing', (done) => {
+      let appsRoot = newCfg.appsRoot;
+      master.exit((err) => {
+        should.not.exists(err);
+        fs.sync().rm(path.join(appsRoot, 'simple-app.tgz'));
+        master = new Master(newCfg);
+        master.run((err) => {
+          err.message.should.match(/app simple-app not exists/);
+          done();
+        });
+      });
+    });
+  });
 });
