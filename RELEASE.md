@@ -1,6 +1,14 @@
+#### v1.2.1_1
+
+##### Feature
+* 支持启动时自动解压app的tgz包
+
+##### Fix
+* 修复server proxy 默认配置bug
+
 #### v1.2.0_1
 
-##### Feature:
+##### Feature
 * 支持ipv6监听 
 * 支持nginx stream(>= nginx 1.9.0)代理, 默认socket服务代理改为nginx
 
