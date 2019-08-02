@@ -26,7 +26,9 @@ describe('api_coredump.test.js', () => {
       .expect(function (res) {
         res.body.code.should.eql('SUCCESS');
         res.body.data.error.length.should.eql(0);
-        res.body.data.success[0].data.should.eql(['core.123']);
+        res.body.data.success[0].data[0].file.should.eql('core.123');
+        res.body.data.success[0].data[0].mtime.should.match(new RegExp(new Date().getFullYear()));
+        res.body.data.success[0].data[0].appId.should.eql('unknow');
         fs.sync().rm(path.join(__dirname, '../../../core.123'));
       })
       .end(done);
