@@ -76,8 +76,10 @@ describe('lib/master.js', function () {
               });
             }
             should(res.body.data.success.length).above(0);
-            master.exit(done);
-            master = null;
+            common.deleteApp(agent, '127.0.0.1', 'simple-app').end((err, res) => {
+              master.exit(done);
+              master = null;
+            });
           });
       });
     });
@@ -329,7 +331,7 @@ describe('lib/master.js', function () {
 
   });
 
-  describe.skip('test master.initApps', () => {
+  describe('test master.initApps', () => {
     let newCfg = JSON.parse(JSON.stringify(config));
     newCfg.admin.port = 29999;
     newCfg.appsSessionPath = path.join(__dirname, 'tmp_mount2.yaml');
