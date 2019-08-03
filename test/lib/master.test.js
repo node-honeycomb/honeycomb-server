@@ -329,7 +329,7 @@ describe('lib/master.js', function () {
 
   });
 
-  describe('test master.initApps', () => {
+  describe.skip('test master.initApps', () => {
     let newCfg = JSON.parse(JSON.stringify(config));
     newCfg.admin.port = 29999;
     newCfg.appsSessionPath = path.join(__dirname, 'tmp_mount2.yaml');

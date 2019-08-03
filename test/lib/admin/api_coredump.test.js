@@ -9,7 +9,7 @@ const supertest = require('supertest');
 const ip = require('ip').address();
 const appsPkgBase = path.join(__dirname, '../../../example-apps');
 
-describe.skip('api_coredump.test.js', () => {
+describe('api_coredump.test.js', () => {
   let ips = '127.0.0.1';
   let agent = supertest(`http://localhost:${config.admin.port}`);
 
