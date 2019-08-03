@@ -289,5 +289,3 @@ exports.fixPath = function (p) {
 };
 
 exports.checkAppName = exports.checkAppId;
-
-

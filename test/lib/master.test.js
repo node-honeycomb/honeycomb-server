@@ -76,8 +76,10 @@ describe('lib/master.js', function () {
               });
             }
             should(res.body.data.success.length).above(0);
-            master.exit(done);
-            master = null;
+            common.deleteApp(agent, '127.0.0.1', 'simple-app').end((err, res) => {
+              master.exit(done);
+              master = null;
+            });
           });
       });
     });
@@ -332,6 +334,7 @@ describe('lib/master.js', function () {
   describe('test master.initApps', () => {
     let newCfg = JSON.parse(JSON.stringify(config));
     newCfg.admin.port = 29999;
+    newCfg.proxy.healthCheck.file = path.join(__dirname, 'healthCheck.status');
     newCfg.appsSessionPath = path.join(__dirname, 'tmp_mount2.yaml');
     newCfg.pidFile = path.join(__dirname, 'hc.pid');
     let master;
@@ -389,6 +392,7 @@ describe('lib/master.js', function () {
         master = new Master(newCfg);
         master.run((err) => {
           err.message.should.match(/app simple-app not exists/);
+          fs.sync().rm(path.join(appsRoot, 'simple-app'));
           done();
         });
       });
