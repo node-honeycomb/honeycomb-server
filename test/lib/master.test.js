@@ -334,6 +334,7 @@ describe('lib/master.js', function () {
   describe('test master.initApps', () => {
     let newCfg = JSON.parse(JSON.stringify(config));
     newCfg.admin.port = 29999;
+    newCfg.proxy.healthCheck.file = path.join(__dirname, 'healthCheck.status');
     newCfg.appsSessionPath = path.join(__dirname, 'tmp_mount2.yaml');
     newCfg.pidFile = path.join(__dirname, 'hc.pid');
     let master;
