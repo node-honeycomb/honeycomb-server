@@ -34,6 +34,7 @@ describe('app_publish.test.js', () => {
         .expect(200)
         .expect((res) => {
           let data = res.body.data;
+          console.log(JSON.stringify(data, null, 2));
           data.success.length.should.eql(1);
           data.error.length.should.eql(0);
         })
