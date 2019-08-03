@@ -389,6 +389,7 @@ describe('lib/master.js', function () {
         master = new Master(newCfg);
         master.run((err) => {
           err.message.should.match(/app simple-app not exists/);
+          fs.sync().rm(path.join(appsRoot, 'simple-app'));
           done();
         });
       });
