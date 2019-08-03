@@ -205,7 +205,7 @@ describe('app_router.test.js', () => {
     });
   });
 
-  describe('server default port', () => {
+  describe.skip('server default port', () => {
     before((done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app_1.0.0_1.tgz'))
         .expect(200)
@@ -229,7 +229,7 @@ describe('app_router.test.js', () => {
     it('should get 400 when request healthCheck', (done) => {
       let net = require('net');
       let c = net.connect({port: 6001});
-      c.on('data', (chunk) => {
+      c.once('data', (chunk) => {
         chunk.toString().should.match(/HTTP\/1\.1 400 Bad Request/);
         done();
       });
@@ -240,7 +240,7 @@ describe('app_router.test.js', () => {
     it('should work fine when request without any header', (done) => {
       let net = require('net');
       let c = net.connect({port: 6001});
-      c.on('data', (chunk) => {
+      c.once('data', (chunk) => {
         chunk.toString().should.match(/HTTP\/1\.1 200 OK/);
         done();
       });
