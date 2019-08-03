@@ -205,7 +205,7 @@ describe('app_router.test.js', () => {
     });
   });
 
-  describe.skip('server default port', () => {
+  describe('server default port', () => {
     before((done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app_1.0.0_1.tgz'))
         .expect(200)
