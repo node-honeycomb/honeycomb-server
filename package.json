@@ -23,7 +23,7 @@
     "ip": "1.1.5",
     "line-reader": "0.4.0",
     "litelog": "3.0.6",
-    "lodash": "4.17.11",
+    "lodash": "^4.17.12",
     "mkdirp": "0.5.1",
     "nodeinstall": "^0.1.3",
     "pidusage": "2.0.15",
