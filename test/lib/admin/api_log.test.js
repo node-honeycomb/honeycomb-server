@@ -10,7 +10,7 @@ const supertest = require('supertest');
 const ip = require('ip').address();
 const appsPkgBase = path.join(__dirname, '../../../example-apps');
 
-describe('api_log.test.js', () => {
+describe.only('api_log.test.js', () => {
   let ips = '127.0.0.1';
   let agent = supertest(`http://localhost:${config.admin.port}`);
 
@@ -143,16 +143,16 @@ describe('api_log.test.js', () => {
       file: fileName,
       lines: 10,
       filter: 'INFO',
-      startTime: moment().seconds(-5).format('HH:mm:ss')
+      startTime: startTime
     }).expect(200)
       .expect('content-type', /application\/json/)
       .expect(function (res) {
         res.body.code.should.eql('SUCCESS');
         res.body.data.success.should.be.an.Array();
         res.body.data.success.forEach((line) => {
-          line.should.match(/127.0.0.1/);
+          line.should.match(/127\.0\.0\.1/);
           line.should.match(/INFO/);
-          let m = line.match(/\d{8}-(\d{2}:\d{2}:\d{2}).\d{3}/);
+          let m = line.match(/\d{8}-(\d{2}:\d{2}:\d{2})\.\d{3}/);
           (m[1] >= startTime).should.eql(true);
         });
       })
