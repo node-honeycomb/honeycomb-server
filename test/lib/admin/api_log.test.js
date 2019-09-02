@@ -10,7 +10,7 @@ const supertest = require('supertest');
 const ip = require('ip').address();
 const appsPkgBase = path.join(__dirname, '../../../example-apps');
 
-describe.only('api_log.test.js', () => {
+describe('api_log.test.js', () => {
   let ips = '127.0.0.1';
   let agent = supertest(`http://localhost:${config.admin.port}`);
 
