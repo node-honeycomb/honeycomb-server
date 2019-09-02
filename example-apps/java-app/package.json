@@ -4,7 +4,11 @@
     "processorNum": 1,
     "service": {
       "exec": "java",
-      "argv": ["-jar", "${main}"],
+      "cwd": "./",
+      "env": {
+        "JAVA_TEST": "abc.${serverRoot}"
+      },
+      "argv": ["-jar", "-DLOG_PATH=${appRoot}", "${main}"],
       "type": "stream",
       "bind": "9090"
     }
