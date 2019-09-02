@@ -251,18 +251,22 @@ module.exports = {
     gatherUsageTimeout: 3000,
     readLogMaxLines: 1000,
     readLogDefaultLines: 100,
+    hooks: {
+      publish: null
+    },
     /**
      * single api 切割日志，以该正则来识别是否新一条日志
      * 注意正则中的匹配，必须为 x:y:z
      * 因为目前console查询提交的startTime格式不可定制
      * TODO: 需要让console中的startTime可以定制格式
+     *   2019-09-02 01:15:00,285
      */
-    queryLogNewLineRegExp: /^\d{8}.(\d{2}:\d{2}:\d{2})(\.|,)\d{3}/,
+    queryLogNewLineRegExp: /^(\d{8}|\d{4}\-\d{2}\-\d{2}).(\d{2}:\d{2}:\d{2})(\.|,)\d{3}/,
     /**
      * 日志排序匹配正则，主要是捕获日志中的时间
      * 在batch api中，通过捕获的时间排序，让返回的多机合并的日志按时序排列
      */
-    queryLogSortRegExp: /^\d{8}.\d{2}:\d{2}:\d{2}(\.|,)\d{3}/
+    queryLogSortRegExp: /^(\d{8}|\d{4}\-\d{2}\-\d{2}).\d{2}:\d{2}:\d{2}(\.|,)\d{3}/
   },
   /**
    * 私有配置保护用
