@@ -246,6 +246,8 @@ module.exports = {
      */
     token: '***honeycomb-default-token***',
     signExpire: 30000,
+    serverTimeout: 300000, // 5 min
+    uploadMaxBody: 800 * 1024 * 1024, // 800m
     gatherUsage: false,
     gatherUsageInterval: 5000,
     gatherUsageTimeout: 3000,
