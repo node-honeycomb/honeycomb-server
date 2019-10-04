@@ -32,7 +32,8 @@
     "urllib": "2.29.1",
     "uuid": "3.3.2",
     "xfs": "0.2.6",
-    "yamljs": "0.3.0"
+    "yamljs": "0.3.0",
+    "snyk": "^1.230.5"
   },
   "devDependencies": {
     "eslint": "4.18.2",
@@ -49,7 +50,10 @@
     "install-alinode": "3.8.4"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
-  "readme": "README.md"
+  "readme": "README.md",
+  "snyk": true
 }
