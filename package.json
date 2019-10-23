@@ -29,7 +29,7 @@
     "pidusage": "2.0.15",
     "randomatic": "3.1.0",
     "slice-file": "1.0.0",
-    "urllib": "2.29.1",
+    "urllib": "2.33.3",
     "uuid": "3.3.2",
     "xfs": "0.2.6",
     "yamljs": "0.3.0"
