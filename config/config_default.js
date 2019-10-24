@@ -75,6 +75,10 @@ module.exports = {
    */
   appReadyTimeout: 60000,
   /**
+   * app checksum decrypto key
+   */
+  appCheckSumSecret: null,
+  /**
    * 日志根目录，默认为 $serverRoot/logs
    * @type {String}  abs path
    */
