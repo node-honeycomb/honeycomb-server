@@ -6,5 +6,6 @@
 /bin/
 /benchmark/
 /test/
+/conf/
 /common/nginx_config_parser.js
 *.min.js

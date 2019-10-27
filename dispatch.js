@@ -1,8 +1,13 @@
 'use strict';
-
 const Master = require('./lib/master');
 const config = require('./config');
 const log = require('./common/log');
+// 迁移老配置
+const migrate = require('./common/migration');
+const flag = migrate.run(config.serverRoot);
+if (flag) {
+  config.reload();
+}
 const master = new Master(config);
 
 process.chdir(__dirname);
