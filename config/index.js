@@ -1,7 +1,7 @@
 'use strict';
 
 /* eslint no-console: 0 */
-const fs = require('fs');
+const fs = require('xfs');
 const _ = require('lodash');
 const path = require('path');
 const utils = require('../common/utils');
@@ -9,23 +9,25 @@ const utils = require('../common/utils');
 
 const installServerRoot = process.env.HONEYCOMB_SERVER_ROOT || path.join(__dirname, '../../../');
 
-function loadConfig() {
+
+function loadConfig(exitWhenError) {
   /**
    * load default config from server codebase
    */
   let defaultCfg = require('./config_default');
-  let userCfg = {};
   /**
    * load release config from server codebase
    */
+  let defaultReleaseCfg = {};
   try {
-    userCfg = require('./config');
+    defaultReleaseCfg = require('./config');
   } catch (e) {
-    /* istanbul ignore next */
-    printMsg(e, 'MODULE_NOT_FOUND', 'Loading inner config failed.');
+    // do nothing
   }
 
-  let config = _.merge({}, defaultCfg, userCfg);
+
+  let config = {};
+  _.merge(config, defaultCfg, defaultReleaseCfg);
 
   // load config from server deploy base
   // config_default.js: the server default config, do not modify
@@ -48,53 +50,80 @@ function loadConfig() {
       servConfig.serverList || [],
       servConfigCustom.serverList || []
     );
-    config = _.merge(config, servConfig, servConfigCustom);
+    _.merge(config, servConfig, servConfigCustom);
     config.serverList = serverList;
   } catch (e) {
-    printMsg(e, 'MODULE_NOT_FOUND', 'Loading server config failed:');
+    printMsg(e, 'MODULE_NOT_FOUND', 'Loading conf/config.js failed:');
   }
 
-  /* istanbul ignore if */
+  fs.sync().mkdir(path.join(config.serverRoot, './conf/custom'));
+
+  /* istanbul ignore if
   if (!config.serverRoot) {
     let e = new Error('should configed in  config_default.js');
     printMsg(e, '', 'config.serverRoot missing');
+  }*/
+  function loadJsConfig(file) {
+    let code = fs.readFileSync(file);
+    let m = {
+      exports: {}
+    };
+    let fn = new Function('module', 'exports', 'require', 'global', 'process', '__filename', '__dirname', code);
+    fn(m, m.exports, require, global, process, file, path.dirname(file));
+    return m.exports;
   }
-  /**
-   * fn load json config file
-   */
+
   function loadJsonConfig(file) {
     let cfg = JSON.parse(fs.readFileSync(file));
     return utils.decryptObject(cfg, config.configSecret);
   }
 
   /**
-   * load server.json
+   * load custom config.js
    */
-  let serverCfg = {};
   try {
-    let oldPath = path.join(config.serverRoot, './conf/config_server.json');
-    let newPath = path.join(config.serverRoot, './conf/server.json');
-    if (fs.existsSync(oldPath)) {
-      fs.renameSync(oldPath, newPath);
+    let cfgPath = path.join(config.serverRoot, './conf/custom/config.js');
+    let customCfg = {};
+    if (fs.existsSync(cfgPath)) {
+      customCfg = loadJsConfig(cfgPath);
     }
-    serverCfg = loadJsonConfig(newPath);
-    config = _.merge(config, serverCfg);
+    _.merge(config, customCfg);
   } catch (e) {
     /* istanbul ignore next */
-    printMsg(e, 'ENOENT', 'Loading server config failed.');
+    printMsg(e, 'MODULE_NOT_FOUND', 'Loading conf/custom/config.js failed.');
   }
 
   /**
-   * load common.json
+   * load custom/server.json
    */
   try {
-    let oldPath = path.join(config.serverRoot, './conf/apps_common.json');
-    let newPath = path.join(config.serverRoot, './conf/common.json');
+    let oldCfg = {};
+    let newCfg = {};
+    let oldPath = path.join(config.serverRoot, './conf/custom/config_server.json');
+    let newPath = path.join(config.serverRoot, './conf/custom/server.json');
     if (fs.existsSync(oldPath)) {
-      fs.renameSync(oldPath, newPath);
+      oldCfg = loadJsonConfig(oldPath);
     }
-    let appsCommon = loadJsonConfig(newPath);
-    config.appsCommon = _.merge(config.appsCommon, appsCommon);
+    newCfg = loadJsonConfig(newPath);
+    _.merge(config, oldCfg, newCfg);
+  } catch (e) {
+    /* istanbul ignore next */
+    printMsg(e, 'ENOENT', 'Loading conf/custom/server.json failed.');
+  }
+
+  /**
+   * load conf/custom/common.json
+   */
+  try {
+    let oldCfg = {};
+    let newCfg = {};
+    let oldPath = path.join(config.serverRoot, './conf/custom/apps_common.json');
+    let newPath = path.join(config.serverRoot, './conf/custom/common.json');
+    if (fs.existsSync(oldPath)) {
+      oldCfg = loadJsonConfig(oldPath);
+    }
+    newCfg = loadJsonConfig(newPath);
+    _.merge(config.appsCommon, oldCfg, newCfg);
   } catch (e) {
     /* istanbul ignore next */
     printMsg(e, 'ENOENT', 'Loading apps common config failed.');
@@ -106,36 +135,40 @@ function loadConfig() {
    * when call master.getAppConfig, so do not merge here
    * because app's common config will be modified too
    */
-  /* istanbul ignore if */
+  /* istanbul ignore if *
   if (!config.apps) {
     config.apps = {};
-  }
+  }*/
 
   let appsCfgFiles = [];
   let appsCfgPath;
+  appsCfgPath = path.join(config.serverRoot, './conf/custom/apps');
   try {
-    appsCfgPath = path.join(config.serverRoot, './conf/apps');
     appsCfgFiles = fs.readdirSync(appsCfgPath);
   } catch (e) {
     /* istanbul ignore next */
-    printMsg(e, 'ENOENT', 'Read directory `conf/apps` failed.');
+    printMsg(e, 'ENOENT', 'Read directory `conf/custom/apps` failed.');
   }
   appsCfgFiles.forEach((file) => {
     let m = file.match(/(.+)(\.json$)/);
-    if (m) {
-      let appName = m[1];
-      try {
-        let appCfg = loadJsonConfig(path.join(appsCfgPath, file));
-        config.apps[appName] = _.merge({}, config.apps[appName], appCfg);
-      } catch (e) {
-        printMsg(e, 'ENOENT', `[ERROR] Loading app config failed: ${appName}.json`);
-      }
+    if (!m) {
+      return;
+    }
+    let appName = m[1];
+    try {
+      let appCfg = loadJsonConfig(path.join(appsCfgPath, file));
+      config.apps[appName] = _.merge({}, config.apps[appName], appCfg);
+    } catch (e) {
+      printMsg(e, 'ENOENT', `[ERROR] Loading conf/custom/apps/${appName}.json failed`);
     }
   });
 
   function printMsg(e, code, errMsg, infoMsg) {
     if (e.code !== code) {
       console.error(new Date(), '[ERROR] ' + errMsg, e.code, e.message);
+      if (exitWhenError) {
+        throw e;
+      }
     } else {
       if (infoMsg) {
         console.log('[INFO] ' + infoMsg);
@@ -170,7 +203,7 @@ function loadConfig() {
   if (!config.appsSessionPath) {
     config.appsSessionPath = path.join(config.runDir, './app.mount.info.yaml');
   }
-
+  /*
   function cleanCache(mod) {
     let mPath;
     let cached;
@@ -183,17 +216,18 @@ function loadConfig() {
       // do nothing
     }
   }
-
+  */
   config.reload = function () {
     // cleanCache('./config_default');
     // cleanCache('./config');
-    cleanCache(path.join(installServerRoot, './conf/config_default.js'));
-    cleanCache(path.join(installServerRoot, './conf/config.js'));
+    // cleanCache(path.join(installServerRoot, './conf/config_default.js'));
+    // cleanCache(path.join(installServerRoot, './conf/config.js'));
+    // cleanCache(path.join(installServerRoot, './conf/custom/config.js'));
     gConfig = loadConfig();
   };
   return config;
 }
-let gConfig = loadConfig();
+let gConfig = loadConfig(true);
 
 let configProxy = new Proxy(gConfig, {
   get: (target, key) => {

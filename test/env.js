@@ -14,7 +14,6 @@ let confCommon = path.join(__dirname, '../conf');
 fs.sync().rm(confCommon);
 fs.sync().mkdir(confCommon);
 fs.sync().save(configTmp, fs.readFileSync(configFile));
-fs.sync().mkdir(path.join(__dirname, '../conf/apps'));
 
 const childProcess = require('child_process');
 const fork = childProcess.fork;
