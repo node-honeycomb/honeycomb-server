@@ -1,6 +1,23 @@
 const fs = require('xfs');
 const path = require('path');
 
+// 跨磁盘copy不能用 fs.rename
+function renameFileSavely(absFileOld, absFileNew) {
+  let stats = fs.statSync(absFileOld);
+  if (stats.isDirectory()) {
+    let list = fs.readdirSync(absFileOld);
+    list.forEach((file) => {
+      let oldF = path.join(absFileOld, file);
+      let newF = path.join(absFileNew, file);
+      renameFileSavely(oldF, newF);
+    });
+  } else {
+    let data = fs.readFileSync(absFileOld);
+    fs.sync().save(absFileNew, data);
+    fs.unlinkSync(absFileOld);
+  }
+}
+
 function migrateConfigFile(confPath) {
   let newConfPath = path.join(confPath, 'custom');
   let flag = false;
@@ -14,7 +31,7 @@ function migrateConfigFile(confPath) {
     let absFileOld = path.join(confPath, file);
     let absFileNew = path.join(newConfPath, file);
     if (fs.existsSync(absFileOld) && !fs.existsSync(absFileNew)) {
-      fs.renameSync(absFileOld, absFileNew);
+      renameFileSavely(absFileOld, absFileNew);
       flag = true;
     }
   });
