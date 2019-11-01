@@ -71,9 +71,15 @@ module.exports = {
   appsRoot: '',
   /**
    * app ready timeout
-   * @type {Number}
+   * 在run.js中设置appReadyTimeoutCheck用
+   * 仅作用于node应用
    */
   appReadyTimeout: 60000,
+  /**
+   * service's app ready check max retry
+   * java app always start with long weitting time
+   */
+  appReadyMaxRetry: 3000,
   /**
    * 日志根目录，默认为 $serverRoot/logs
    * @type {String}  abs path
@@ -248,7 +254,17 @@ module.exports = {
      */
     token: '***honeycomb-default-token***',
     signExpire: 30000,
-    serverTimeout: 300000, // 5 min
+    /**
+     * admin端口的service超时时间
+     * @type {Number}
+     * publish接口的超时时间为这个值/2
+     */
+    serverTimeout: 600000,
+    /**
+     * 串行发布，默认为true
+     * @type {Boolean}
+     */
+    seriesPublish: true,
     uploadMaxBody: 800 * 1024 * 1024, // 800m
     gatherUsage: false,
     gatherUsageInterval: 5000,
