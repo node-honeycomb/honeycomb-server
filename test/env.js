@@ -10,6 +10,9 @@ let configFile = path.join(__dirname, '../config/config_test.js');
 let configTmp = path.join(__dirname, '../config/config.js');
 
 let confCommon = path.join(__dirname, '../conf');
+console.log('-----------------');
+console.log('nodejs version:', process.version);
+console.log('-----------------');
 
 fs.sync().rm(confCommon);
 fs.sync().mkdir(confCommon);

@@ -33,8 +33,8 @@ travis-install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
 	@npm install
-	@npm install node@8.9.4
 	@cp nginx_sample.conf nginx.conf
+	@which node
 
 prepare-test: parser
 	@cd example-apps && tar cfz simple-app.tgz simple-app/
