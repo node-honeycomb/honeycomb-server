@@ -1,7 +1,7 @@
 {
   "name": "honeycomb-server",
-  "version": "1.2.5",
-  "build": "2",
+  "version": "2.0.0",
+  "build": "1",
   "description": "Honeycomb, the micro-app's container",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
     "ws": "^3.3.2"
   },
   "engines": {
-    "install-alinode": "3.8.4"
+    "install-alinode": "5.13.0"
   },
   "scripts": {
     "test": "make test"
