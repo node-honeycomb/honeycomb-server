@@ -140,3 +140,4 @@ eslint:
 	@./node_modules/.bin/eslint .
 
 .PHONY: tag install default test test2 test-cov release package eslint parser codecov travis-install
+
