@@ -1046,6 +1046,9 @@ describe('lib/proxy/nginx.js', () => {
     beforeEach(() => {
       mm.restore();
     });
+    afterEach(() => {
+      mm.restore();
+    });
     it('should work fine when workers is empty', (done) => {
       let ng = new Nginx(options);
       mm(child, 'exec', function (cmd, callback) {
@@ -1076,9 +1079,13 @@ describe('lib/proxy/nginx.js', () => {
     it('should work fine when workers when check multi time', (done) => {
       let ng = new Nginx(options);
       let a = 0;
-      mm(child, 'exec', function (cmd, callback) {
+      mm(child, 'exec', function (cmd, opt, callback) {
         a++;
-        callback(null);
+        if (!callback) {
+          callback = opt;
+          opt = {};
+        }
+        callback && callback(null);
       });
       ng.checkNginxProcess([1, 2, 3], 2, () => {
         a.should.eql(3);
