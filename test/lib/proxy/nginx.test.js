@@ -145,6 +145,37 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
+
+    it('should work fine with is app.router = /', (done) => {
+      let options = {
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        ip: '0.0.0.0',
+        port: '80',
+        index: '/abc'
+      };
+      let ng = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/',
+        appId: 'default-app',
+        name: 'default-app',
+        sockList: ['1.sock']
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      ng.register(app, (err) => {
+        let file = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        file.should.match(/location = \/ \{\n\s+return 301 \$scheme:\/\/\$http_host\/abc\$is_args\$args;\n\s+\}/);
+        file.should.match(/location \/ \{\n\s+proxy_http_version 1\.1;\n\s+proxy_pass http:\/\/honeycomb_default-app;\n\s+\}/);
+        ng.exit();
+        done();
+      });
+    });
+
     it('should work fine when register stream app', (done) => {
       let options = {
         nginxBin: nginxBin,
