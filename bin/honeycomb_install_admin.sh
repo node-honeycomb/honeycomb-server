@@ -53,7 +53,7 @@ cp ./honeycomb/bin/assets/install.md $ROOT/
 
 cp ./honeycomb/bin/assets/crontab_clear_logs $ROOT/bin/
 
-cp ./honeycomb/bin/gen_pwd $ROOT/bin/
+# cp ./honeycomb/bin/gen_pwd $ROOT/bin/
 
 export PATH=$ROOT/target/honeycomb/node_modules/.bin/:$PATH
 
