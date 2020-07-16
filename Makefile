@@ -21,12 +21,11 @@ clean:
 
 parser:
 	@./node_modules/.bin/pegjs -o common/nginx_config_parser.js common/nginx_config_parser.pegjs
+
 install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
 	@npm install --registry=https://registry.npm.taobao.org
-	@npm install nodeinstall --registry=https://registry.npm.taobao.org
-	@./node_modules/.bin/nodeinstall .
 	@cp nginx_sample.conf nginx.conf
 
 travis-install: clean
@@ -80,25 +79,23 @@ test2: prepare-test
 
 test-cov:
 	@rm -rf coverage
-	@./node_modules/.bin/istanbul cover \
+	@${BIN_NYC} \
 		-x 'config/config.js' \
 		-x 'common/nginx_config_parser.js' \
-		--include-pid \
-		--reporter=lcov \
-		./node_modules/mocha/bin/_mocha --\
+		--reporter=lcovonly \
+		$(BIN_MOCHA) \
 		--recursive \
 		--exit \
 		-t 30000 \
 		-R spec \
 		-r ./test/env.js \
 		$(TESTS)
-	@./node_modules/.bin/istanbul report --reporter=lcovonly
 	@rm -rf ./config/config.js
 
 codecov:travis-install eslint prepare-test test-cov
 
 release-prepare:
-	@echo 'Copy files'
+	@echo 'copy files'
 	@mkdir -p $(RELEASE_DIR)
 	@if [ `echo $$OSTYPE | grep -c 'darwin'` -eq 1 ]; then \
 		cp -r $(RELEASE_COPY) $(RELEASE_DIR); \
@@ -108,10 +105,8 @@ release-prepare:
 
 	@cp package.json $(RELEASE_DIR)
 	@cp dispatch.js $(RELEASE_DIR)
-
-	@cd $(RELEASE_DIR) && npm install --production --registry=https://registry.npm.taobao.org
-	@npm install nodeinstall --registry=https://registry.npm.taobao.org
-	@cd $(RELEASE_DIR) && ../../node_modules/.bin/nodeinstall .
+	@echo "install node_modules"
+	@cd $(RELEASE_DIR) && npm install --production --registry=https://registry.npm.taobao.org .
 	@rm -rf $(RELEASE_DIR)/tests
 	@rm -rf $(RELEASE_DIR)/example-apps
 	@echo "all codes in \"$(RELEASE_DIR)\""

@@ -4,12 +4,12 @@ node_js:
   - "8"
   - "10"
   - "12"
-before_install:
-  - sudo apt-get install -y nginx
-  - npm install codecov
+
 install:
+  - sudo apt-get install -y nginx
+  - npm install -g codecov
   - which nginx
+
 script:
   - make codecov
-after_script:
-  - ./node_modules/.bin/codecov
+  - codecov
