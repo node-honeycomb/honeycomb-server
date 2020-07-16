@@ -15,7 +15,7 @@
 
 安装包文件名： `honeycomb-server_${version}_${buildNumber}.tgz`
 
-- 如： `honeycomb-server_2.2.1_2.tgz`
+- 如： `honeycomb-server_1.0.0_1.tgz`
 
 ### 3. 上传至服务器后解压
 
