@@ -45,9 +45,6 @@
     "supertest": "^3.0.0",
     "ws": "^3.3.2"
   },
-  "engines": {
-    "install-alinode": "3.8.4"
-  },
   "scripts": {
     "test": "make test"
   },
