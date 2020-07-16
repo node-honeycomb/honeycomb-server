@@ -105,35 +105,41 @@ module.exports = {
   logFilePatterns: [
     {
       // app-usage.2016-12-26-22.log
-      match: /(^[^\/]+)\.\d{4}-\d{2}-\d{2}-\d{2}\.log$/,
+      match: /^([\w-.]+)\.\d{4}-\d{2}-\d{2}-\d{2}\.log$/,
       pattern: '$1.{year}-{month}-{day}-{hour}.log'
     },
     {
       // server.2016-12-26.log
       // access.2016-12-26.log
-      match: /(^[^\/]+)\.\d{4}-\d{2}-\d{2}\.log$/,
+      match: /^([\w-.]+)\.\d{4}-\d{2}-\d{2}\.log$/,
       pattern: '$1.{year}-{month}-{day}.log'
     },
     {
       // access-20161226.log
       // node-20161226.log
-      match: /(^[^\/]+)-\d{8}\.log/,
+      match: /^([\w-.]+)-\d{8}\.log/,
       pattern: '$1-{year}{month}{day}.log'
     },
     {
       // admin/sys.2016-12-26.log
-      match: /(^\.*[^\/]+)\/(\.*[^\/]+)\.\d{4}-\d{2}-\d{2}\.log$/,
+      match: /^([\w-.]+)\/([\w-.]+)\.\d{4}-\d{2}-\d{2}\.log$/,
       pattern: '$1/$2.{year}-{month}-{day}.log'
     },
     {
-      // admin/test/sys.2016-12-26.log
-      match: /(^\.*[^\/]+)\/(\.*[^\/]+)\/(\.*[^\/]+)\.\d{4}-\d{2}-\d{2}\.log$/,
-      pattern: '$1/$2/$3.{year}-{month}-{day}.log'
+      // admin/app-usage.2016-12-26-22.log
+      // admin/access-2016-12-26.log
+      match: /^([\w-.]+)\/([\w-.]+)(\.|\-)\d{4}-\d{2}-\d{2}-\d{2}\.log$/,
+      pattern: '$1/$2$3{year}-{month}-{day}-{hour}.log'
     },
     {
-      // admin/access-2016-12-26.log
-      match: /(^\.*[^\/]+)\/(\.*[^\/]+)\-\d{4}-\d{2}-\d{2}\.log$/,
-      pattern: '$1/$2-{year}-{month}-{day}.log'
+      // admin/app-usage.2016.12.26.log
+      match: /^([\w-.]+)\/(^[\w-.]+)\.\d{4}-\d{2}-\d{2}-\d{2}\.log$/,
+      pattern: '$1/$2.{year}-{month}-{day}-{hour}.log'
+    },
+    {
+      // admin/test/sys.2016-12-26.log
+      match: /^([\w-.]+)\/([\w-.]+)\/([\w-.]+)\.\d{4}-\d{2}-\d{2}\.log$/,
+      pattern: '$1/$2/$3.{year}-{month}-{day}.log'
     }
   ],
   /**
