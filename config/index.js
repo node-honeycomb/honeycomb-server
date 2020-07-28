@@ -135,10 +135,10 @@ function loadConfig(exitWhenError) {
    * when call master.getAppConfig, so do not merge here
    * because app's common config will be modified too
    */
-  /* istanbul ignore if *
+  /* istanbul ignore if */
   if (!config.apps) {
     config.apps = {};
-  }*/
+  }
 
   let appsCfgFiles = [];
   let appsCfgPath;
