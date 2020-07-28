@@ -2,6 +2,9 @@
 const _ = require('lodash');
 const mkdirp = require('mkdirp');
 const crypto = require('crypto');
+const path = require('path');
+const fs = require('xfs');
+const tar = require('tar');
 const childProcess = require('child_process');
 
 exports.mkdirp = function (dir, mode) {
@@ -289,3 +292,15 @@ exports.fixPath = function (p) {
 };
 
 exports.checkAppName = exports.checkAppId;
+
+exports.untar = function (file, cwd, done) {
+  tar.x({
+    file: path.join(cwd, file),
+    cwd: cwd
+  }, null, (err) => {
+    if (err) {
+      fs.sync().rm(path.join(cwd, file).replace(/\.tgz$/, ''));
+    }
+    done(err);
+  });
+};
