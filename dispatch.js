@@ -11,7 +11,6 @@ if (flag) {
 const master = new Master(config);
 
 process.chdir(__dirname);
-process.execPath = './node_modules/.bin/node';
 
 log.info('====================');
 log.info('starting server');
@@ -20,7 +19,7 @@ log.info('====================');
 master.on('ready', () => {
   master.run(function (err) {
     if (err) {
-      log.error('server start failed, err: ', err);
+      console.error('server start failed, err: ', err.stack); // eslint-disable-line
       process.exit(1);
     } else {
       log.info('server start success', `http://${config.host || '127.0.0.1'}:${config.proxy.port}`);
