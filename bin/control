@@ -220,7 +220,7 @@ function list() {
       utils.callremote(path, {method: 'GET', ips: [ip]}, cb);
     },
     usages: (cb) => {
-      let path = `/api/single/appUsage?fileName=app-usage.${currHour()}.log`;
+      let path = `/api/single/appUsage?file=app-usage.${currHour()}.log`;
       utils.callremote(path, {method: 'GET', ips: [ip]}, cb);
     }
   }, (err, results) => {
