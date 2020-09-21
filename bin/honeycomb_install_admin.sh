@@ -43,7 +43,7 @@ tar xfz ./honeycomb.tgz
 ## init config file
 if [ ! -f $ROOT/conf/config_default.js ]; then
   cp ./honeycomb/bin/assets/global_config_sample.js $ROOT/conf/config_default.js
-  ./honeycomb/node_modules/.bin/node ./honeycomb/bin/gen_config.js $ROOT/conf/config_default.js
+  node ./honeycomb/bin/gen_config.js $ROOT/conf/config_default.js
 fi
 
 ## init bin script
