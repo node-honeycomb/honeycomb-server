@@ -19,7 +19,7 @@ describe('api_coredump.test.js', () => {
 
   it('should list coredump', (done) => {
     // mock file
-    fs.sync().save(path.join(__dirname, '../../../core.123'));
+    fs.sync().save(path.join(__dirname, '../../../core.123'), '');
     common.checkCoreDump(agent, ips)
       .expect(200)
       .expect('content-type', /application\/json/)
@@ -34,7 +34,7 @@ describe('api_coredump.test.js', () => {
       .end(done);
   });
   it('should delete coredump', (done) => {
-    fs.sync().save(path.join(__dirname, '../../../core.123'));
+    fs.sync().save(path.join(__dirname, '../../../core.123'), '');
     common.deleteCoreDump(agent, ips, {files: 'core.123'})
       .expect(200)
       .expect('content-type', /application\/json/)
