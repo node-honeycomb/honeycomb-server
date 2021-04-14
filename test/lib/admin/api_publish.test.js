@@ -25,7 +25,8 @@ describe('app_publish.test.js', () => {
       (done) => common.deleteApp(agent, ips, 'noenter-app').end(done),
       (done) => common.deleteApp(agent, ips, 'norun-app').end(done),
       (done) => common.deleteApp(agent, ips, 'timeout-app').end(done),
-      (done) => common.deleteApp(agent, ips, 'java-app').end(done)
+      (done) => common.deleteApp(agent, ips, 'java-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'exenoent-app').end(done)
     ], done);
   });
   describe('publish api', () => {
@@ -175,6 +176,21 @@ describe('app_publish.test.js', () => {
           data.error[0].message.should.match(/unexpect_worker_exit/);
         })
         .end(done);
+    });
+    it('should return error when app illegal', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'exenoent-app.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(0);
+          data.error.length.should.eql(1);
+          data.error[0].message.should.match(/spawn noent-exec ENOENT/);
+        }).end(() => {
+          let m = common.getMaster();
+          let child = m.getChild('exenoent-app');
+          ['offline', 'stopping'].indexOf(child.status).should.above(-1);
+          done();
+        });
     });
     it('should return error when app ready timeout', (done) => {
       let date = new Date();
