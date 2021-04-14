@@ -56,6 +56,7 @@ prepare-test: parser
 	@cd example-apps && tar cfz reload-app_1.0.0_1.tgz reload-app_1.0.0_1/
 	@cd example-apps && tar cfz java-app.tgz java-app/
 	@cd example-apps && tar cfz java-port-app.tgz java-port-app/
+	@cd example-apps && tar cfz exenoent-app.tgz exenoent-app/
 
 test: eslint prepare-test
 	@$(BIN_MOCHA) \

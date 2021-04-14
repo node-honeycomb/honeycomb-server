@@ -1,0 +1,16 @@
+{
+  "main": "index.js",
+  "honeycomb": {
+    "processorNum": 1,
+    "service": {
+      "exec": "noent-exec",
+      "cwd": "./",
+      "env": {
+        "JAVA_TEST": "abc.${serverRoot}"
+      },
+      "argv": ["-jar", "-DLOG_PATH=${appRoot}", "${main}"],
+      "type": "stream",
+      "bind": "9090"
+    }
+  }
+}
