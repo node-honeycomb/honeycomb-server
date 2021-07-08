@@ -41,7 +41,7 @@
     "pegjs": "0.10.0",
     "should": "^11.1.1",
     "supertest": "^3.0.0",
-    "ws": "^3.3.2"
+    "ws": "^5.2.3"
   },
   "scripts": {
     "test": "make test"
