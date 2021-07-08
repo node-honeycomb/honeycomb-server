@@ -18,5 +18,4 @@ tests/mock/mount/hello.mount.info.yaml
 .nyc_output
 /nginx.conf
 .vscode/
-package-lock.json
 /node
