@@ -2,7 +2,7 @@
 
 honeycomb-server is a micro web-app container for Node.js app.
 
-[![Build Status](https://travis-ci.org/node-honeycomb/honeycomb-server.svg?branch=master)](https://travis-ci.org/node-honeycomb/honeycomb-server)
+[![Node.js CI](https://github.com/node-honeycomb/honeycomb-server/actions/workflows/node.js.yml/badge.svg)](https://github.com/node-honeycomb/honeycomb-server/actions/workflows/node.js.yml)
 [![Test coverage](https://img.shields.io/codecov/c/github/node-honeycomb/honeycomb-server.svg?style=flat-square)](https://codecov.io/gh/node-honeycomb/honeycomb-server)
 [![snyk status](https://snyk.io/test/github/node-honeycomb/honeycomb-server/badge.svg?style=flat-square)](https://snyk.io/test/github/node-honeycomb/honeycomb-server)
 [![dependencies status](https://david-dm.org/node-honeycomb/honeycomb-server/status.svg)](https://david-dm.org/node-honeycomb/honeycomb-server)
