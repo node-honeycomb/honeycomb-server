@@ -49,7 +49,7 @@ describe('app_router.test.js', () => {
             ws.send('websocket-test');
           });
           ws.on('message', function incoming(data) {
-            data.should.match(/websocket\-test/);
+            data.toString().should.match(/websocket\-test/);
             done();
           });
         });
