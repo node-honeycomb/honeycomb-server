@@ -4,7 +4,8 @@ const mkdirp = require('mkdirp');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('xfs');
-const tar = require('tar');
+const tar = require('tar-fs');
+const zlib = require('zlib');
 const childProcess = require('child_process');
 
 exports.mkdirp = function (dir, mode) {
@@ -294,6 +295,29 @@ exports.fixPath = function (p) {
 exports.checkAppName = exports.checkAppId;
 
 exports.untar = function (file, cwd, done) {
+  let pkgStream;
+  if (fs.existsSync(path.join(cwd, file))) {
+    pkgStream = fs.createReadStream(path.join(cwd, file));
+  } else {
+    return done(new Error('pkg not found:' + file));
+  }
+  let gunzipStream = zlib.createGunzip();
+  let tarStream = tar.extract(cwd);
+
+  let flagCb = false;
+  function cb(err) {
+    if (flagCb) {
+      return;
+    }
+    flagCb = true;
+    done(err);
+  }
+  tarStream.on('error', cb);
+  tarStream.on('finish', cb);
+
+  pkgStream.pipe(gunzipStream).pipe(tarStream);
+
+  /*
   tar.x({
     file: path.join(cwd, file),
     cwd: cwd
@@ -303,4 +327,5 @@ exports.untar = function (file, cwd, done) {
     }
     done(err);
   });
+  */
 };
