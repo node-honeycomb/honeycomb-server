@@ -1,6 +1,6 @@
 {
   "name": "honeycomb-server",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "build": "1",
   "description": "Honeycomb, the micro-app's container",
   "repository": {
@@ -27,7 +27,7 @@
     "pidusage": "2.0.18",
     "randomatic": "3.1.0",
     "tar-fs": "^2.1.1",
-    "urllib": "2.37.1",
+    "urllib": "2.37.4",
     "uuid": "3.3.2",
     "xfs": "0.2.6",
     "yamljs": "0.3.0"
