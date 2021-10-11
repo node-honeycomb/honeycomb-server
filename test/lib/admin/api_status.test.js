@@ -41,4 +41,16 @@ describe('api_status.test.js', () => {
       })
       .end(done);
   });
+  it('should get system status success', function (done) {
+    common.ping(agent, ips)
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        let data = res.body.data;
+        data.success.length.should.eql(1);
+        data.error.length.should.eql(0);
+        data.success[0].data.should.have.properties(['serverTime', 'cluster']);
+      })
+      .end(done);
+  });
 });

@@ -253,6 +253,11 @@ exports.status = (superAgent, ips) => {
   return commonGet(superAgent, url);
 };
 
+exports.ping = (superAgent, ips) => {
+  let url = `/api/ping?ips=${ips}`;
+  return commonGet(superAgent, url);
+};
+
 exports.healthCheck = (superAgent, ips) => {
   let url = `/status`;
   return commonGet(superAgent, url);
