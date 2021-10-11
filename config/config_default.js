@@ -280,6 +280,7 @@ module.exports = {
     hooks: {
       publish: null
     },
+    cluster: '',
     /**
      * single api 切割日志，以该正则来识别是否新一条日志
      * 注意正则中的匹配，必须为 x:y:z
