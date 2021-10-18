@@ -248,4 +248,52 @@ describe('api_log.test.js', () => {
       .end(done);
   });
 
+  it('should return 404 when fileName illegal', function (done) {
+    let fileName = `../../server.${moment().format('YYYY-MM-DD')}.log`;
+    common.downloadLog(agent, ips, fileName)
+      .expect(404)
+      .end(done);
+  });
+  it('should return error when fileName not found', function (done) {
+    let fileName = `server1.${moment().format('YYYY-MM-DD')}.log`;
+    common.downloadLog(agent, ips, fileName)
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        res.body.code.should.eql('ERROR');
+        res.body.message.should.match(/log file not found/);
+      })
+      .end(done);
+  });
+  it('should return error when fileName is a dir', function (done) {
+    let fileName = `abc`;
+    fs.sync().mkdir(path.join(__dirname, '../../../logs/abc'));
+    common.downloadLog(agent, ips, fileName)
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        res.body.code.should.eql('ERROR');
+        res.body.message.should.match(/log file not found/);
+        fs.sync().rm(path.join(__dirname, '../../../logs/abc'));
+      })
+      .end(done);
+  });
+
+  it('should download log success with single ip', function (done) {
+    let fileName = `server.${moment().format('YYYY-MM-DD')}.log`;
+    common.downloadLog(agent, ips, fileName)
+      .expect(200)
+      .expect('content-type', /application\/octet-stream/)
+      .end(done);
+  });
+
+  it('should download log success with ips', function (done) {
+    let fileName = `server.${moment().format('YYYY-MM-DD')}.log`;
+    const ips = '127.0.0.1,localhost';
+    common.downloadLog(agent, ips, fileName)
+      .expect(200)
+      .expect('content-type', /application\/octet-stream/)
+      .end(done);
+  });
+
 });

@@ -199,6 +199,11 @@ function loadConfig(exitWhenError) {
   if (!config.logsRoot) {
     config.logsRoot = path.join(config.serverRoot, './logs');
   }
+
+  // 日志文件下载限速 单位 bytes per second
+  if (!config.logFileDownloadRate) {
+    config.logFileDownloadRate = 500 * 1024;
+  }
   /* istanbul ignore if */
   if (!config.appsSessionPath) {
     config.appsSessionPath = path.join(config.runDir, './app.mount.info.yaml');
