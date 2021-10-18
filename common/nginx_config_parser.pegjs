@@ -84,11 +84,20 @@ comment = w:__ '#' v:([^\r\n]*) {
   }
 }
 
+script_line
+  = _ v:$([^{}\r\n]+) _ end {
+    return {
+      key: '',
+      value: v,
+      type: 'script_line'
+    }
+ }
+
 // 值项
 single_value = literal_string / literal_value
 
 block
-  = block_open __ cmt:(comment end / end)? sts:(statement*) _ block_close {
+  = block_open __ cmt:(comment end / end)? sts:((statement/script_line)*) _ block_close {
     return {
       type: 'block',
       statements: sts,
