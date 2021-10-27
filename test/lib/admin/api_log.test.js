@@ -296,4 +296,13 @@ describe('api_log.test.js', () => {
       .end(done);
   });
 
+  it('should return error when fileName not found and with ips', function (done) {
+    let fileName = `abc`;
+    const ips = '127.0.0.1,localhost';
+    common.downloadLog(agent, ips, fileName)
+      .expect(200)
+      .expect('content-type', /application\/octet-stream/)
+      .end(done);
+  });
+
 });
