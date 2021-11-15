@@ -21,6 +21,11 @@ module.exports = {
    */
   name: 'honeycomb-server',
   /**
+   * clusterName，server的ping接口会用其判断集群是否一致
+   * 也可以通过process.env.HONEYCOMB_CLUSTER 来传递
+   */
+  cluster: '',
+  /**
    * debug flag
    */
   debug: true,
@@ -280,7 +285,6 @@ module.exports = {
     hooks: {
       publish: null
     },
-    cluster: '',
     /**
      * single api 切割日志，以该正则来识别是否新一条日志
      * 注意正则中的匹配，必须为 x:y:z

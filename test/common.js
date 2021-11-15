@@ -258,8 +258,8 @@ exports.status = (superAgent, ips) => {
   return commonGet(superAgent, url);
 };
 
-exports.ping = (superAgent, ips) => {
-  let url = `/api/ping?ips=${ips}`;
+exports.ping = (superAgent, ips, cluster) => {
+  let url = `/api/ping?ips=${ips}&clusterCode=${cluster}`;
   return commonGet(superAgent, url);
 };
 
