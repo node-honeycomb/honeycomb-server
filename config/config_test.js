@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = {
   debug: false,
+  cluster: 'test',
   logs: {
     sys: {
       level: 'DEBUG',
