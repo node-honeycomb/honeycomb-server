@@ -248,10 +248,15 @@ describe('api_log.test.js', () => {
       .end(done);
   });
 
-  it('should return 404 when fileName illegal', function (done) {
+  it('should return error when fileName illegal', function (done) {
     let fileName = `../../server.${moment().format('YYYY-MM-DD')}.log`;
     common.downloadLog(agent, ips, fileName)
-      .expect(404)
+      .expect(200)
+      .expect('content-type', /application\/json/)
+      .expect(function (res) {
+        res.body.code.should.eql('ERROR');
+        res.body.message.should.match(/logpath illegal/);
+      })
       .end(done);
   });
   it('should return error when fileName not found', function (done) {

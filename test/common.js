@@ -249,7 +249,7 @@ exports.getLog = (superAgent, ips, query) => {
 };
 
 exports.downloadLog = (superAgent, ips, fileName) => {
-  let url = `/api/log/${fileName}?ips=${ips}`;
+  let url = `/api/downloadLogFile?ips=${ips}&file=${fileName}`;
   return commonGet(superAgent, url);
 };
 
