@@ -301,9 +301,6 @@ exports.untar = function (file, cwd, done) {
   } else {
     return done(new Error('pkg not found:' + file));
   }
-  let gunzipStream = zlib.createGunzip();
-  let tarStream = tar.extract(cwd);
-
   let flagCb = false;
   function cb(err) {
     if (flagCb) {
@@ -312,20 +309,11 @@ exports.untar = function (file, cwd, done) {
     flagCb = true;
     done(err);
   }
+  let gunzipStream = zlib.createGunzip();
+  gunzipStream.on('error', cb);
+  let tarStream = tar.extract(cwd);
   tarStream.on('error', cb);
   tarStream.on('finish', cb);
 
   pkgStream.pipe(gunzipStream).pipe(tarStream);
-
-  /*
-  tar.x({
-    file: path.join(cwd, file),
-    cwd: cwd
-  }, null, (err) => {
-    if (err) {
-      fs.sync().rm(path.join(cwd, file).replace(/\.tgz$/, ''));
-    }
-    done(err);
-  });
-  */
 };
