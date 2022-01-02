@@ -8,6 +8,7 @@ const ip = require('ip').address();
 const supertest = require('supertest');
 const utils = require('../../common/utils');
 const message = require('../../lib/message');
+const messageWorker = require('../../lib/message_worker');
 const common = require('../common');
 const Master = require('../../lib/master');
 
@@ -121,7 +122,7 @@ describe('lib/master.js', function () {
     });
     it('should work fine when appId forbidden to unmount', function (done) {
       master.$unmount('__ADMIN__', function (err) {
-        err.code.should.eql('APP_FORBIDDEN_MOUNT');
+        err.code.should.eql('APP_NOT_MOUNTED');
         done();
       });
     });
@@ -144,9 +145,9 @@ describe('lib/master.js', function () {
 
   describe('test $restartAdmin', () => {
     it('should work fine', (done) => {
-      let oldPid = master.admin.getPid()[0];
+      let oldPid = master.admin.getTid()[0];
       master.$restartAdmin((err) => {
-        let newPid = master.admin.getPid()[1];
+        let newPid = master.admin.getTid()[1];
         should(err).eql(null);
         oldPid.should.not.eql(newPid);
         done();
@@ -185,20 +186,22 @@ describe('lib/master.js', function () {
         cb(null, 'hello');
       };
 
-      let proc = master.admin.getFirstWorker();
-      let msg = message.genMessage({
+      let thread = master.admin.getFirstWorker();
+      let workerAdmin = master.getWorker('__ADMIN__');
+      workerAdmin.appId.should.eql('__ADMIN__');
+      let msg = messageWorker.genMessage({
         action: '$test',
         data: 123,
-        target: proc,
+        target: thread,
       });
-      mm(proc, 'send', function (cbmsg) {
+      mm(thread, 'postMessage', function (cbmsg) {
         cbmsg._id.should.eql(msg._id);
-        cbmsg.action.should.eql(message.getCallbackActionName());
+        cbmsg.action.should.eql(messageWorker.getCallbackActionName());
         cbmsg.data.should.eql('hello');
         mm.restore();
         done();
       });
-      proc.emit('message', msg);
+      thread.emit('message', msg);
     });
 
     it('should work fine when app_message called with arguments', function (done) {
@@ -207,20 +210,20 @@ describe('lib/master.js', function () {
         cb(null, 'hello');
       };
 
-      let proc = master.admin.getFirstWorker();
+      let thread = master.admin.getFirstWorker();
       let msg = message.genMessage({
         action: '$test',
         arguments: [123],
-        target: proc,
+        target: thread,
       });
-      mm(proc, 'send', function (cbmsg) {
+      mm(thread, 'postMessage', function (cbmsg) {
         cbmsg._id.should.eql(msg._id);
         cbmsg.action.should.eql(message.getCallbackActionName());
         cbmsg.data.should.eql('hello');
         mm.restore();
         done();
       });
-      proc.emit('message', msg);
+      thread.emit('message', msg);
     });
 
     it('should work fine when app_message called without args', function (done) {
@@ -228,34 +231,34 @@ describe('lib/master.js', function () {
         cb(null, 'hello');
       };
 
-      let proc = master.admin.getFirstWorker();
+      let thread = master.admin.getFirstWorker();
       let msg = message.genMessage({
         action: '$test',
-        target: proc,
+        target: thread,
       });
-      mm(proc, 'send', function (cbmsg) {
+      mm(thread, 'postMessage', function (cbmsg) {
         cbmsg._id.should.eql(msg._id);
         cbmsg.action.should.eql(message.getCallbackActionName());
         cbmsg.data.should.eql('hello');
         mm.restore();
         done();
       });
-      proc.emit('message', msg);
+      thread.emit('message', msg);
     });
     it('should work fine when app_message called no exists func', function (done) {
-      let proc = master.admin.getFirstWorker();
+      let thread = master.admin.getFirstWorker();
       let msg = message.genMessage({
         action: '$no-exists',
-        target: proc,
+        target: thread,
       });
-      mm(proc, 'send', function (cbmsg) {
+      mm(thread, 'postMessage', function (cbmsg) {
         cbmsg._id.should.eql(msg._id);
         cbmsg.action.should.eql(message.getCallbackActionName());
         cbmsg.error.should.eql('unknow rpc call: $no-exists');
         mm.restore();
         done();
       });
-      proc.emit('message', msg);
+      thread.emit('message', msg);
     });
 
     it('should work fine when emit app_exit', function () {
@@ -395,6 +398,15 @@ describe('lib/master.js', function () {
           fs.sync().rm(path.join(appsRoot, 'simple-app'));
           done();
         });
+      });
+    });
+
+    it('$restartAdmin() should work fine when reload admin', (done) => {
+      let oldTids = master.admin.getTid();
+      master.$restartAdmin(() => {
+        let newTids = master.admin.getTid();
+        newTids[0].should.above(oldTids[0]);
+        done();
       });
     });
   });
