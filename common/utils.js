@@ -138,13 +138,75 @@ exports.genWeight = function (version, buildNum) {
   return weight;
 };
 
-exports.encrypt = function (data, key) {
+/**
+ * ***********************************************************************
+ * CreateCipher to createCipheriv migration script
+ * Compute key+IV from passphrase
+ * from https://gist.github.com/bnoordhuis/2de2766d3d3a47ebe41aaaec7e8b14df
+ */
+function sizes(cipher) {
+  for (let nkey = 1, niv = 0; ;) {
+    try {
+      crypto.createCipheriv(cipher, '.'.repeat(nkey), '.'.repeat(niv));
+      return [nkey, niv];
+    } catch (e) {
+      if (/(invalid iv length|Invalid initialization vector)/i.test(e.message)) {
+        niv += 1;
+      } else if (/invalid key length/i.test(e.message)) {
+        nkey += 1;
+      } else {
+        throw e;
+      }
+    }
+  }
+}
+function computeKeyAndIvFromPwd(cipher, passphrase) {
+  let [nkey, niv] = sizes(cipher);
+  for (let key = '', iv = '', p = ''; ;) {
+    const h = crypto.createHash('md5');
+    h.update(p, 'hex');
+    h.update(passphrase);
+    p = h.digest('hex');
+    let n = 0;
+    let i = 0;
+    n = Math.min(p.length - i, 2 * nkey);
+    nkey -= n / 2, key += p.slice(i, i + n), i += n;
+    n = Math.min(p.length - i, 2 * niv);
+    niv -= n / 2, iv += p.slice(i, i + n), i += n;
+    if (nkey + niv === 0) {
+      return [key, iv];
+    }
+  }
+}
+/**
+ *************************************************************************
+ */
+exports.encrypt = function (data, key, iv) {
+  if (!iv) {
+    let tmp = computeKeyAndIvFromPwd('aes-256-cbc', key);
+    key = Buffer.from(tmp[0], 'hex');
+    iv = Buffer.from(tmp[1], 'hex');
+  }
+  var cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+  cipher.setAutoPadding(true);
+  return cipher.update(data, 'utf8', 'base64') + cipher.final('base64');
+};
+exports.encryptOld = function (data, key) {
   var cipher = crypto.createCipher('aes-256-cbc', key);
   cipher.setAutoPadding(true);
   return cipher.update(data, 'utf8', 'base64') + cipher.final('base64');
 };
-
-exports.decrypt = function (data, key) {
+exports.decrypt = function (data, key, iv) {
+  if (!iv) {
+    let tmp = computeKeyAndIvFromPwd('aes-256-cbc', key);
+    key = Buffer.from(tmp[0], 'hex');
+    iv = Buffer.from(tmp[1], 'hex');
+  }
+  var decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+  decipher.setAutoPadding(true);
+  return decipher.update(data, 'base64', 'utf8') + decipher.final('utf8');
+};
+exports.decryptOld = function (data, key) {
   var decipher = crypto.createDecipher('aes-256-cbc', key);
   decipher.setAutoPadding(true);
   return decipher.update(data, 'base64', 'utf8') + decipher.final('utf8');
@@ -199,7 +261,7 @@ exports.decryptObject = function (obj, secret, prefixDecode) {
       if (v && type === 'object') {
         exports.decryptObject(v, secret, prefixDecode);
       } else if (type === 'string' && v.startsWith(prefixDecode)) {
-        a[i] = exports.decrypt(v.substr(prefixDecode.length), secret, prefixDecode);
+        a[i] = exports.decrypt(v.substr(prefixDecode.length), secret);
       }
     });
   } else {

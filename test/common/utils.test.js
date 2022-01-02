@@ -146,6 +146,39 @@ describe('common/utils,', function () {
     });
   });
 
+  describe('encrypt & encrypt', () => {
+    it('should work fine with long pwd', function () {
+      let pwd = '***honeycomb-default-secret***';
+      let enStrOld = utils.encryptOld('abc', pwd);
+      let enStrNew = utils.encrypt('abc', pwd);
+      enStrOld.should.eql(enStrNew);
+      enStrOld.should.eql(enStrNew);
+      let data = utils.decryptOld(enStrNew, pwd);
+      let data2 = utils.decrypt(enStrNew, pwd);
+      data.should.eql('abc');
+      data2.should.eql(data);
+    });
+    it('should work fine with short pwd', function () {
+      let pwd = 'abc';
+      let enStrOld = utils.encryptOld('abc', pwd);
+      let enStrNew = utils.encrypt('abc', pwd);
+      enStrOld.should.eql(enStrNew);
+      let data = utils.decryptOld(enStrNew, pwd);
+      let data2 = utils.decrypt(enStrNew, pwd);
+      data.should.eql('abc');
+      data2.should.eql(data);
+    });
+
+    it('should work fine with iv', function () {
+      let crypto = require('crypto');
+      let key = crypto.randomBytes(32);
+      let iv = crypto.randomBytes(16);
+      let enStr = utils.encrypt('abc', key, iv);
+      let data = utils.decrypt(enStr, key, iv);
+      data.should.eql('abc');
+    });
+  });
+
   describe('encryptObject & decryptObject', () => {
     let pwd = 'addfsdfhwqefqwfg';
     it('should work fine with null', function () {
