@@ -25,7 +25,7 @@ parser:
 install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
-	@npm install --registry=https://registry.npm.taobao.org
+	@npm install --registry=https://registry.npmmirror.com
 	@cp nginx_sample.conf nginx.conf
 
 travis-install: clean
@@ -107,7 +107,7 @@ release-prepare:
 	@cp package.json $(RELEASE_DIR)
 	@cp dispatch.js $(RELEASE_DIR)
 	@echo "install node_modules"
-	@cd $(RELEASE_DIR) && npm install --production --registry=https://registry.npm.taobao.org .
+	@cd $(RELEASE_DIR) && npm install --production --registry=https://registry.npmmirror.com .
 	@rm -rf $(RELEASE_DIR)/tests
 	@rm -rf $(RELEASE_DIR)/example-apps
 	@echo "all codes in \"$(RELEASE_DIR)\""
