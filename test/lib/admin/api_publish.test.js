@@ -70,6 +70,56 @@ describe('app_publish.test.js', () => {
           done(err);
         });
     });
+    it('should publish job-app successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'job-app.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(1);
+          data.error.length.should.eql(0);
+        })
+        .end((err) => {
+          let master = common.getMaster();
+          let child = master.getChild('job-app');
+          Object.keys(child.workers).length.should.eql(1);
+          let tt = new Date();
+          let t0 = require('litelog').getTime(tt, '%Y-%m-%d');
+          let logFile = path.join(master.config.logsRoot, `job-app/stdout.${t0}.log`);
+          let dd = fs.readFileSync(logFile).toString();
+          let lines = dd.trim().split(/\n/);
+          let t1 = require('litelog').getTime(tt, '%Y%m%d-%H');
+          let lastlog = lines.pop();
+          lastlog.indexOf(t1).should.eql(0);
+          lastlog.indexOf(master.config.serverRoot).should.above(0);
+          child.status.should.eql('online');
+          common.stopApp(agent, ips, 'job-app')
+            .expect(200)
+            .expect((res) => {
+              let data = res.body.data;
+              data.success.length.should.eql(1);
+              data.error.length.should.eql(0);
+            }).end((err) => {
+              let child = common.getMaster().getChild('job-app');
+              should(child).eql(undefined);
+              done(err)
+            })
+        });
+    });
+    it('should publish job-exception-app successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'job-exception-app.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(0);
+          data.error.length.should.eql(1);
+        })
+        .end((err) => {
+          let master = common.getMaster();
+          let child = master.getChild('job-exception-app');
+          should(child).eql(undefined);
+          done(err);
+        });
+    });
     it('should publish java app successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'java-app.tgz'))
         .expect(200)
@@ -177,7 +227,7 @@ describe('app_publish.test.js', () => {
         })
         .end(done);
     });
-    it('should return error when app illegal', (done) => {
+    it('should return error when app illegal2', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'exenoent-app.tgz'))
         .expect(200)
         .expect((res) => {
@@ -188,7 +238,7 @@ describe('app_publish.test.js', () => {
         }).end(() => {
           let m = common.getMaster();
           let child = m.getChild('exenoent-app');
-          ['offline', 'stopping'].indexOf(child.status).should.above(-1);
+          should(child).eql(undefined);
           done();
         });
     });

@@ -25,7 +25,7 @@ parser:
 install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
-	@npm install --registry=https://registry.npm.taobao.org
+	@npm install --registry=https://registry.npmmirror.com
 	@cp nginx_sample.conf nginx.conf
 
 travis-install: clean
@@ -57,6 +57,8 @@ prepare-test: parser
 	@cd example-apps && tar cfz java-app.tgz java-app/
 	@cd example-apps && tar cfz java-port-app.tgz java-port-app/
 	@cd example-apps && tar cfz exenoent-app.tgz exenoent-app/
+	@cd example-apps && tar cfz job-app.tgz job-app/
+	@cd example-apps && tar cfz job-exception-app.tgz job-exception-app/
 
 test: eslint prepare-test
 	@$(BIN_MOCHA) \
@@ -107,7 +109,7 @@ release-prepare:
 	@cp package.json $(RELEASE_DIR)
 	@cp dispatch.js $(RELEASE_DIR)
 	@echo "install node_modules"
-	@cd $(RELEASE_DIR) && npm install --production --registry=https://registry.npm.taobao.org .
+	@cd $(RELEASE_DIR) && npm install --production --registry=https://registry.npmmirror.com .
 	@rm -rf $(RELEASE_DIR)/tests
 	@rm -rf $(RELEASE_DIR)/example-apps
 	@echo "all codes in \"$(RELEASE_DIR)\""
