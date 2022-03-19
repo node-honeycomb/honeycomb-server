@@ -26,7 +26,9 @@ describe('app_publish.test.js', () => {
       (done) => common.deleteApp(agent, ips, 'norun-app').end(done),
       (done) => common.deleteApp(agent, ips, 'timeout-app').end(done),
       (done) => common.deleteApp(agent, ips, 'java-app').end(done),
-      (done) => common.deleteApp(agent, ips, 'exenoent-app').end(done)
+      (done) => common.deleteApp(agent, ips, 'exenoent-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'job-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'job-exception-app').end(done)
     ], done);
   });
   describe('publish api', () => {
