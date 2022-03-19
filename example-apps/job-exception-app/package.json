@@ -1,0 +1,14 @@
+{
+  "main": "run.sh",
+  "honeycomb": {
+    "order": 1,
+    "job": {
+      "exec": "sh",
+      "argv": ["${main}"],
+      "env": {
+        "TEST": "abc.${serverRoot}"
+      },
+      "cwd": "./"
+    }
+  }
+}
