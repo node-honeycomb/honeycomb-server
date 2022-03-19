@@ -1,6 +1,6 @@
 {
   "name": "honeycomb-server",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "build": "1",
   "description": "Honeycomb, the micro-app's container",
   "repository": {
