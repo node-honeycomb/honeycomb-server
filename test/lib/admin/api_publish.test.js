@@ -107,6 +107,21 @@ describe('app_publish.test.js', () => {
             })
         });
     });
+    it('should publish illegal-tgz-pkg successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'illegal-tgz-pkg.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(0);
+          data.error.length.should.eql(1);
+        })
+        .end((err) => {
+          let master = common.getMaster();
+          let child = master.getChild('illegal-tgz-pkg');
+          should(child).eql(undefined);
+          done(err);
+        });
+    });
     it('should publish job-exception-app successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'job-exception-app.tgz'))
         .expect(200)
@@ -122,6 +137,7 @@ describe('app_publish.test.js', () => {
           done(err);
         });
     });
+
     it('should publish java app successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'java-app.tgz'))
         .expect(200)

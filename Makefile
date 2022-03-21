@@ -59,6 +59,7 @@ prepare-test: parser
 	@cd example-apps && tar cfz exenoent-app.tgz exenoent-app/
 	@cd example-apps && tar cfz job-app.tgz job-app/
 	@cd example-apps && tar cfz job-exception-app.tgz job-exception-app/
+	@cd example-apps && head -n 2 java-app.tgz > illegal-tgz-pkg.tgz
 
 test: eslint prepare-test
 	@$(BIN_MOCHA) \
