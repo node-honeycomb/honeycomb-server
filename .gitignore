@@ -19,3 +19,4 @@ tests/mock/mount/hello.mount.info.yaml
 /nginx.conf
 .vscode/
 /node
+test/lib/tmp_mount2.yaml

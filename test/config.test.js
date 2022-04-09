@@ -73,6 +73,7 @@ describe('test config', () => {
     mockConsole.reset();
     msg.stderr[0].join(' ').should.match(/Loading conf\/config.js failed/);
     fs.unlinkSync(gCfgFile);
+    testMod.reload();
   });
 
   it('should throw error when serverRoot config_default.js is error', () => {
@@ -85,6 +86,7 @@ describe('test config', () => {
     mockConsole.reset();
     msg.stderr[0].join(' ').should.match(/Loading conf\/config_default\.js failed/);
     fs.unlinkSync(gCfgFile);
+    testMod.reload();
   });
 
   it('should throw error when app\'s config error', () => {
@@ -98,6 +100,7 @@ describe('test config', () => {
     mockConsole.reset();
     msg.stderr[0].join(' ').should.match(/Loading conf\/custom\/apps\/test.json failed/);
     fs.unlinkSync(aCfgFile);
+    testMod.reload();
   });
 
   it('should reload conf/custom/config.js', () => {
@@ -120,6 +123,7 @@ describe('test config', () => {
     testMod.exec('hello').should.match(/hello/);
     fs.unlinkSync(file);
     mockConsole.reset();
+    testMod.reload();
   });
 
   it('should reload conf/custom/server.json', () => {
@@ -143,6 +147,7 @@ describe('test config', () => {
     fs.unlinkSync(file);
     fs.unlinkSync(newFile);
     mockConsole.reset();
+    testMod.reload();
   });
   it('should reload conf/custom/common.json', () => {
     let file = path.join(root, './conf/custom/apps_common.json');
@@ -165,6 +170,7 @@ describe('test config', () => {
     fs.unlinkSync(file);
     fs.unlinkSync(newFile);
     mockConsole.reset();
+    testMod.reload();
   });
   it('should reload apps/*.json and rename it to server.json', () => {
     let appCfg = path.join(root, './conf/custom/apps/test.json');
@@ -183,5 +189,6 @@ describe('test config', () => {
     testMod.appsCommon.test.should.eql('test_app_common_json');
     fs.unlinkSync(appCfg);
     fs.unlinkSync(common);
+    testMod.reload();
   });
 });
