@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@sindresorhus/df": "2.1.0",
-    "async": "2.6.1",
+    "async": "3.2.2",
     "body-parser": "1.18.3",
     "chalk": "2.3.0",
     "cli-table": "0.3.1",
