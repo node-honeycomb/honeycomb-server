@@ -16,14 +16,9 @@ function loadConfig(exitWhenError) {
    */
   let defaultCfg = require('./config_default');
   /**
-   * load release config from server codebase
+   * load default production config from server codebase
    */
-  let defaultReleaseCfg = {};
-  try {
-    defaultReleaseCfg = require('./config');
-  } catch (e) {
-    // do nothing
-  }
+  let defaultReleaseCfg = require('./config');
 
 
   let config = {};
@@ -34,27 +29,33 @@ function loadConfig(exitWhenError) {
   // config.js: the custom config file, edit config here
   //
   // then server will merge({}, config_default, config)
-  try {
-    let servConfig = {};
-    let servConfigCustom = {};
-    let servConfigFile = path.join(installServerRoot, '/conf/config_default.js');
-    let servConfigCustomFile = path.join(installServerRoot, '/conf/config.js');
-    if (fs.existsSync(servConfigFile)) {
+  let servConfigFile = path.join(installServerRoot, '/conf/config_default.js');
+  let servConfigCustomFile = path.join(installServerRoot, '/conf/config.js');
+  let servConfig = {};
+  let servConfigCustom = {};
+  if (fs.existsSync(servConfigFile)) {
+    try {
       servConfig = require(servConfigFile);
+    } catch (e) {
+      console.error("[honeycomb-server] loading conf/config_default.js failed", e)
+      throw e
     }
-    if (fs.existsSync(servConfigCustomFile)) {
-      servConfigCustom = require(servConfigCustomFile);
-    }
-    let serverList = [].concat(
-      config.list || [],
-      servConfig.serverList || [],
-      servConfigCustom.serverList || []
-    );
-    _.merge(config, servConfig, servConfigCustom);
-    config.serverList = serverList;
-  } catch (e) {
-    printMsg(e, 'MODULE_NOT_FOUND', 'Loading conf/config.js failed:');
   }
+  if (fs.existsSync(servConfigCustomFile)) {
+    try {
+      servConfigCustom = require(servConfigCustomFile);
+    } catch (e) {
+      console.error("[honeycomb-server] loading conf/config.js failed", e)
+      throw e
+    }
+  }
+  let serverList = [].concat(
+    config.list || [],
+    servConfig.serverList || [],
+    servConfigCustom.serverList || []
+  );
+  _.merge(config, servConfig, servConfigCustom);
+  config.serverList = serverList;
 
   fs.sync().mkdir(path.join(config.serverRoot, './conf/custom'));
 
