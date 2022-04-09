@@ -21,7 +21,7 @@
     "formstream": "1.1.0",
     "ip": "1.1.5",
     "line-reader": "0.4.0",
-    "litelog": "3.0.6",
+    "litelog": "3.0.10",
     "lodash": "^4.17.12",
     "mkdirp": "1.0.4",
     "pidusage": "2.0.18",

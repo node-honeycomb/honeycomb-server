@@ -91,6 +91,8 @@ describe('app_publish.test.js', () => {
           let lines = dd.trim().split(/\n/);
           let t1 = require('litelog').getTime(tt, '%Y%m%d-%H');
           let lastlog = lines.pop();
+          console.log('t1', lastlog.indexOf(t1))
+          console.log('serverRoot', lastlog.indexOf(master.config.serverRoot))
           lastlog.indexOf(t1).should.eql(0);
           lastlog.indexOf(master.config.serverRoot).should.above(0);
           child.status.should.eql('online');
