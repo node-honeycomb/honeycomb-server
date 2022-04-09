@@ -83,7 +83,7 @@ describe('test config', () => {
     testMod.reload();
     let msg = info;
     mockConsole.reset();
-    msg.stderr[0].join(' ').should.match(/Loading conf\/config\.js failed/);
+    msg.stderr[0].join(' ').should.match(/Loading conf\/config_default\.js failed/);
     fs.unlinkSync(gCfgFile);
   });
 

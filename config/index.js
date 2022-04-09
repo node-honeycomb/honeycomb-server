@@ -37,16 +37,20 @@ function loadConfig(exitWhenError) {
     try {
       servConfig = require(servConfigFile);
     } catch (e) {
-      console.error("[honeycomb-server] loading conf/config_default.js failed", e)
-      throw e
+      console.error('[honeycomb-server] Loading conf/config_default.js failed', e);
+      if (exitWhenError) {
+        throw e;
+      }
     }
   }
   if (fs.existsSync(servConfigCustomFile)) {
     try {
       servConfigCustom = require(servConfigCustomFile);
     } catch (e) {
-      console.error("[honeycomb-server] loading conf/config.js failed", e)
-      throw e
+      console.error('[honeycomb-server] Loading conf/config.js failed', e);
+      if (exitWhenError) {
+        throw e;
+      }
     }
   }
   let serverList = [].concat(
