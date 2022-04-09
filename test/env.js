@@ -18,11 +18,12 @@ fs.sync().rm(confCommon);
 fs.sync().mkdir(confCommon);
 fs.sync().save(configTmp, fs.readFileSync(configFile));
 
+/*
 const childProcess = require('child_process');
 const fork = childProcess.fork;
 
 childProcess.fork = function(modulePath, args, options) {
-  const execPath = path.resolve(__dirname, '../node_modules/.bin/istanbul');
+  const execPath = path.resolve(__dirname, '../node_modules/.bin/nyc');
   args = [
     'cover',
     '--report', 'none',
@@ -33,6 +34,7 @@ childProcess.fork = function(modulePath, args, options) {
   ].concat(args);
   return fork.apply(childProcess,[execPath, args, options]);
 }
+*/
 
 process.on('exit', function () {
   // fs.sync().rm(path.join(__dirname, './appsRoot'));
