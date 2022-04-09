@@ -62,6 +62,7 @@ before(function (done) {
 });
 
 after((done) => {
+  console.log('test server exit');
   master.exit(done);
 });
 
