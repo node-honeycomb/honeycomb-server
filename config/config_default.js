@@ -197,6 +197,16 @@ module.exports = {
      * 默认首页地址， 如果 / 没有被劫持，
      */
     index: '/',
+    /**
+     * 请求id，如果为空，不设置
+     * 如果指定, 则以指定的值作为header，加入nginx $request_id
+     *   proxy_set_header ${requestId} $request_id;
+     *   proxy_set_header X-Request-Id $request_id;
+     *
+     * 注意需要 nginx >= 1.11
+     * @type {String}
+     */
+    requestId: '',
     serverIndexs: {},
     /**
      * 健康检查
