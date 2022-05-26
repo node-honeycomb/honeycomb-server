@@ -4,6 +4,7 @@ const path = require('path');
 const mm = require('mm');
 const child = require('child_process');
 const Nginx = require('../../../lib/proxy/nginx');
+const _ = require("lodash")
 
 
 describe('lib/proxy/nginx.js', () => {
@@ -41,6 +42,7 @@ describe('lib/proxy/nginx.js', () => {
       port: '80',
       bind: [{ip: '*', port: 80, default: true}],
       healthCheck: {},
+      requestId: 'X-Request-Id',
       index: '/test',
       serverIndexs: {}
     };
@@ -516,6 +518,85 @@ describe('lib/proxy/nginx.js', () => {
         done();
       });
     });
+    it('should work fine', (done) => {
+      let nginxProxy = new Nginx(options);
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        // version: '0.0.0',
+        // buildNum: 0,
+        // pid: 4588,
+        // type: 'stream',  // default 'http', http  | stream
+        sockList: ['1.sock', '2.sock']
+        // backupSockList: []
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        fileProxyPass.should.match(/listen 0\.0\.0\.0:80 +default/);
+        fileProxyPass.should.match(/location \/default_server\//);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_default\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_default\-app \{/);
+        fileUpstream.should.match(/server unix:1.sock/);
+        fileUpstream.should.match(/server unix:2.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+    it('should work fine with request_id', (done) => {
+      let nginxProxy = new Nginx({
+        nginxBin: nginxBin,
+        nginxConfig: nginxConf,
+        nginxIncludePath: nginxIncludePath,
+        serverConfigPath: '',
+        port: '80',
+        serverIndexs: {},
+        requestId: "X-Req-Id"
+      });
+      let app = {
+        bind: '80',
+        router: '/default_server',
+        appId: 'default-app',
+        name: 'default-app',
+        // version: '0.0.0',
+        // buildNum: 0,
+        // pid: 4588,
+        // type: 'stream',  // default 'http', http  | stream
+        sockList: ['1.sock', '2.sock'],
+        param: {
+          location: {
+            proxy_set_header: ["X-Test-A 1", "X-Test-B 2"]
+          }
+        }
+        // backupSockList: []
+      };
+      mm(child, 'exec', function (cmd, callback) {
+        callback(null, '', '');
+      });
+      nginxProxy.register(app, (err) => {
+        should.not.exists(err);
+        let fileProxyPass = fs.readFileSync(path.join(nginxIncludePath, './http/server_0.0.0.0:80_*.conf')).toString();
+        fileProxyPass.should.match(/listen 0\.0\.0\.0:80 +default/);
+        fileProxyPass.should.match(/location \/default_server\//);
+        fileProxyPass.should.match(/proxy_set_header X-Req-Id \$request_id/);
+        fileProxyPass.should.match(/proxy_set_header X-Test-A 1/);
+        fileProxyPass.should.match(/proxy_set_header X-Test-B 2/);
+        fileProxyPass.should.match(/proxy_pass http:\/\/honeycomb_default\-app;/);
+        let fileUpstream = fs.readFileSync(path.join(nginxIncludePath, './http/all_upstream.conf')).toString();
+        fileUpstream.should.match(/upstream honeycomb_default\-app \{/);
+        fileUpstream.should.match(/server unix:1.sock/);
+        fileUpstream.should.match(/server unix:2.sock/);
+        nginxProxy.exit();
+        done();
+      });
+    });
+
     it('should work fine with app.router undefined', (done) => {
       let nginxProxy = new Nginx(options);
       let app = {
