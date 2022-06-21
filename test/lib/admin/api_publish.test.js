@@ -28,7 +28,8 @@ describe('app_publish.test.js', () => {
       (done) => common.deleteApp(agent, ips, 'java-app').end(done),
       (done) => common.deleteApp(agent, ips, 'exenoent-app').end(done),
       (done) => common.deleteApp(agent, ips, 'job-app').end(done),
-      (done) => common.deleteApp(agent, ips, 'job-exception-app').end(done)
+      (done) => common.deleteApp(agent, ips, 'job-exception-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'none-main-app').end(done)
     ], done);
   });
   describe('publish api', () => {
@@ -70,6 +71,26 @@ describe('app_publish.test.js', () => {
           let child = common.getMaster().getChild('notarget-app');
           Object.keys(child.workers).length.should.eql(1);
           done(err);
+        });
+    });
+    it('should publish none-main-app successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'none-main-app.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(1);
+          data.error.length.should.eql(0);
+        })
+        .end((err) => {
+          let child = common.getMaster().getChild('none-main-app');
+          Object.keys(child.workers).length.should.eql(0);
+          should(err).eql(null)
+          done()
+          /*
+          supertest("http://localhost:8080/").get('/none-main/test/hello.txt').expect((res) => {
+            res.text.should.eql('hello static');
+          }).end(done)
+          */
         });
     });
     it('should publish job-app successfully', (done) => {
@@ -136,7 +157,7 @@ describe('app_publish.test.js', () => {
           let master = common.getMaster();
           let child = master.getChild('job-exception-app');
           should(child).eql(undefined);
-          done(err);
+          done(err)
         });
     });
 

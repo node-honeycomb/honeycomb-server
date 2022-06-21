@@ -154,7 +154,7 @@ describe('app_router.test.js', () => {
           client.on('error', done);
           client.on('data', function (chunk) {
             chunk.toString().should.eql('socket-app_1.0.0_1');
-            done();
+            client.end(done)
           });
         });
     });
@@ -169,7 +169,7 @@ describe('app_router.test.js', () => {
           client.on('error', done);
           client.on('data', function (chunk) {
             chunk.toString().should.eql('socket-app_1.0.0_2');
-            done();
+            client.end(done)
           });
         });
     });
@@ -184,7 +184,7 @@ describe('app_router.test.js', () => {
           client.on('error', done);
           client.on('data', function (chunk) {
             chunk.toString().should.eql('socket-app_1.0.0_1');
-            done();
+            client.end(done)
           });
         });
     });
@@ -199,7 +199,7 @@ describe('app_router.test.js', () => {
           client.on('error', done);
           client.on('data', function (chunk) {
             chunk.toString().should.eql('socket-app_1.0.0_2');
-            done();
+            client.end(done)
           });
         });
     });

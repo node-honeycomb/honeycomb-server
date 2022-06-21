@@ -1,0 +1,17 @@
+{
+  "main": null,
+  "honeycomb": {
+    "processorNum": 1,
+    "service": {
+      "type": "http",
+      "bind": "8080",
+      "router": "/none-main",
+      "static": {
+        "/test": {
+          "dir": "./",
+          "gziped": false
+        }
+      }
+    }
+  }
+}
