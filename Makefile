@@ -36,6 +36,7 @@ travis-install: clean
 	@which node
 
 prepare-test: parser
+	@cp nginx_sample.conf nginx.conf
 	@cd example-apps && tar cfz simple-app.tgz simple-app/
 	@cd example-apps && tar cfz simple-app_1.0.0_1.tgz simple-app_1.0.0_1/
 	@cd example-apps && tar cfz simple-app_1.1.0_1.tgz simple-app_1.1.0_1/
@@ -58,6 +59,7 @@ prepare-test: parser
 	@cd example-apps && tar cfz java-port-app.tgz java-port-app/
 	@cd example-apps && tar cfz exenoent-app.tgz exenoent-app/
 	@cd example-apps && tar cfz job-app.tgz job-app/
+	@cd example-apps && tar cfz none-main-app.tgz none-main-app/
 	@cd example-apps && tar cfz job-exception-app.tgz job-exception-app/
 	@cd example-apps && head -n 2 java-app.tgz > illegal-tgz-pkg.tgz
 

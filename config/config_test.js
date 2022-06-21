@@ -1,5 +1,13 @@
 'use strict';
 const path = require('path');
+// const cp = require('child_process');
+
+/*
+function getNginxNin() {
+  let ng = cp.execSync('which nginx').toString().trim();
+  return ng;
+}
+*/
 
 module.exports = {
   debug: false,
@@ -20,8 +28,8 @@ module.exports = {
     port: 8080,
     index: '/console',
     traceIdName: 'test',
-    nginxBin: null,
-    nginxConfig: null
+    nginxBin: null, // getNginxNin(),
+    nginxConfig: null // path.join(__dirname, '../nginx.conf')
   },
   appsSessionPath: path.join(__dirname, '../test/app.mount.info.yaml'),
   appsRoot: path.join(__dirname, '../test/appsRoot'),
