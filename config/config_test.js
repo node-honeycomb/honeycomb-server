@@ -33,6 +33,7 @@ module.exports = {
   },
   appsSessionPath: path.join(__dirname, '../test/app.mount.info.yaml'),
   appsRoot: path.join(__dirname, '../test/appsRoot'),
+  appReadyMaxRetry: 10,
   admin: {
     msgTimeout: 6 * 1000,
     enablePublishPage: true,

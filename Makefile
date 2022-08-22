@@ -78,7 +78,7 @@ test2: prepare-test
 	@$(BIN_MOCHA) \
 		--recursive \
 		--exit \
-		-t 30000 \
+		-t 61000 \
 		-R spec \
 		-r test/env.js \
 		$(TESTS)
@@ -93,7 +93,7 @@ test-cov:
 		$(BIN_MOCHA) \
 		--recursive \
 		--exit \
-		-t 30000 \
+		-t 61000 \
 		-R spec \
 		-r ./test/env.js \
 		$(TESTS)
