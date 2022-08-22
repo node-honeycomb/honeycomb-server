@@ -149,7 +149,7 @@ function commonPost(superAgent, url, data) {
 };
 
 exports.publishApp = (superAgent, ips, file, noStart) => {
-  let url = `/api/publish?ips=${ips}`;
+  let url = `/api/publish?ips=${ips}&timeout=60000`;
   if (noStart) {
     url += '&nostart=true'
   }
