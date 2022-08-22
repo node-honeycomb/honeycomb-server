@@ -18,7 +18,14 @@ function loadConfig(exitWhenError) {
   /**
    * load default production config from server codebase
    */
-  let defaultReleaseCfg = require('./config');
+  let defaultReleaseCfg = {};
+  try {
+    defaultReleaseCfg = require('./config');
+  } catch (e) {
+    if (e.code != 'MODULE_NOT_FOUND' && exitWhenError) {
+      throw e;
+    }
+  }
 
 
   let config = {};
