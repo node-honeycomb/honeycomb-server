@@ -38,8 +38,12 @@ before(function (done) {
       });
     },
     (done) => master.run(done),
-    (done) => exports.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz')).end(done),
-    (done) => exports.publishApp(agent, ips, path.join(appsPkgBase, 'https-app.tgz')).end(done),
+    (done) => {
+      exports.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz')).end(done)
+    },
+    (done) => {
+      exports.publishApp(agent, ips, path.join(appsPkgBase, 'https-app.tgz')).end(done)
+    },
     (done) => {
       master.exit(done);
       master.exit((err) => {

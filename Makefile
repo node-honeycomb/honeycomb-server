@@ -36,6 +36,7 @@ travis-install: clean
 	@which node
 
 prepare-test: parser
+	@rm -rf test/appsRoot/*
 	@cp nginx_sample.conf nginx.conf
 	@cd example-apps && tar cfz simple-app.tgz simple-app/
 	@cd example-apps && tar cfz simple-app_1.0.0_1.tgz simple-app_1.0.0_1/
