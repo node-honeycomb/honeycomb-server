@@ -2,6 +2,11 @@
   "main": null,
   "honeycomb": {
     "processorNum": 1,
+    "serverParam": {
+      "location": {
+        "client_max_body_size": "200m"
+      }
+    },
     "service": {
       "type": "http",
       "bind": "8080",
