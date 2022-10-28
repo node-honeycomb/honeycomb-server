@@ -26,6 +26,7 @@ describe('app_publish.test.js', () => {
       (done) => common.deleteApp(agent, ips, 'norun-app').end(done),
       (done) => common.deleteApp(agent, ips, 'timeout-app').end(done),
       (done) => common.deleteApp(agent, ips, 'java-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'java-port-app').end(done),
       (done) => common.deleteApp(agent, ips, 'exenoent-app').end(done),
       (done) => common.deleteApp(agent, ips, 'job-app').end(done),
       (done) => common.deleteApp(agent, ips, 'job-exception-app').end(done),
@@ -112,8 +113,8 @@ describe('app_publish.test.js', () => {
           let lines = dd.trim().split(/\n/);
           let t1 = require('litelog').getTime(tt, '%Y%m%d-%H');
           let lastlog = lines.pop();
-          console.log('t1', lastlog.indexOf(t1))
-          console.log('serverRoot', lastlog.indexOf(master.config.serverRoot))
+          // console.log('t1', lastlog.indexOf(t1))
+          // console.log('serverRoot', lastlog.indexOf(master.config.serverRoot))
           lastlog.indexOf(t1).should.eql(0);
           lastlog.indexOf(master.config.serverRoot).should.above(0);
           child.status.should.eql('online');
@@ -203,7 +204,7 @@ describe('app_publish.test.js', () => {
           if (err) return done(err);
           let child = common.getMaster().getChild('java-port-app');
           Object.keys(child.workers).length.should.eql(1);
-          let client = require('net').connect({host: 'localhost', port: 9099});
+          let client = require('net').connect({host: '127.0.0.1', port: 9099});
           let msg = {test: true};
           client.on('data', (chunk) => {
             let obj = JSON.parse(chunk);
@@ -218,6 +219,7 @@ describe('app_publish.test.js', () => {
               })
               .end(done);
           });
+          client.on('error', done);
           client.write(JSON.stringify(msg));
         });
     });
