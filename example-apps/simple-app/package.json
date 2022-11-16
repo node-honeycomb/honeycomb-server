@@ -1,6 +1,7 @@
 {
   "main": "index.js",
   "honeycomb": {
-    "processorNum": 2
+    "processorNum": 2,
+    "dumpHeap": true
   }
 }
