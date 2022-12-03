@@ -1,0 +1,10 @@
+FROM ubuntu:20.04
+RUN apt update
+RUN apt install -y wget curl gnupg make
+COPY .github/workflows/nginx.list /etc/apt/sources.list.d/nginx.list
+RUN wget http://nginx.org/keys/nginx_signing.key && apt-key add nginx_signing.key
+RUN apt update && apt remove -y nginx nginx-common nginx-full nginx-core 
+RUN apt install -y nginx openjdk-8-jdk
+RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt-get install -y nodejs

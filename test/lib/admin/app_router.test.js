@@ -30,12 +30,14 @@ describe('app_router.test.js', () => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app.tgz'))
         .expect(200)
         .end(() => {
-          request2.get('/simple-app/hello')
-            .expect(200)
-            .expect((res) => {
-              res.body.action.should.eql('broadcast_test');
-            })
-            .end(done);
+          setTimeout(function() {
+            request2.get('/simple-app/hello')
+              .expect(200)
+              .expect((res) => {
+                res.body.action.should.eql('broadcast_test');
+              })
+              .end(done);
+            }, 500);
         });
     });
     it('should work fine when websocket app', (done) => {
@@ -43,15 +45,17 @@ describe('app_router.test.js', () => {
         .expect(200)
         .end((err) => {
           if (err) return done(err);
-          const WebSocket = require('ws');
-          const ws = new WebSocket('ws://localhost:8080/socket');
-          ws.on('open', function open() {
-            ws.send('websocket-test');
-          });
-          ws.on('message', function incoming(data) {
-            data.toString().should.match(/websocket\-test/);
-            done();
-          });
+          setTimeout(function() {
+            const WebSocket = require('ws');
+            const ws = new WebSocket('ws://localhost:8080/socket');
+            ws.on('open', function open() {
+              ws.send('websocket-test');
+            });
+            ws.on('message', function incoming(data) {
+              data.toString().should.match(/websocket\-test/);
+              done();
+            });
+          }, 1000);
         });
     });
     it('should work fine when https app', (done) => {
@@ -107,31 +111,38 @@ describe('app_router.test.js', () => {
         .expect(200)
         .end((err) => {
           if (err) return done(err);
-          request2.get('/example/hello')
-            .expect(200)
-            .expect('simple-app_v1.0.0_1')
-            .end(done);
+          setTimeout(function() {
+            request2.get('/example/hello')
+              .expect(200)
+              .expect('simple-app_v1.0.0_1')
+              .end(done);
+          }, 500);
         });
     });
     it('should router to simple-app_1.1.0_1 successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app_1.1.0_1.tgz'))
         .expect(200)
-        .end(() => {
-          request2.get('/example/hello')
-            .expect(200)
-            .expect('simple-app_v1.1.0_1')
-            .end(done);
+        .end((err) => {
+          should(err).eql(null);
+          setTimeout(function() {
+            request2.get('/example/hello')
+              .expect(200)
+              .expect('simple-app_v1.1.0_1')
+              .end(done);
+          }, 500);
         });
     })
     it('should switch to simple-app_1.0.0_1 when stop 1.1.0_1', (done) => {
       common.stopApp(agent, ips, 'simple-app_1.1.0_1')
         .expect(200)
         .end((err) => {
-          if (err) return done(err);
-          request2.get('/example/hello')
-            .expect(200)
-            .expect('simple-app_v1.0.0_1')
-            .end(done);
+          should(err).eql(null);
+          setTimeout(function() {
+            request2.get('/example/hello')
+              .expect(200)
+              .expect('simple-app_v1.0.0_1')
+              .end(done);
+          }, 500);
         });
     });
   });
@@ -150,12 +161,14 @@ describe('app_router.test.js', () => {
         .end((err) => {
           if (err) return done(err);
           let net = require('net');
-          let client = net.connect(6000, 'localhost');
-          client.on('error', done);
-          client.on('data', function (chunk) {
-            chunk.toString().should.eql('socket-app_1.0.0_1');
-            client.end(done)
-          });
+          setTimeout(function() {
+            let client = net.connect(6000, 'localhost');
+            client.on('error', done);
+            client.on('data', function (chunk) {
+              chunk.toString().should.eql('socket-app_1.0.0_1');
+              client.end(done)
+            });
+          }, 500);
         });
     });
     it('should router to socket-app_1.0.0_2', (done) => {
@@ -165,12 +178,14 @@ describe('app_router.test.js', () => {
         .end((err) => {
           if (err) return done(err);
           let net = require('net');
-          let client = net.connect(6000, 'localhost');
-          client.on('error', done);
-          client.on('data', function (chunk) {
-            chunk.toString().should.eql('socket-app_1.0.0_2');
-            client.end(done)
-          });
+          setTimeout(function() {
+            let client = net.connect(6000, 'localhost');
+            client.on('error', done);
+            client.on('data', function (chunk) {
+              chunk.toString().should.eql('socket-app_1.0.0_2');
+              client.end(done)
+            });
+          }, 500);
         });
     });
     it('should router to socket-app_1.0.0_1 when newer app stoped', (done) => {
@@ -180,12 +195,14 @@ describe('app_router.test.js', () => {
         .end((err) => {
           if (err) return done(err);
           let net = require('net');
-          let client = net.connect(6000, 'localhost');
-          client.on('error', done);
-          client.on('data', function (chunk) {
-            chunk.toString().should.eql('socket-app_1.0.0_1');
-            client.end(done)
-          });
+          setTimeout(function() {
+            let client = net.connect(6000, 'localhost');
+            client.on('error', done);
+            client.on('data', function (chunk) {
+              chunk.toString().should.eql('socket-app_1.0.0_1');
+              client.end(done)
+            });
+          }, 500);
         });
     });
     it('should router to socket-app_1.0.0_2 when newer app started', (done) => {
@@ -195,12 +212,14 @@ describe('app_router.test.js', () => {
         .end((err) => {
           if (err) return done(err);
           let net = require('net');
-          let client = net.connect(6000, 'localhost');
-          client.on('error', done);
-          client.on('data', function (chunk) {
-            chunk.toString().should.eql('socket-app_1.0.0_2');
-            client.end(done)
-          });
+          setTimeout(function() {
+            let client = net.connect(6000, 'localhost');
+            client.on('error', done);
+            client.on('data', function (chunk) {
+              chunk.toString().should.eql('socket-app_1.0.0_2');
+              client.end(done)
+            });
+          }, 500);
         });
     });
   });
@@ -209,7 +228,10 @@ describe('app_router.test.js', () => {
     before((done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'simple-app_1.0.0_1.tgz'))
         .expect(200)
-        .end(done);
+        .end((err) => {
+          should(err).eql(null);
+          setTimeout(done, 500);
+        });
     });
     after((done) => {
       common.deleteApp(agent, ips, 'simple-app_1.0.0_1').end(done);
@@ -221,12 +243,12 @@ describe('app_router.test.js', () => {
         .end(done);
     });
     it('should get 200 when request healthCheck', (done) => {
-      let request = supertest('http://127.0.0.1:6001');
+      let request = supertest('http://127.0.0.1:8080');
       request.get('/status')
         .expect(200)
         .end(done);
     });
-    it('should get 400 when request healthCheck', (done) => {
+    it('should get 400 when bad request healthCheck', (done) => {
       let net = require('net');
       let c = net.connect({port: 6001});
       c.once('data', (chunk) => {
@@ -235,17 +257,6 @@ describe('app_router.test.js', () => {
       });
       c.on('connect', () => {
         c.write('GET /status s\r\n\r\n');
-      });
-    });
-    it('should work fine when request without any header', (done) => {
-      let net = require('net');
-      let c = net.connect({port: 6001});
-      c.once('data', (chunk) => {
-        chunk.toString().should.match(/HTTP\/1\.1 200 OK/);
-        done();
-      });
-      c.on('connect', () => {
-        c.write('GET /status\r\n\r\n');
       });
     });
   });

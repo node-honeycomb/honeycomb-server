@@ -211,6 +211,11 @@ function loadConfig(exitWhenError) {
   if (!config.logsRoot) {
     config.logsRoot = path.join(config.serverRoot, './logs');
   }
+  // nginx 进来的检查，代理到healthCheck
+  if (config.proxy.healthCheck && !config.proxy.healthCheck.file) {
+    let protocol = config.admin.https ? 'https' : 'http';
+    config.proxy.healthCheck.url = protocol + '://localhost:' + config.admin.port + '/api/health';
+  }
 
   // 日志文件下载限速 单位 bytes per second
   if (!config.logFileDownloadRate) {

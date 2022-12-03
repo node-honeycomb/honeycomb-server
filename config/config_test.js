@@ -28,8 +28,17 @@ module.exports = {
     port: 8080,
     index: '/console',
     traceIdName: 'test',
-    nginxBin: null, // getNginxNin(),
-    nginxConfig: null // path.join(__dirname, '../nginx.conf')
+    // nginxBin: null, // getNginxNin(),
+    // nginxConfig: null, // path.join(__dirname, '../nginx.conf')
+    healthCheck: {
+      router: '/status',
+      /**
+       * healthCheck check Duration, server should wait duration time, then kill apps
+       * @type {Number}
+       */
+      duration: 5000,
+      file: '',
+    },
   },
   appsSessionPath: path.join(__dirname, '../test/app.mount.info.yaml'),
   appsRoot: path.join(__dirname, '../test/appsRoot'),

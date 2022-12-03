@@ -20,3 +20,4 @@ tests/mock/mount/hello.mount.info.yaml
 .vscode/
 /node
 test/lib/tmp_mount2.yaml
+test/app.mount.info.yaml

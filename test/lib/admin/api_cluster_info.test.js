@@ -34,11 +34,13 @@ describe('api_cluster_info', () => {
         .end((err) => {
           if (err) return done(err);
           let ag1 = supertest('http://localhost:6001/reload-app');
-          ag1.get('/')
-            .expect((res) => {
-              res.body.cluster.should.eql({}) //.test.should.eql(d);
-            })
-            .end(done);
+          setTimeout(()=>{
+            ag1.get('/')
+              .expect((res) => {
+                res.body.cluster.should.eql({}) //.test.should.eql(d);
+              })
+              .end(done);
+            }, 500);
         });
     });  
     it('should get cluster info', (done) => {
@@ -52,11 +54,13 @@ describe('api_cluster_info', () => {
             .end((err) => {
               if (err) return done(err);
               let ag1 = supertest('http://localhost:6001/reload-app');
-              ag1.get('/')
-                .expect((res) => {
-                  res.body.cluster.should.eql(clusterInfo) //.test.should.eql(d);
-                })
-                .end(done);
+              setTimeout(()=>{
+                ag1.get('/')
+                  .expect((res) => {
+                    res.body.cluster.should.eql(clusterInfo) //.test.should.eql(d);
+                  })
+                  .end(done);
+              }, 500);
             });
       });
     });

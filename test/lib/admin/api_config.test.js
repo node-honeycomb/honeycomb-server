@@ -98,12 +98,14 @@ describe('api_config.test.js', () => {
           .end((e) => {
             common.reloadApp(agent, ips, 'reload-app_1.0.0_1')
               .end((e) => {
-                let ag1 = supertest('http://localhost:6001/reload-app');
-                ag1.get('/')
-                  .expect((res)=> {
-                    res.body.testCommon.should.eql(d);
-                  })
-                  .end(done);
+                setTimeout(() => {
+                  let ag1 = supertest('http://localhost:6001/reload-app');
+                  ag1.get('/')
+                    .expect((res)=> {
+                      res.body.testCommon.should.eql(d);
+                    })
+                    .end(done);
+                  }, 500);
               });
           });
       });
@@ -118,12 +120,14 @@ describe('api_config.test.js', () => {
           .end(() => {
             common.reloadApp(agent, ips, 'reload-app_1.0.0_1')
               .end(() => {
-                let ag1 = supertest('http://localhost:6001/reload-app');
-                ag1.get('/')
-                  .expect((res)=> {
-                    res.body.test.should.eql(d);
-                  })
-                  .end(done);
+                setTimeout(() => {
+                  let ag1 = supertest('http://localhost:6001/reload-app');
+                  ag1.get('/')
+                    .expect((res)=> {
+                      res.body.test.should.eql(d);
+                    })
+                    .end(done);
+                  }, 500);
               });
           });
       });

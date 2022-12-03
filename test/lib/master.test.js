@@ -120,13 +120,13 @@ describe('lib/master.js', function () {
         done();
       });
     });
-    it('should work fine when appId forbidden to unmount', function (done) {
+    it('should work fine when appId __ADMIN__ forbidden to unmount', function (done) {
       master.$unmount('__ADMIN__', function (err) {
-        err.code.should.eql('APP_NOT_MOUNTED');
+        err.code.should.eql('APP_FORBIDDEN_MOUNT');
         done();
       });
     });
-    it('should work fine when appId forbidden to unmount', function (done) {
+    it('should work fine when appId __PROXY__ forbidden to unmount ', function (done) {
       master.$unmount('__PROXY__', function (err) {
         err.code.should.eql('APP_FORBIDDEN_MOUNT');
         done();
@@ -135,11 +135,20 @@ describe('lib/master.js', function () {
   });
 
   describe('test child fork', () => {
+    const appsPkgBase = path.join(__dirname, '../../example-apps');
+    let agent = supertest(`http://localhost:${config.admin.port}`);
+    before((done) => {
+      common.publishApp(agent, '127.0.0.1', path.join(appsPkgBase, 'simple-app.tgz'))
+          .expect(200).end(done);
+    })
+    after((done) => {
+      common.deleteApp(agent, '127.0.0.1', 'simple-app').end(done);
+    });
     it('should return when child\' worker already forked', () => {
-      let proxy = master.getChild('__PROXY__');
-      Object.keys(proxy.workers).length.should.eql(1);
+      let proxy = master.getChild('simple-app');
+      Object.keys(proxy.workers).length.should.eql(2);
       proxy._create();
-      Object.keys(proxy.workers).length.should.eql(1);
+      Object.keys(proxy.workers).length.should.eql(2);
     });
   });
 
@@ -302,18 +311,10 @@ describe('lib/master.js', function () {
         done();
       });
     });
-    it('should return if no-exists app', function (done) {
-      master._fork('unexists-dir', {
-        file: 'null'
-      }, function (err) {
-        err.message.should.match(/enter_file_not_found/);
-        done();
-      });
-    });
   });
 
 
-  describe('test signal', function () {
+  describe.skip('test signal', function () {
     it('should offline server when kill SIGUSR2', function (done) {
       fs.writeFileSync(config.serverStatusFile, 'offline');
       process.emit('SIGUSR2');

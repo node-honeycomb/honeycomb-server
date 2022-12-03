@@ -1,0 +1,13 @@
+{
+  "main": "index.js",
+  "version": "1.0.0",
+  "honeycomb": {
+    "processorNum": 1,
+    "dumpHeap": true,
+    "killCurrentBeforeMount": true,
+    "healthCheck":{
+      "type": "http",
+      "path": "/kill-old/health"
+    }
+  }
+}

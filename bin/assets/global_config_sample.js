@@ -51,12 +51,7 @@ module.exports = {
     nginxConfig: '',
     healthCheck: {
       router: '/status.taobao',
-      file: path.join(__dirname, '../run/status'),
-      /**
-       * honeycomb是否自动touch health检测文件
-       * @type {Boolean}
-       */
-      autoTouch: true
+      file: path.join(__dirname, '../run/status'), // can be empty
     },
     /**
      * nginx upstream health check, for tengine

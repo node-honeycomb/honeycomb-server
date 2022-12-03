@@ -69,7 +69,7 @@ describe('lib/proxy/nginx.js', () => {
       }
     });
 
-    it('should throw error when config file eaccess', () => {
+    it.skip('should throw error when config file eaccess', () => {
       let options = {
         nginxBin: nginxBin,
         nginxConfig: eaccessFile,
