@@ -213,12 +213,24 @@ module.exports = {
      */
     healthCheck: {
       router: '/status',
+      /**
+       * healthCheck check Duration, server should wait duration time, then kill apps
+       * @type {Number}
+       */
+      duration: 5000,
+      /**
+       * 设置file，通过touch文件来控制健康检查
+       * 如果file为null，则默认将请求转发到honeycomb-server admin的检查接口: server admin的 Get  http://localhost:9999/api/health
+       *   honeycomb-server的健康检查接口的逻辑为，检查所有在线app的healthCheck接口，合并结果，所有app健康则返回200， 否则返回404
+       * @type {[type]}
+       */
       file: path.join(__dirname, '../run/status'),
       /**
-       * honeycomb是否自动touch health检测文件
-       * @type {Boolean}
+       * 设置url则，通过代理来控制健康检查
+       * 如设置了file，则file优先
+       * @type {String}
        */
-      autoTouch: true
+      url: '',
     },
     /*
     upstreamCheck: {
@@ -226,7 +238,7 @@ module.exports = {
     }
     ,*/
     switch: {
-      stream: 'nginx',
+      stream: 'nginx', // can only be nginx
       http: 'nginx'
     },
     /**
@@ -282,7 +294,7 @@ module.exports = {
      */
     serverTimeout: 600000,
     /**
-     * 串行发布，默认为true
+     * 串行发布，默认为true [deprecated, since publish action may stop app first]
      * @type {Boolean}
      */
     seriesPublish: true,

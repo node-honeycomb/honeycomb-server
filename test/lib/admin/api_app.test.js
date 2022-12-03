@@ -2,6 +2,7 @@ const common = require('../../common.js');
 const config = require('../../../config');
 const async = require('async');
 const mm = require('mm');
+const http = require('http');
 const fs = require('xfs');
 const path = require('path');
 const should = require('should');
@@ -212,10 +213,16 @@ describe('api_app.test.js', () => {
       common.reloadApp(agent, ips, 'simple-app')
         .expect(200)
         .expect(checkRes)
-        .end(allDone);
+        .end(function(err) {
+          should(err).eql(null);
+          setTimeout(allDone, 1000);
+        });
 
       common.reloadApp(agent, ips, 'simple-app')
-        .expect(checkRes).end(allDone);
+        .expect(checkRes).end(function(err) {
+          should(err).eql(null);
+          setTimeout(allDone, 1000);
+        });
     });
 
     it('should reload illegal-app fine', (done) => {
@@ -291,6 +298,36 @@ describe('api_app.test.js', () => {
     });
   });
 
+  describe('healthcheck app', () => {
+    before((done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.0.0_1.tgz'))
+        .end((err) => {
+          done(err);
+        });
+    });
+    after((done) => {
+      async.series([
+        (done) => common.deleteApp(agent, ips, 'kill-old-before-mount-app_1.0.0_1').end(done)
+      ], done);
+    });
+    it('should work fine using server healthcheck', (done) => {
+      supertest('http://localhost:8080').get('/status')
+        .expect(200)
+        .end(() => {
+          http.get('http://localhost:8080/kill-old/status', () => {
+            supertest('http://localhost:8080').get('/status').expect((res) => {
+              res.statusCode.should.eql(404);
+              res.text.should.match(/kill-old-before-mount-app_1.0.0_1:HTTP-CODE:404/);
+            }).end(() => {
+              http.get('http://localhost:8080/kill-old/status', () => {
+                supertest('http://localhost:8080').get('/status').expect(200).end(done);
+              });
+            });
+          })
+        })
+    });
+  });
+
   describe('restart app', () => {
     let request2 = supertest('http://localhost:8080');
     let oldWorkers;
@@ -311,21 +348,24 @@ describe('api_app.test.js', () => {
       common.restartApp(agent, ips, 'simple-app')
         .expect(200)
         .expect((res)=>{
-          res.body.error.length.should.eql(0);
-          res.body.success.length.should.eql(1);
+          res.body.data.error.length.should.eql(0);
+          res.body.data.success.length.should.eql(1);
         })
-        .end(() => {
-          request2.get('/simple-app/hello')
-            .expect(200)
-            .expect((res) => {
-              res.body.action.should.eql('broadcast_test');
-              let child = common.getMaster().getChild('simple-app');
-              let newWorkers = Object.keys(child.workers).sort();
-              newWorkers.forEach((v) => {
-                oldWorkers.indexOf(v).should.eql(-1);
-              });
-            })
-            .end(done);
+        .end((err) => {
+          should(err).eql(null);
+          setTimeout(function() {
+            request2.get('/simple-app/hello')
+              .expect(200)
+              .expect((res) => {
+                res.body.action.should.eql('broadcast_test');
+                let child = common.getMaster().getChild('simple-app');
+                let newWorkers = Object.keys(child.workers).sort();
+                newWorkers.forEach((v) => {
+                  oldWorkers.indexOf(v).should.eql(-1);
+                });
+              })
+              .end(done);
+          }, 500);
         });
     });
     it('should return when $mount failed', (done) => {

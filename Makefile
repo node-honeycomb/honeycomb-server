@@ -1,12 +1,10 @@
 TESTS          	= $(shell find test -type f -name *.test.js)
 
 RELEASE_DIR     = out/release/
-
 RELEASE_COPY    = bin lib config common
-
 BIN_NYC         = ./node_modules/.bin/nyc
 BIN_MOCHA       = ./node_modules/.bin/_mocha
-
+PWD             = $(shell pwd)
 
 TESTS_ENV       = test/env.js
 
@@ -27,17 +25,22 @@ install: clean
 	@mkdir -p ./run
 	@npm install --registry=https://registry.npmmirror.com
 	@cp nginx_sample.conf nginx.conf
+	@if [ $(shell uname -s) = 'Darwin' ]; then sed -i "" "s#SERVER_ROOT#$(PWD)#g" nginx.conf; else sed -i "s#SERVER_ROOT#$(PWD)#g" nginx.conf; fi 
 
 travis-install: clean
 	@mkdir -p ./logs
 	@mkdir -p ./run
 	@npm install
 	@cp nginx_sample.conf nginx.conf
+	@if [ $(shell uname -s) = 'Darwin' ]; then sed -i "" "s#SERVER_ROOT#$(PWD)#g" nginx.conf; else sed -i "s#SERVER_ROOT#$(PWD)#g" nginx.conf; fi 
 	@which node
 
 prepare-test: parser
 	@rm -rf test/appsRoot/*
 	@cp nginx_sample.conf nginx.conf
+	@if [ $(shell uname -s) = 'Darwin' ]; then sed -i "" "s#SERVER_ROOT#$(PWD)#g" nginx.conf; else sed -i "s#SERVER_ROOT#$(PWD)#g" nginx.conf; fi 
+	@if [ $(shell ps aux|grep nginx|grep -v grep|wc -l) -eq 0 ]; then echo ">> start nginx: $(PWD)/nginx.conf" ; nginx -c $(PWD)/nginx.conf; fi
+	@ps aux|grep nginx
 	@cd example-apps && tar cfz simple-app.tgz simple-app/
 	@cd example-apps && tar cfz simple-app_1.0.0_1.tgz simple-app_1.0.0_1/
 	@cd example-apps && tar cfz simple-app_1.1.0_1.tgz simple-app_1.1.0_1/
@@ -63,8 +66,11 @@ prepare-test: parser
 	@cd example-apps && tar cfz none-main-app.tgz none-main-app/
 	@cd example-apps && tar cfz job-exception-app.tgz job-exception-app/
 	@cd example-apps && head -n 2 java-app.tgz > illegal-tgz-pkg.tgz
+	@cd example-apps && tar cfz kill-old-before-mount-app_1.0.0_1.tgz kill-old-before-mount-app_1.0.0_1/
+	@cd example-apps && tar cfz kill-old-before-mount-app_1.1.0_1.tgz kill-old-before-mount-app_1.1.0_1/
 
 test: eslint prepare-test
+	@nginx -c $(PWD)/nginx.conf
 	@$(BIN_MOCHA) \
 		--recursive \
 		--exit \
@@ -100,6 +106,15 @@ test-cov:
 	@rm -rf ./config/config.js
 
 codecov:travis-install eslint prepare-test test-cov
+
+test-image:
+	@docker build -t honeycomb-server:test -f ./Dockerfile.test .
+
+test-local:
+	@docker run --rm -v $(PWD):/root/honeycomb-server -w /root/honeycomb-server honeycomb-server:test make test2
+
+test-debug:
+	@docker run --rm -p 9998:9999 -p 8000:8080 -v $(PWD):/root/honeycomb-server -w /root/honeycomb-server -it honeycomb-server:test bash
 
 release-prepare:
 	@echo 'copy files'

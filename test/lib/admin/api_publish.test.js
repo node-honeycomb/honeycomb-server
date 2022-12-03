@@ -30,7 +30,9 @@ describe('app_publish.test.js', () => {
       (done) => common.deleteApp(agent, ips, 'exenoent-app').end(done),
       (done) => common.deleteApp(agent, ips, 'job-app').end(done),
       (done) => common.deleteApp(agent, ips, 'job-exception-app').end(done),
-      (done) => common.deleteApp(agent, ips, 'none-main-app').end(done)
+      (done) => common.deleteApp(agent, ips, 'none-main-app').end(done),
+      (done) => common.deleteApp(agent, ips, 'kill-old-before-mount-app_1.0.0_1').end(done),
+      (done) => common.deleteApp(agent, ips, 'kill-old-before-mount-app_1.1.0_1').end(done),
     ], done);
   });
   describe('publish api', () => {
@@ -53,11 +55,13 @@ describe('app_publish.test.js', () => {
           data.error.length.should.eql(0);
         })
         .end((err) => {
-          if (err) return done(err);
+          should(err).eql(null);
           let request2 = supertest('http://localhost:10001');
-          request2.get('/old-app/hello')
-            .expect(200)
-            .end(done);
+          setTimeout(() => {
+            request2.get('/old-app/hello')
+              .expect(200)
+              .end(done);
+          }, 1000);
         });
     });
     it('should publish notarget app successfully', (done) => {
@@ -83,7 +87,8 @@ describe('app_publish.test.js', () => {
           data.error.length.should.eql(0);
         })
         .end((err) => {
-          let child = common.getMaster().getChild('none-main-app');
+          let master = common.getMaster();
+          let child = master.getChild('none-main-app');
           Object.keys(child.workers).length.should.eql(0);
           should(err).eql(null)
           done()
@@ -94,6 +99,41 @@ describe('app_publish.test.js', () => {
           */
         });
     });
+
+    it('should publish kill-old-before-mount-app successfully', (done) => {
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.0.0_1.tgz'))
+        .expect(200)
+        .expect((res) => {
+          let data = res.body.data;
+          data.success.length.should.eql(1);
+          data.error.length.should.eql(0);
+        })
+        .end((err) => {
+          should(err).eql(null);
+          let master = common.getMaster();
+          let child = master.getChild('kill-old-before-mount-app_1.0.0_1');
+          Object.keys(child.workers).length.should.eql(1);
+          supertest('http://localhost:8080').get('/status').expect(200).end(function() {
+            common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.1.0_1.tgz'))
+            //.expect(200)
+              .end((err) => {
+                should(err).eql(null);
+                let master = common.getMaster();
+                let c0 = master.getChild('kill-old-before-mount-app_1.0.0_1');
+                should(c0).eql(undefined);
+                let c1 = master.getChild('kill-old-before-mount-app_1.1.0_1');
+                Object.keys(c1.workers).length.should.eql(1)
+                supertest('http://localhost:8080').get('/status').expect(200).end(done);
+              });
+          });
+          /*
+          supertest("http://localhost:8080/").get('/none-main/test/hello.txt').expect((res) => {
+            res.text.should.eql('hello static');
+          }).end(done)
+          */
+        });
+    });
+
     it('should publish job-app successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'job-app.tgz'))
         .expect(200)
@@ -162,7 +202,7 @@ describe('app_publish.test.js', () => {
         });
     });
 
-    it('should publish java app successfully', (done) => {
+    it.skip('should publish java app successfully', (done) => {
       common.publishApp(agent, ips, path.join(appsPkgBase, 'java-app.tgz'))
         .expect(200)
         .expect((res) => {
@@ -189,6 +229,7 @@ describe('app_publish.test.js', () => {
               })
               .end(done);
           });
+          client.on('error', done);
           client.write(JSON.stringify(msg));
         });
     });

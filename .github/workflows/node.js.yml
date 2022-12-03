@@ -10,9 +10,12 @@ on:
     branches: [ master, v2.x ]
 
 jobs:
-  build:
-
+  container-test-job:
     runs-on: ubuntu-latest
+    
+    container:
+      image: ubuntu:20.04
+      options: --user root --cpus 2
 
     strategy:
       matrix:
@@ -26,9 +29,17 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: sudo apt-get install -y nginx
+    - run: apt update && apt install -y wget curl gnupg make
+    - run: cp .github/workflows/nginx.list /etc/apt/sources.list.d/nginx.list
+    - run: wget http://nginx.org/keys/nginx_signing.key && apt-key add nginx_signing.key
+    - run: apt update -y && apt remove -y nginx nginx-common nginx-full nginx-core 
+    - run: apt-get install -y nginx openjdk-11-jdk
+    - run: chown root:root `which nginx`
+    #- run: curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+    #- run: bash /tmp/nodesource_setup.sh
+    #- run: apt-get install -y nodejs
+    - run: node -v && java -version
     - run: npm install -g codecov
-    - run: which nginx
-    - run: java -version
+    - run: which nginx && nginx -v
     - run: make codecov
     - run: codecov
