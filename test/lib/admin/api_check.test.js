@@ -45,7 +45,7 @@ describe('api_check.test.js', () => {
       })
       .end(done);
   });
-  it('should return error when params.appid illegal', function (done) {
+  it('should return error when params.appid illegal 2', function (done) {
     common.commonErrorGet(agent, '/api/config/app/illegal@app?ips=' + ips, {}, {})
       .expect(500)
       .expect((res) => {
