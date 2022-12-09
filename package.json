@@ -16,7 +16,7 @@
     "cli-table": "0.3.1",
     "deep-object-diff": "^1.1.9",
     "ejs": "3.1.8",
-    "express": "4.16.3",
+    "express": "4.17.3",
     "formidable": "1.2.1",
     "formstream": "1.1.0",
     "ip": "1.1.5",
