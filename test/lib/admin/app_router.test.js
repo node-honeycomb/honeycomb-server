@@ -87,13 +87,15 @@ describe('app_router.test.js', () => {
         .end((err) => {
           if (err) return done(err);
           let net = require('net');
-          let client = net.connect(6000, 'localhost');
-          client.on('error', done);
-          client.on('data', function (chunk) {
-            chunk.toString().should.match(/socket\-test/);
-            done();
-          });
-          client.write('socket-test');
+          setTimeout(() => {
+            let client = net.connect(6000, 'localhost');
+            client.on('error', done);
+            client.on('data', function (chunk) {
+              chunk.toString().should.match(/socket\-test/);
+              done();
+            });
+            client.write('socket-test');
+          }, 500);
         });
     });
   });

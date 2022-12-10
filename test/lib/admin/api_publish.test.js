@@ -245,23 +245,25 @@ describe('app_publish.test.js', () => {
           if (err) return done(err);
           let child = common.getMaster().getChild('java-port-app');
           Object.keys(child.workers).length.should.eql(1);
-          let client = require('net').connect({host: '127.0.0.1', port: 9099});
-          let msg = {test: true};
-          client.on('data', (chunk) => {
-            let obj = JSON.parse(chunk);
-            obj.should.eql(msg);
-            client.end();
-            common.reloadApp(agent, ips, 'java-port-app')
-              .expect(200)
-              .expect((res) => {
-                let data = res.body.data;
-                data.success.length.should.eql(1);
-                data.error.length.should.eql(0);
-              })
-              .end(done);
-          });
-          client.on('error', done);
-          client.write(JSON.stringify(msg));
+          setTimeout(() => {
+            let client = require('net').connect({host: '127.0.0.1', port: 9099});
+            let msg = {test: true};
+            client.on('data', (chunk) => {
+              let obj = JSON.parse(chunk);
+              obj.should.eql(msg);
+              client.end();
+              common.reloadApp(agent, ips, 'java-port-app')
+                .expect(200)
+                .expect((res) => {
+                  let data = res.body.data;
+                  data.success.length.should.eql(1);
+                  data.error.length.should.eql(0);
+                })
+                .end(done);
+            });
+            client.on('error', done);
+            client.write(JSON.stringify(msg));
+          }, 500);
         });
     });
     it('should publish app but not started', (done) => {
