@@ -379,3 +379,24 @@ exports.untar = function (file, cwd, done) {
 
   pkgStream.pipe(gunzipStream).pipe(tarStream);
 };
+
+/**
+ * 返回内存大小对应的字节数
+ * @param {String} sz 内存大小描述，例如：1k, 1M, 1G
+ * @return {Number}
+ */
+exports.parseMemorySize = function(sz) {
+  if (!isNaN(sz)) {
+    return parseInt(sz);
+  }
+
+  let num = sz.substring(sz, sz.length - 1);
+  if (sz.endsWith('k') || sz.endsWith('K')) {
+    return parseInt(num) * 1024;
+  } else if (sz.endsWith('m') || sz.endsWith('M')) {
+    return parseInt(num) * 1024 * 1024;
+  } else if (sz.endsWith('g') || sz.endsWith('G')) {
+    return parseInt(num) * 1024 * 1024 * 1024;
+  }
+  return 0;
+}
