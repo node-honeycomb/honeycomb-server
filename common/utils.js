@@ -381,13 +381,19 @@ exports.untar = function (file, cwd, done) {
 };
 
 /**
- * 返回内存大小对应的字节数
+ * 返回内存大小对应的字节数。如果失败，返回0。
+ * 另外，和Java类似，不支持5.2G这样的写法。
+ * 单位：k/m/g，以及K/M/G，大小写无区别。
  * @param {String} sz 内存大小描述，例如：1k, 1M, 1G
  * @return {Number}
  */
 exports.parseMemorySize = function (sz) {
+  if (sz === undefined) {
+    return 0;
+  }
   if (!isNaN(sz)) {
-    return parseInt(sz);
+    let n = parseInt(sz)
+    return isNaN(n) ? 0 : n;
   }
 
   let num = sz.substring(0, sz.length - 1);
