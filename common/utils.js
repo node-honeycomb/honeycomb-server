@@ -385,7 +385,7 @@ exports.untar = function (file, cwd, done) {
  * @param {String} sz 内存大小描述，例如：1k, 1M, 1G
  * @return {Number}
  */
-exports.parseMemorySize = function(sz) {
+exports.parseMemorySize = function (sz) {
   if (!isNaN(sz)) {
     return parseInt(sz);
   }
@@ -399,4 +399,4 @@ exports.parseMemorySize = function(sz) {
     return parseInt(num) * 1024 * 1024 * 1024;
   }
   return 0;
-}
+};
