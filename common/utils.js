@@ -392,7 +392,7 @@ exports.parseMemorySize = function (sz) {
     return 0;
   }
   if (!isNaN(sz)) {
-    let n = parseInt(sz)
+    let n = parseInt(sz);
     return isNaN(n) ? 0 : n;
   }
 
