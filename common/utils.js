@@ -390,7 +390,7 @@ exports.parseMemorySize = function (sz) {
     return parseInt(sz);
   }
 
-  let num = sz.substring(sz, sz.length - 1);
+  let num = sz.substring(0, sz.length - 1);
   if (sz.endsWith('k') || sz.endsWith('K')) {
     return parseInt(num) * 1024;
   } else if (sz.endsWith('m') || sz.endsWith('M')) {
