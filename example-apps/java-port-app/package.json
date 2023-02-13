@@ -4,7 +4,7 @@
     "processorNum": 1,
     "service": {
       "exec": "java",
-      "argv": ["-jar", "${main}"],
+      "argv": ["-Xmx500m", "-Xmn200m", "-Xms150m", "-jar", "${main}"],
       "type": "stream",
       "upstream": "port",
       "bind": "9099"
