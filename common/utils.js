@@ -397,12 +397,14 @@ exports.parseMemorySize = function (sz) {
   }
 
   let num = sz.substring(0, sz.length - 1);
-  if (sz.endsWith('k') || sz.endsWith('K')) {
+  if (sz.match(/[kK]$/)) {
     return parseInt(num) * 1024;
-  } else if (sz.endsWith('m') || sz.endsWith('M')) {
+  } else if (sz.match(/[mM]$/)) {
     return parseInt(num) * 1024 * 1024;
-  } else if (sz.endsWith('g') || sz.endsWith('G')) {
+  } else if (sz.match(/[gG]$/)) {
     return parseInt(num) * 1024 * 1024 * 1024;
+  } else if (sz.match(/[tT]$/)) {
+    return parseInt(num) * 1024 * 1024 * 1024 * 1024;
   }
   return 0;
 };

@@ -313,9 +313,13 @@ describe('common/utils,', function () {
   describe('parseMemorySize()', () => {
     it('should return right size', () => {
       should(utils.parseMemorySize('1234')).eql(1234);
+      should(utils.parseMemorySize('8k')).eql(8192);
       should(utils.parseMemorySize('8K')).eql(8192);
+      should(utils.parseMemorySize('5m')).eql(5242880);
       should(utils.parseMemorySize('5M')).eql(5242880);
+      should(utils.parseMemorySize('6g')).eql(6442450944);
       should(utils.parseMemorySize('6G')).eql(6442450944);
+      should(utils.parseMemorySize('1t')).eql(1099511627776);
     });
     it('should return 0', () => {
       should(utils.parseMemorySize(null)).eql(0);
