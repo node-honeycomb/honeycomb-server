@@ -109,23 +109,27 @@ describe('app_publish.test.js', () => {
           data.error.length.should.eql(0);
         })
         .end((err) => {
-          should(err).eql(null);
-          let master = common.getMaster();
-          let child = master.getChild('kill-old-before-mount-app_1.0.0_1');
-          Object.keys(child.workers).length.should.eql(1);
-          supertest('http://localhost:8080').get('/status').expect(200).end(function() {
-            common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.1.0_1.tgz'))
-            //.expect(200)
-              .end((err) => {
-                should(err).eql(null);
-                let master = common.getMaster();
-                let c0 = master.getChild('kill-old-before-mount-app_1.0.0_1');
-                should(c0).eql(undefined);
-                let c1 = master.getChild('kill-old-before-mount-app_1.1.0_1');
-                Object.keys(c1.workers).length.should.eql(1)
-                supertest('http://localhost:8080').get('/status').expect(200).end(done);
-              });
-          });
+          setTimeout(() => {
+            should(err).eql(null);
+            let master = common.getMaster();
+            let child = master.getChild('kill-old-before-mount-app_1.0.0_1');
+            Object.keys(child.workers).length.should.eql(1);
+            supertest('http://localhost:8080').get('/status').expect(200).end(function() {
+              common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.1.0_1.tgz'))
+                .expect(200)
+                .end((err) => {
+                  setTimeout(() => {
+                    should(err).eql(null);
+                    let master = common.getMaster();
+                    let c0 = master.getChild('kill-old-before-mount-app_1.0.0_1');
+                    should(c0).eql(undefined);
+                    let c1 = master.getChild('kill-old-before-mount-app_1.1.0_1');
+                    Object.keys(c1.workers).length.should.eql(1)
+                    supertest('http://localhost:8080').get('/status').expect(200).end(done);
+                  }, 500);
+                });
+            });
+          }, 500);
           /*
           supertest("http://localhost:8080/").get('/none-main/test/hello.txt').expect((res) => {
             res.text.should.eql('hello static');

@@ -300,30 +300,37 @@ describe('api_app.test.js', () => {
 
   describe('healthcheck app', () => {
     before((done) => {
-      common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.0.0_1.tgz'))
+      common.publishApp(agent, ips, path.join(appsPkgBase, 'kill-old-before-mount-app_1.1.0_1.tgz'))
         .end((err) => {
           done(err);
         });
     });
     after((done) => {
       async.series([
-        (done) => common.deleteApp(agent, ips, 'kill-old-before-mount-app_1.0.0_1').end(done)
+        (done) => common.deleteApp(agent, ips, 'kill-old-before-mount-app_1.1.0_1').end(done)
       ], done);
     });
     it('should work fine using server healthcheck', (done) => {
       supertest('http://localhost:8080').get('/status')
         .expect(200)
         .end(() => {
-          http.get('http://localhost:8080/kill-old/status', () => {
-            supertest('http://localhost:8080').get('/status').expect((res) => {
-              res.statusCode.should.eql(404);
-              res.text.should.match(/kill-old-before-mount-app_1.0.0_1:HTTP-CODE:404/);
-            }).end(() => {
-              http.get('http://localhost:8080/kill-old/status', () => {
-                supertest('http://localhost:8080').get('/status').expect(200).end(done);
+          setTimeout(() => {
+            http.get('http://localhost:8080/kill-old/status', (res) => {
+              // console.log('>>>>>>>>>>>>>>1:', res.statusCode);
+              supertest('http://localhost:8080').get('/status').expect((res) => {
+                res.statusCode.should.eql(404);
+                res.text.should.match(/kill-old-before-mount-app_1.0.0_1:HTTP-CODE:404/);
+              }).end(() => {
+                // console.log('>>>>>>>>>>>>>>2');
+                http.get('http://localhost:8080/kill-old/status', (res) => {
+                  // console.log('>>>>>>>>>>>>>>2:', res.statusCode);
+                  setTimeout(() => {
+                    supertest('http://localhost:8080').get('/status').expect(200).end(done);
+                  }, 500);
+                });
               });
-            });
-          })
+            })
+          }, 500);
         })
     });
   });
