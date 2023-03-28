@@ -4,7 +4,7 @@ const mkdirp = require('mkdirp');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('xfs');
-const tar = require('tar-fs');
+const tar = require('./tar_fs');
 const zlib = require('zlib');
 const childProcess = require('child_process');
 
