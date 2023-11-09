@@ -1,7 +1,7 @@
 {
   "name": "honeycomb-server",
   "version": "4.0.10",
-  "build": "1",
+  "build": "2",
   "description": "Honeycomb, the micro-app's container",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "overrides": {
-      "vm2": "^3.9.15"
+      "vm2": "^3.9.19"
   },
   "dependencies": {
     "@sindresorhus/df": "2.1.0",
