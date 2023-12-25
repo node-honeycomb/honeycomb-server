@@ -8,6 +8,16 @@ const tar = require('tar-fs');
 const zlib = require('zlib');
 const childProcess = require('child_process');
 
+let cmdTar = false;
+
+try {
+  childProcess.execSync('tar --version');
+  childProcess.execSync('gunzip --version');
+  cmdTar = true;
+} catch (e) {
+  // do nothing
+}
+
 exports.mkdirp = function (dir, mode) {
   mode = mode || '0755';
   mkdirp.sync(dir, mode);
@@ -357,12 +367,6 @@ exports.fixPath = function (p) {
 exports.checkAppName = exports.checkAppId;
 
 exports.untar = function (file, cwd, done) {
-  let pkgStream;
-  if (fs.existsSync(path.join(cwd, file))) {
-    pkgStream = fs.createReadStream(path.join(cwd, file));
-  } else {
-    return done(new Error('pkg not found:' + file));
-  }
   let flagCb = false;
   function cb(err) {
     if (flagCb) {
@@ -371,13 +375,26 @@ exports.untar = function (file, cwd, done) {
     flagCb = true;
     done(err);
   }
-  let gunzipStream = zlib.createGunzip();
-  gunzipStream.on('error', cb);
-  let tarStream = tar.extract(cwd);
-  tarStream.on('error', cb);
-  tarStream.on('finish', cb);
-
-  pkgStream.pipe(gunzipStream).pipe(tarStream);
+  if (cmdTar) {
+    childProcess.exec(`tar xfz ${file}`, {
+      cwd: cwd
+    }, (error) => {
+      cb(error);
+    });
+  } else {
+    let pkgStream;
+    if (fs.existsSync(path.join(cwd, file))) {
+      pkgStream = fs.createReadStream(path.join(cwd, file));
+    } else {
+      return done(new Error('pkg not found:' + file));
+    }
+    let gunzipStream = zlib.createGunzip();
+    gunzipStream.on('error', cb);
+    let tarStream = tar.extract(cwd);
+    tarStream.on('error', cb);
+    tarStream.on('finish', cb);
+    pkgStream.pipe(gunzipStream).pipe(tarStream);
+  }
 };
 
 /**
