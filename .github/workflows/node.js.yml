@@ -40,6 +40,6 @@ jobs:
     #- run: apt-get install -y nodejs
     - run: node -v && java -version
     - run: npm install -g codecov
-    - run: which nginx && nginx -v
+    - run: nginx -v && tar --version && gunzip --version
     - run: make codecov
     - run: codecov
