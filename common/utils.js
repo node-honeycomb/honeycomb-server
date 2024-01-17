@@ -376,11 +376,19 @@ exports.untar = function (file, cwd, done) {
     done(err);
   }
   if (cmdTar) {
-    childProcess.exec(`tar xfz ${file}`, {
+    console.log(`[untar]: tar xfz ${file}`);
+    let ut = childProcess.spawn('tar', ['xfz', file, '--warning=no-unknown-keyword'], {
       cwd: cwd
-    }, (error) => {
-      cb(error);
     });
+    ut.stdout.on('data', (data) => {
+      console.log(`[untar stdout]: ${data}`);
+    });
+    // 监听标准错误输出
+    ut.stderr.on('data', (data) => {
+      console.error(`[untar stderr]: ${data}`);
+    });
+    ut.on('error', cb);
+    ut.on('close', cb);
   } else {
     let pkgStream;
     if (fs.existsSync(path.join(cwd, file))) {
