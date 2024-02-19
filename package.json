@@ -22,7 +22,7 @@
     "express": "4.17.3",
     "formidable": "1.2.1",
     "formstream": "1.1.0",
-    "ip": "1.1.5",
+    "ip": "1.1.9",
     "line-reader": "0.4.0",
     "litelog": "3.0.10",
     "lodash": "^4.17.12",
