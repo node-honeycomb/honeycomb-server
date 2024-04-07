@@ -47,6 +47,7 @@ module.exports = {
     msgTimeout: 6 * 1000,
     enablePublishPage: true,
     gatherUsage: true,
+    prometheus: true,
     readLogMaxLines: 500,
     hooks: {
       publish: 'ls .'
