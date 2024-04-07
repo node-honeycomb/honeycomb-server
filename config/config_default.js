@@ -277,6 +277,10 @@ module.exports = {
     https: null,
     healthCheck: '/status',
     /**
+     * 是否暴露 prometheus metrics
+     */
+    prometheus: false,
+    /**
      * 默认发布页的密码, 上线请务必修改
      * 密码可以通过
      *   `honeycomb pwd $pwd`来生成， 比如`honeycomb pwd honeycomb123` 即可得到以下hash串

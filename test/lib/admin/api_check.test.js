@@ -41,6 +41,15 @@ describe('api_check.test.js', () => {
       .expect(200)
       .end(done);
   });
+  it('should return ok when liveness check', function (done) {
+    common.commonErrorGet(agent, '/metrics', {}, {stringToSign: ''})
+      .expect(200)
+      .expect((res) => {
+        res.text.should.match(/server_in_publish/mg)
+        res.text.should.match(/app_exit_count/mg)
+      })
+      .end(done);
+  });
 
   it('should return error when params.appid illegal', function (done) {
     common.commonPost(agent, '/api/app/illegal@app/stop?ips=' + ips, {})
