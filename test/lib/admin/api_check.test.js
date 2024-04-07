@@ -36,6 +36,11 @@ describe('api_check.test.js', () => {
       .expect(403)
       .end(done);
   });
+  it('should return ok when liveness check', function (done) {
+    common.commonErrorGet(agent, '/api/liveness', {}, {stringToSign: ''})
+      .expect(200)
+      .end(done);
+  });
 
   it('should return error when params.appid illegal', function (done) {
     common.commonPost(agent, '/api/app/illegal@app/stop?ips=' + ips, {})
